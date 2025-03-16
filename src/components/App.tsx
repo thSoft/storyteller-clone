@@ -1,4 +1,4 @@
-import { PuzzleBrowser } from "./components/PuzzleBrowser";
+import { PuzzleBrowser } from "./PuzzleBrowser";
 
 // Main App Component
 function App() {
