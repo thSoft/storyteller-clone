@@ -9,7 +9,7 @@ type Props = {};
 export const CurrentChapterView: React.FC<Props> = ({}) => {
   const dispatch = useDispatch();
   const currentChapterIndex = useSelector(
-    (state: RootState) => state.gameState.currentChapterIndex
+    (state: RootState) => state.currentChapterIndex
   );
 
   const currentChapter = chapters[currentChapterIndex];
