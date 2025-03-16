@@ -37,6 +37,10 @@ export type Puzzle = Entity & {
   initialStoryState: StoryState;
 };
 
+export type Chapter = {
+  puzzles: string[];
+};
+
 export type StoryBeat = {
   templateId: string;
   slotAssignedCharacters: Record<string, string>;
@@ -47,6 +51,7 @@ export type PuzzleState = {
 };
 
 export type GameState = {
-  currentPuzzleId: string;
+  currentPuzzleId: string | null;
+  currentChapterIndex: number;
   puzzleStates: Record<string, PuzzleState>;
 };
