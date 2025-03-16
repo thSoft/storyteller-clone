@@ -18,7 +18,8 @@ type RemoveStoryBeatPayload = {
 };
 
 const initialGameState: GameState = {
-  currentPuzzleId: Object.keys(puzzles)[0],
+  currentPuzzleId: null,
+  currentChapterIndex: 0,
   puzzleStates: Object.fromEntries(
     Object.keys(puzzles).map((puzzleId) => [puzzleId, { storyBeats: [] }])
   ),
@@ -28,8 +29,11 @@ const gameStateSlice = createSlice({
   name: "gameState",
   initialState: initialGameState,
   reducers: {
-    setCurrentPuzzleId(state, action: PayloadAction<string>) {
+    setCurrentPuzzleId(state, action: PayloadAction<string | null>) {
       state.currentPuzzleId = action.payload;
+    },
+    setCurrentChapterIndex: (state, action: PayloadAction<number>) => {
+      state.currentChapterIndex = action.payload;
     },
     setSlotCharacter(state, action: PayloadAction<UpdateSlotPayload>) {
       const {
@@ -37,6 +41,9 @@ const gameStateSlice = createSlice({
         slotId: slot,
         characterId: character,
       } = action.payload;
+      if (!state.currentPuzzleId) {
+        return;
+      }
       const puzzle = state.puzzleStates[state.currentPuzzleId];
       if (puzzle && puzzle.storyBeats[storyBeatIndex]) {
         puzzle.storyBeats[storyBeatIndex].slotAssignedCharacters[slot] =
@@ -47,6 +54,9 @@ const gameStateSlice = createSlice({
       state,
       action: PayloadAction<AddStoryBeatPayload>
     ) {
+      if (!state.currentPuzzleId) {
+        return;
+      }
       const { index, beat } = action.payload;
       const puzzle = state.puzzleStates[state.currentPuzzleId];
       if (puzzle) {
@@ -57,6 +67,9 @@ const gameStateSlice = createSlice({
       state,
       action: PayloadAction<RemoveStoryBeatPayload>
     ) {
+      if (!state.currentPuzzleId) {
+        return;
+      }
       const { index } = action.payload;
       const puzzle = state.puzzleStates[state.currentPuzzleId];
       if (puzzle && index >= 0 && index < puzzle.storyBeats.length) {
@@ -68,6 +81,7 @@ const gameStateSlice = createSlice({
 
 export const {
   setCurrentPuzzleId,
+  setCurrentChapterIndex,
   setSlotCharacter,
   addStoryBeatToCurrentPuzzle,
   removeStoryBeatFromCurrentPuzzle,
