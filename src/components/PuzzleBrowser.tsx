@@ -8,7 +8,7 @@ import { PuzzleView } from "./PuzzleView";
 
 export const PuzzleBrowser: React.FC = () => {
   const currentPuzzleId = useSelector(
-    (state: RootState) => state.gameState.currentPuzzleId
+    (state: RootState) => state.currentPuzzleId
   );
   const dispatch = useDispatch();
 

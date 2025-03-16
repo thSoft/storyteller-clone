@@ -35,9 +35,9 @@ export const PuzzleView: React.FC<{
   puzzle: Puzzle;
   currentPuzzleId: string;
 }> = ({ puzzle, currentPuzzleId }) => {
-  const gameState = useSelector((state: RootState) => state.gameState);
-
-  const puzzleState = gameState.puzzleStates[currentPuzzleId];
+  const puzzleState = useSelector(
+    (state: RootState) => state.puzzleStates[currentPuzzleId]
+  );
   const storyBeats = puzzleState.storyBeats;
 
   const states = getStates(storyBeats, puzzle.initialStoryState);
