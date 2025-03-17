@@ -3,7 +3,6 @@ import { useDrag } from "react-dnd";
 import { SceneTemplate } from "../types";
 import { ItemTypes } from "./ItemTypes";
 
-// Draggable Scene Component
 export const DraggableScene: React.FC<{ template: SceneTemplate }> = ({
   template,
 }) => {

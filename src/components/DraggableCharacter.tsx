@@ -3,7 +3,6 @@ import { useDrag } from "react-dnd";
 import { Character } from "../types";
 import { ItemTypes } from "./ItemTypes";
 
-// Draggable Character Component
 export const DraggableCharacter: React.FC<{ character: Character }> = ({
   character,
 }) => {

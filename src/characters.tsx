@@ -1,9 +1,8 @@
 import { Character, EntityMap } from "./types";
 import { entityMap } from "./utils";
 
-// Characters
+export const adam: Character = { id: "adam", name: "👨 Adam" };
 
-export const characters: EntityMap<Character> = entityMap([
-  { id: "adam", name: "👨 Adam" },
-  { id: "eve", name: "👩 Eve" },
-]);
+export const eve: Character = { id: "eve", name: "👩 Eve" };
+
+export const characters: EntityMap<Character> = entityMap([adam, eve]);
