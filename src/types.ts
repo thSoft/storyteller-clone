@@ -25,7 +25,7 @@ export type SceneTemplate = Entity & {
   slots: SceneSlot[];
   outcomeLogic: (
     state: StoryState,
-    assigned: Record<string, string>
+    assigned: Record<string, Character>
   ) => StoryState;
 };
 

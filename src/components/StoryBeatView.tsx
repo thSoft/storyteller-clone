@@ -8,15 +8,11 @@ import { SceneSlot, StoryBeat, StoryState } from "../types";
 import { DroppableSlot } from "./DroppableSlot";
 import { InsertionPoint } from "./InsertionPoint";
 
-export function StoryBeatView({
-  beat,
-  index,
-  states,
-}: {
+export const StoryBeatView: React.FC<{
   beat: StoryBeat;
   index: number;
   states: StoryState[];
-}) {
+}> = ({ beat, index, states }) => {
   const template = sceneTemplates[beat.templateId];
   const dispatch = useDispatch();
   const handleRemoveBeat = () => {
@@ -58,4 +54,4 @@ export function StoryBeatView({
       <InsertionPoint index={index + 1} />
     </span>
   );
-}
+};

@@ -20,9 +20,15 @@ function getStates(beats: StoryBeat[], initialState: StoryState): StoryState[] {
     const previousState = previousStates[previousStates.length - 1];
     const template = sceneTemplates[beat.templateId];
     if (template) {
+      const resolvedAssignmentEntries = Object.entries(
+        beat.slotAssignedCharacters
+      ).map(([slotId, characterId]) => [slotId, characters[characterId]]);
       return [
         ...previousStates,
-        template.outcomeLogic(previousState, beat.slotAssignedCharacters),
+        template.outcomeLogic(
+          previousState,
+          Object.fromEntries(resolvedAssignmentEntries)
+        ),
       ];
     } else {
       return previousStates;
