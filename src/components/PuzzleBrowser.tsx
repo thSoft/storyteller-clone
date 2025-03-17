@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCurrentPuzzleId } from "../gameStateSlice";
 import { puzzles } from "../puzzles";
 import { RootState } from "../store";
-import { CurrentChapterView } from "./CurrentChapterView";
+import { ChapterView } from "./ChapterView";
 import { PuzzleView } from "./PuzzleView";
 
 export const PuzzleBrowser: React.FC = () => {
@@ -24,7 +24,7 @@ export const PuzzleBrowser: React.FC = () => {
           <PuzzleView puzzle={puzzle} currentPuzzleId={currentPuzzleId} />
         </>
       ) : (
-        <CurrentChapterView />
+        <ChapterView />
       )}
     </div>
   );
