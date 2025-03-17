@@ -3,8 +3,9 @@ import { entityMap } from "./utils";
 
 export const puzzles = entityMap([eveDiesHeartbroken]);
 
-const chapter1 = {
-  puzzles: [eveDiesHeartbroken.id],
-};
-
-export const chapters = [chapter1];
+export const chapters = [
+  {
+    title: "Broken Hearts Everywhere",
+    puzzles: [eveDiesHeartbroken.id],
+  },
+];

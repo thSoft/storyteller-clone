@@ -4,9 +4,7 @@ import { setCurrentChapterIndex, setCurrentPuzzleId } from "../gameStateSlice";
 import { chapters, puzzles } from "../puzzles";
 import { RootState } from "../store";
 
-type Props = {};
-
-export const CurrentChapterView: React.FC<Props> = ({}) => {
+export const ChapterView: React.FC = () => {
   const dispatch = useDispatch();
   const currentChapterIndex = useSelector(
     (state: RootState) => state.currentChapterIndex
@@ -28,7 +26,9 @@ export const CurrentChapterView: React.FC<Props> = ({}) => {
 
   return (
     <div>
-      <h2>Chapter {currentChapterIndex + 1}</h2>
+      <h2>
+        Chapter {currentChapterIndex + 1}: {currentChapter.title}
+      </h2>
 
       <div style={{ marginBottom: "1rem" }}>
         <button onClick={handlePrev} disabled={currentChapterIndex === 0}>
