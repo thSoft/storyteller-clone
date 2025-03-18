@@ -46,8 +46,14 @@ const gameStateSlice = createSlice({
       }
       const puzzle = state.puzzleStates[state.currentPuzzleId];
       if (puzzle && puzzle.storyBeats[storyBeatIndex]) {
-        puzzle.storyBeats[storyBeatIndex].slotAssignedCharacters[slot] =
-          character;
+        const assignedCharacters =
+          puzzle.storyBeats[storyBeatIndex].slotAssignedCharacters;
+        for (const otherSlotId in assignedCharacters) {
+          if (assignedCharacters[otherSlotId] === character) {
+            delete assignedCharacters[otherSlotId];
+          }
+        }
+        assignedCharacters[slot] = character;
       }
     },
     addStoryBeatToCurrentPuzzle(
