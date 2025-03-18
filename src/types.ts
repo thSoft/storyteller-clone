@@ -37,7 +37,8 @@ export type Puzzle = Entity & {
   initialStoryState: StoryState;
 };
 
-export type Chapter = {
+export type Chapter = Entity & {
+  title: string;
   puzzles: string[];
 };
 
@@ -51,7 +52,7 @@ export type PuzzleState = {
 };
 
 export type GameState = {
+  currentChapterId: string | null;
   currentPuzzleId: string | null;
-  currentChapterIndex: number;
   puzzleStates: Record<string, PuzzleState>;
 };
