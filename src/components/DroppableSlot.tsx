@@ -30,6 +30,7 @@ export const DroppableSlot: React.FC<{
           backgroundColor: dragging ? "lightblue" : "white",
           padding: "4px",
           border: `1px ${character ? "solid black" : "dashed gray"}`,
+          lineHeight: 1.3,
         }}
       >
         {assignedCharacter ? character?.name : "(nobody)"}

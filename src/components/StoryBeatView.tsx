@@ -32,12 +32,11 @@ export const StoryBeatView: React.FC<{
       <div
         key={index}
         style={{
-          marginBottom: "8px",
           border: "1px solid black",
           padding: "8px",
         }}
       >
-        <h3>{template?.name}</h3>
+        <h3 style={{ marginTop: 0 }}>{template?.name}</h3>
         {template?.slots.map((slot: SceneSlot) => (
           <DroppableSlot
             key={slot.id}
