@@ -2,21 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { puzzles } from "./puzzles";
 import { GameState, StoryBeat } from "./types";
 
-type UpdateSlotPayload = {
-  storyBeatIndex: number;
-  slotId: string;
-  characterId: string;
-};
-
-type AddStoryBeatPayload = {
-  index: number;
-  beat: StoryBeat;
-};
-
-type RemoveStoryBeatPayload = {
-  index: number;
-};
-
 const initialGameState: GameState = {
   currentPuzzleId: null,
   currentChapterIndex: 0,
@@ -32,15 +17,18 @@ const gameStateSlice = createSlice({
     setCurrentPuzzleId(state, action: PayloadAction<string | null>) {
       state.currentPuzzleId = action.payload;
     },
-    setCurrentChapterIndex: (state, action: PayloadAction<number>) => {
+    setCurrentChapterIndex(state, action: PayloadAction<number>) {
       state.currentChapterIndex = action.payload;
     },
-    setSlotCharacter(state, action: PayloadAction<UpdateSlotPayload>) {
-      const {
-        storyBeatIndex,
-        slotId: slot,
-        characterId: character,
-      } = action.payload;
+    setSlotCharacter(
+      state,
+      action: PayloadAction<{
+        storyBeatIndex: number;
+        slotId: string;
+        characterId: string;
+      }>
+    ) {
+      const { storyBeatIndex, slotId, characterId } = action.payload;
       if (!state.currentPuzzleId) {
         return;
       }
@@ -49,21 +37,24 @@ const gameStateSlice = createSlice({
         const assignedCharacters =
           puzzle.storyBeats[storyBeatIndex].slotAssignedCharacters;
         for (const otherSlotId in assignedCharacters) {
-          if (assignedCharacters[otherSlotId] === character) {
+          if (assignedCharacters[otherSlotId] === characterId) {
             delete assignedCharacters[otherSlotId];
           }
         }
-        assignedCharacters[slot] = character;
+        assignedCharacters[slotId] = characterId;
       }
     },
     addStoryBeatToCurrentPuzzle(
       state,
-      action: PayloadAction<AddStoryBeatPayload>
+      action: PayloadAction<{
+        index: number;
+        beat: StoryBeat;
+      }>
     ) {
+      const { index, beat } = action.payload;
       if (!state.currentPuzzleId) {
         return;
       }
-      const { index, beat } = action.payload;
       const puzzle = state.puzzleStates[state.currentPuzzleId];
       if (puzzle) {
         puzzle.storyBeats.splice(index, 0, beat);
@@ -71,12 +62,12 @@ const gameStateSlice = createSlice({
     },
     removeStoryBeatFromCurrentPuzzle(
       state,
-      action: PayloadAction<RemoveStoryBeatPayload>
+      action: PayloadAction<{ index: number }>
     ) {
+      const { index } = action.payload;
       if (!state.currentPuzzleId) {
         return;
       }
-      const { index } = action.payload;
       const puzzle = state.puzzleStates[state.currentPuzzleId];
       if (puzzle && index >= 0 && index < puzzle.storyBeats.length) {
         puzzle.storyBeats.splice(index, 1);
