@@ -4,7 +4,7 @@ import { GameState, StoryBeat } from "./types";
 
 const initialGameState: GameState = {
   currentPuzzleId: null,
-  currentChapterIndex: 0,
+  currentChapterId: null, // Changed from currentChapterIndex
   puzzleStates: Object.fromEntries(
     Object.keys(puzzles).map((puzzleId) => [puzzleId, { storyBeats: [] }])
   ),
@@ -17,8 +17,8 @@ const gameStateSlice = createSlice({
     setCurrentPuzzleId(state, action: PayloadAction<string | null>) {
       state.currentPuzzleId = action.payload;
     },
-    setCurrentChapterIndex(state, action: PayloadAction<number>) {
-      state.currentChapterIndex = action.payload;
+    setCurrentChapterId(state, action: PayloadAction<string | null>) {
+      state.currentChapterId = action.payload; // Changed from setCurrentChapterIndex
     },
     setSlotCharacter(
       state,
@@ -78,7 +78,7 @@ const gameStateSlice = createSlice({
 
 export const {
   setCurrentPuzzleId,
-  setCurrentChapterIndex,
+  setCurrentChapterId, // Updated export
   setSlotCharacter,
   addStoryBeatToCurrentPuzzle,
   removeStoryBeatFromCurrentPuzzle,
