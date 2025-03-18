@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useDrop } from "react-dnd";
 import { characters } from "../characters";
 import { SceneSlot } from "../types";
@@ -18,6 +18,9 @@ export const DroppableSlot: React.FC<{
     }),
   }));
 
+  const ref = useRef<HTMLSpanElement>(null);
+  drop(ref);
+
   const character = assignedCharacter
     ? characters[assignedCharacter]
     : undefined;
@@ -25,7 +28,7 @@ export const DroppableSlot: React.FC<{
     <div style={{ margin: "10px 0" }}>
       {slot.label}:{" "}
       <span
-        ref={drop}
+        ref={ref}
         style={{
           backgroundColor: dragging ? "lightblue" : "white",
           padding: "4px",
