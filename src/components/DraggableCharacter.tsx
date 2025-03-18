@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useDrag } from "react-dnd";
 import { Character } from "../types";
 import { ItemTypes } from "./ItemTypes";
@@ -14,9 +14,12 @@ export const DraggableCharacter: React.FC<{ character: Character }> = ({
     }),
   }));
 
+  const ref = useRef<HTMLDivElement>(null);
+  drag(ref);
+
   return (
     <div
-      ref={drag}
+      ref={ref}
       style={{
         opacity: isDragging ? 0.5 : 1,
         cursor: "move",
