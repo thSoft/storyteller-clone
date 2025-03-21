@@ -8,10 +8,10 @@ import { scenes } from "../scenes";
 import { RootState } from "../store";
 import { Panel, Puzzle, StoryState } from "../types";
 import { resolve, resolveMap } from "../utils";
-import { DraggableCharacter } from "./DraggableCharacter";
-import { DraggableScene } from "./DraggableScene";
+import { CharacterView } from "./CharacterView";
 import { InsertionPoint } from "./InsertionPoint";
 import { PanelView } from "./PanelView";
+import { SceneView } from "./SceneView";
 
 function getStates(panels: Panel[], initialState: StoryState): StoryState[] {
   function computeState(
@@ -58,14 +58,14 @@ export const PuzzleView: React.FC<{
           <div>
             <h2>Scenes:</h2>
             {puzzleScenes.map((scene) => (
-              <DraggableScene key={scene.id} scene={scene} />
+              <SceneView key={scene.id} scene={scene} />
             ))}
           </div>
 
           <div>
             <h2>Characters:</h2>
             {puzzleCharacters.map((character) => (
-              <DraggableCharacter key={character.id} character={character} />
+              <CharacterView key={character.id} character={character} />
             ))}
           </div>
         </div>

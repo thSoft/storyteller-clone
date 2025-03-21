@@ -4,7 +4,7 @@ import { characters } from "../characters";
 import { SceneSlot } from "../types";
 import { ItemTypes } from "./ItemTypes";
 
-export const DroppableSlot: React.FC<{
+export const SlotView: React.FC<{
   slot: SceneSlot;
   assignedCharacter: string | undefined;
   onAssignCharacter: (characterId: string) => void;

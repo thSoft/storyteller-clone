@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { puzzles } from "./puzzles";
+import { chapters, puzzles } from "./puzzles";
 import { GameState, Panel } from "./types";
 
 const initialGameState: GameState = {
@@ -10,12 +10,28 @@ const initialGameState: GameState = {
   ),
 };
 
+function findChapterId(puzzleId: string): string {
+  return (
+    Object.values(chapters).find((chapter) =>
+      chapter.puzzles.includes(puzzleId)
+    )?.id ?? Object.keys(chapters)[0]
+  );
+}
+
 const gameStateSlice = createSlice({
   name: "gameState",
   initialState: initialGameState,
   reducers: {
     setCurrentPuzzleId(state, action: PayloadAction<string | null>) {
-      state.currentPuzzleId = action.payload;
+      const currentPuzzleId = action.payload;
+      state.currentPuzzleId = currentPuzzleId;
+      if (currentPuzzleId) {
+        if (puzzles[currentPuzzleId]) {
+          state.currentChapterId = findChapterId(currentPuzzleId);
+        } else {
+          state.puzzleStates[currentPuzzleId] = { panels: [] };
+        }
+      }
     },
     setCurrentChapterId(state, action: PayloadAction<string | null>) {
       state.currentChapterId = action.payload;
@@ -55,9 +71,11 @@ const gameStateSlice = createSlice({
       if (!state.currentPuzzleId) {
         return;
       }
-      const puzzle = state.puzzleStates[state.currentPuzzleId];
-      if (puzzle) {
-        puzzle.panels.splice(index, 0, panel);
+      const puzzleState = state.puzzleStates[state.currentPuzzleId];
+      if (puzzleState) {
+        puzzleState.panels.splice(index, 0, panel);
+      } else {
+        state.puzzleStates[state.currentPuzzleId] = { panels: [panel] };
       }
     },
     removePanelFromCurrentPuzzle(
@@ -68,9 +86,9 @@ const gameStateSlice = createSlice({
       if (!state.currentPuzzleId) {
         return;
       }
-      const puzzle = state.puzzleStates[state.currentPuzzleId];
-      if (puzzle && index >= 0 && index < puzzle.panels.length) {
-        puzzle.panels.splice(index, 1);
+      const puzzleState = state.puzzleStates[state.currentPuzzleId];
+      if (puzzleState && index >= 0 && index < puzzleState.panels.length) {
+        puzzleState.panels.splice(index, 1);
       }
     },
   },
@@ -78,7 +96,7 @@ const gameStateSlice = createSlice({
 
 export const {
   setCurrentPuzzleId,
-  setCurrentChapterId, // Updated export
+  setCurrentChapterId,
   setSlotCharacter,
   addPanelToCurrentPuzzle,
   removePanelFromCurrentPuzzle,

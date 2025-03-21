@@ -3,7 +3,7 @@ import { useDrag } from "react-dnd";
 import { Scene } from "../types";
 import { ItemTypes } from "./ItemTypes";
 
-export const DraggableScene: React.FC<{ scene: Scene }> = ({ scene }) => {
+export const SceneView: React.FC<{ scene: Scene }> = ({ scene }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.SCENE,
     item: { sceneId: scene.id },

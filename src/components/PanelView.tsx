@@ -5,8 +5,8 @@ import {
 } from "../gameStateSlice";
 import { scenes } from "../scenes";
 import { Panel, SceneSlot, StoryState } from "../types";
-import { DroppableSlot } from "./DroppableSlot";
 import { InsertionPoint } from "./InsertionPoint";
+import { SlotView } from "./SlotView";
 
 export const PanelView: React.FC<{
   panel: Panel;
@@ -38,7 +38,7 @@ export const PanelView: React.FC<{
       >
         <h3 style={{ marginTop: 0 }}>{scene?.name}</h3>
         {scene?.slots.map((slot: SceneSlot) => (
-          <DroppableSlot
+          <SlotView
             key={slot.id}
             slot={slot}
             assignedCharacter={panel.slotAssignedCharacters[slot.id]}
