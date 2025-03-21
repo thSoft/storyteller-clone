@@ -16,6 +16,7 @@ export const initialStoryState = {
   dead: {} as Record<string, boolean>,
   heartbroken: {} as Record<string, boolean>,
   loves: {} as Record<string, string>,
+  defeated: {} as Record<string, boolean>,
   event: undefined as string | undefined,
 };
 
@@ -32,6 +33,7 @@ export type Scene = Entity & {
 
 export type Puzzle = Entity & {
   title: string;
+  prompt: string;
   scenes: string[];
   characters: string[];
   isWinning: (state: StoryState) => boolean;

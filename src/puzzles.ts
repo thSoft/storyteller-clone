@@ -1,13 +1,13 @@
-import { eveDiesHeartbroken } from "./puzzles/eveDiesHeartbroken";
+import { elementalBattle } from "./puzzles/elementalBattle";
 import { Chapter, EntityMap } from "./types";
 import { entityMap } from "./utils";
 
-export const puzzles = entityMap([eveDiesHeartbroken]);
+export const puzzles = entityMap([elementalBattle]);
 
 export const chapters: EntityMap<Chapter> = entityMap([
   {
-    id: "Broken Hearts Everywhere",
-    title: "Broken Hearts Everywhere",
-    puzzles: [eveDiesHeartbroken.id],
+    id: "battles",
+    title: "Epic Battles",
+    puzzles: [elementalBattle.id],
   },
 ]);
