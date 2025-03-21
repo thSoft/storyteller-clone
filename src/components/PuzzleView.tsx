@@ -1,54 +1,50 @@
+import { produce } from "immer";
 import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useSelector } from "react-redux";
 import { characters } from "../characters";
-import { sceneTemplates } from "../sceneTemplates";
+import { scenes } from "../scenes";
 import { RootState } from "../store";
-import { Puzzle, StoryBeat, StoryState } from "../types";
-import { resolve } from "../utils";
+import { Panel, Puzzle, StoryState } from "../types";
+import { resolve, resolveMap } from "../utils";
 import { DraggableCharacter } from "./DraggableCharacter";
 import { DraggableScene } from "./DraggableScene";
 import { InsertionPoint } from "./InsertionPoint";
-import { StoryBeatView } from "./StoryBeatView";
+import { PanelView } from "./PanelView";
 
-function getStates(beats: StoryBeat[], initialState: StoryState): StoryState[] {
+function getStates(panels: Panel[], initialState: StoryState): StoryState[] {
   function computeState(
     previousStates: StoryState[],
-    beat: StoryBeat
+    panel: Panel
   ): StoryState[] {
     const previousState = previousStates[previousStates.length - 1];
-    const template = sceneTemplates[beat.templateId];
-    if (template) {
-      const resolvedAssignmentEntries = Object.entries(
-        beat.slotAssignedCharacters
-      ).map(([slotId, characterId]) => [slotId, characters[characterId]]);
+    const scene = scenes[panel.sceneId];
+    if (scene) {
+      const assigned = resolveMap(panel.slotAssignedCharacters);
       return [
         ...previousStates,
-        template.outcomeLogic(
-          previousState,
-          Object.fromEntries(resolvedAssignmentEntries)
-        ),
+        produce(previousState, (draft) => {
+          draft.event = undefined;
+          scene.outcomeLogic(draft, assigned);
+        }),
       ];
     } else {
       return previousStates;
     }
   }
-  return beats.reduce(computeState, [initialState]);
+  return panels.reduce(computeState, [initialState]);
 }
 
 export const PuzzleView: React.FC<{
   puzzle: Puzzle;
   currentPuzzleId: string;
 }> = ({ puzzle, currentPuzzleId }) => {
-  const puzzleState = useSelector(
-    (state: RootState) => state.puzzleStates[currentPuzzleId]
+  const panels = useSelector(
+    (state: RootState) => state.puzzleStates[currentPuzzleId].panels
   );
-  const storyBeats = puzzleState.storyBeats;
-
-  const states = getStates(storyBeats, puzzle.initialStoryState);
-
-  const puzzleSceneTemplates = resolve(puzzle.sceneTemplates, sceneTemplates);
+  const states = getStates(panels, puzzle.initialStoryState);
+  const puzzleScenes = resolve(puzzle.scenes, scenes);
   const puzzleCharacters = resolve(puzzle.characters, characters);
 
   return (
@@ -61,8 +57,8 @@ export const PuzzleView: React.FC<{
         <div>
           <div>
             <h2>Scenes:</h2>
-            {puzzleSceneTemplates.map((template) => (
-              <DraggableScene key={template.id} template={template} />
+            {puzzleScenes.map((scene) => (
+              <DraggableScene key={scene.id} scene={scene} />
             ))}
           </div>
 
@@ -77,10 +73,10 @@ export const PuzzleView: React.FC<{
         <div>
           <h2>Story:</h2>
           <InsertionPoint index={0} />
-          {storyBeats.map((beat, index) => {
+          {panels.map((panel, index) => {
             return (
-              <StoryBeatView
-                beat={beat}
+              <PanelView
+                panel={panel}
                 index={index}
                 states={states}
                 key={index}

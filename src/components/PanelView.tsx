@@ -1,27 +1,27 @@
 import { useDispatch } from "react-redux";
 import {
-  removeStoryBeatFromCurrentPuzzle,
+  removePanelFromCurrentPuzzle,
   setSlotCharacter,
 } from "../gameStateSlice";
-import { sceneTemplates } from "../sceneTemplates";
-import { SceneSlot, StoryBeat, StoryState } from "../types";
+import { scenes } from "../scenes";
+import { Panel, SceneSlot, StoryState } from "../types";
 import { DroppableSlot } from "./DroppableSlot";
 import { InsertionPoint } from "./InsertionPoint";
 
-export const StoryBeatView: React.FC<{
-  beat: StoryBeat;
+export const PanelView: React.FC<{
+  panel: Panel;
   index: number;
   states: StoryState[];
-}> = ({ beat, index, states }) => {
-  const template = sceneTemplates[beat.templateId];
+}> = ({ panel: panel, index, states }) => {
+  const scene = scenes[panel.sceneId];
   const dispatch = useDispatch();
-  const handleRemoveBeat = () => {
-    dispatch(removeStoryBeatFromCurrentPuzzle({ index: index }));
+  const handleRemovePanel = () => {
+    dispatch(removePanelFromCurrentPuzzle({ index: index }));
   };
   const handleAssignCharacter = (slotId: string, characterId: string) => {
     dispatch(
       setSlotCharacter({
-        storyBeatIndex: index,
+        panelIndex: index,
         slotId: slotId,
         characterId: characterId,
       })
@@ -36,19 +36,19 @@ export const StoryBeatView: React.FC<{
           padding: "8px",
         }}
       >
-        <h3 style={{ marginTop: 0 }}>{template?.name}</h3>
-        {template?.slots.map((slot: SceneSlot) => (
+        <h3 style={{ marginTop: 0 }}>{scene?.name}</h3>
+        {scene?.slots.map((slot: SceneSlot) => (
           <DroppableSlot
             key={slot.id}
             slot={slot}
-            assignedCharacter={beat.slotAssignedCharacters[slot.id]}
+            assignedCharacter={panel.slotAssignedCharacters[slot.id]}
             onAssignCharacter={(characterId) =>
               handleAssignCharacter(slot.id, characterId)
             }
           />
         ))}
         <p>{states[index + 1]?.event || "\u00A0"}</p>
-        <button onClick={() => handleRemoveBeat()}>Remove</button>
+        <button onClick={() => handleRemovePanel()}>Remove</button>
       </div>
       <InsertionPoint index={index + 1} />
     </span>
