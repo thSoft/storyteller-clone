@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { puzzles } from "./puzzles";
-import { GameState, StoryBeat } from "./types";
+import { GameState, Panel } from "./types";
 
 const initialGameState: GameState = {
   currentPuzzleId: null,
-  currentChapterId: null, // Changed from currentChapterIndex
+  currentChapterId: null,
   puzzleStates: Object.fromEntries(
-    Object.keys(puzzles).map((puzzleId) => [puzzleId, { storyBeats: [] }])
+    Object.keys(puzzles).map((puzzleId) => [puzzleId, { panels: [] }])
   ),
 };
 
@@ -18,24 +18,24 @@ const gameStateSlice = createSlice({
       state.currentPuzzleId = action.payload;
     },
     setCurrentChapterId(state, action: PayloadAction<string | null>) {
-      state.currentChapterId = action.payload; // Changed from setCurrentChapterIndex
+      state.currentChapterId = action.payload;
     },
     setSlotCharacter(
       state,
       action: PayloadAction<{
-        storyBeatIndex: number;
+        panelIndex: number;
         slotId: string;
         characterId: string;
       }>
     ) {
-      const { storyBeatIndex, slotId, characterId } = action.payload;
+      const { panelIndex, slotId, characterId } = action.payload;
       if (!state.currentPuzzleId) {
         return;
       }
       const puzzle = state.puzzleStates[state.currentPuzzleId];
-      if (puzzle && puzzle.storyBeats[storyBeatIndex]) {
+      if (puzzle && puzzle.panels[panelIndex]) {
         const assignedCharacters =
-          puzzle.storyBeats[storyBeatIndex].slotAssignedCharacters;
+          puzzle.panels[panelIndex].slotAssignedCharacters;
         for (const otherSlotId in assignedCharacters) {
           if (assignedCharacters[otherSlotId] === characterId) {
             delete assignedCharacters[otherSlotId];
@@ -44,23 +44,23 @@ const gameStateSlice = createSlice({
         assignedCharacters[slotId] = characterId;
       }
     },
-    addStoryBeatToCurrentPuzzle(
+    addPanelToCurrentPuzzle(
       state,
       action: PayloadAction<{
         index: number;
-        beat: StoryBeat;
+        panel: Panel;
       }>
     ) {
-      const { index, beat } = action.payload;
+      const { index, panel } = action.payload;
       if (!state.currentPuzzleId) {
         return;
       }
       const puzzle = state.puzzleStates[state.currentPuzzleId];
       if (puzzle) {
-        puzzle.storyBeats.splice(index, 0, beat);
+        puzzle.panels.splice(index, 0, panel);
       }
     },
-    removeStoryBeatFromCurrentPuzzle(
+    removePanelFromCurrentPuzzle(
       state,
       action: PayloadAction<{ index: number }>
     ) {
@@ -69,8 +69,8 @@ const gameStateSlice = createSlice({
         return;
       }
       const puzzle = state.puzzleStates[state.currentPuzzleId];
-      if (puzzle && index >= 0 && index < puzzle.storyBeats.length) {
-        puzzle.storyBeats.splice(index, 1);
+      if (puzzle && index >= 0 && index < puzzle.panels.length) {
+        puzzle.panels.splice(index, 1);
       }
     },
   },
@@ -80,8 +80,8 @@ export const {
   setCurrentPuzzleId,
   setCurrentChapterId, // Updated export
   setSlotCharacter,
-  addStoryBeatToCurrentPuzzle,
-  removeStoryBeatFromCurrentPuzzle,
+  addPanelToCurrentPuzzle,
+  removePanelFromCurrentPuzzle,
 } = gameStateSlice.actions;
 
 export default gameStateSlice.reducer;

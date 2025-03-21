@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useDrop } from "react-dnd";
 import { useDispatch } from "react-redux";
-import { addStoryBeatToCurrentPuzzle } from "../gameStateSlice";
+import { addPanelToCurrentPuzzle } from "../gameStateSlice";
 import { ItemTypes } from "./ItemTypes";
 
 export const InsertionPoint: React.FC<{
   index: number;
 }> = ({ index }) => {
   const dispatch = useDispatch();
-  const handleInsertBeat = (index: number, templateId: string) => {
+  const handleInsertPanel = (index: number, sceneId: string) => {
     dispatch(
-      addStoryBeatToCurrentPuzzle({
-        beat: {
-          templateId,
+      addPanelToCurrentPuzzle({
+        panel: {
+          sceneId,
           slotAssignedCharacters: {},
         },
         index: index,
@@ -21,16 +21,18 @@ export const InsertionPoint: React.FC<{
   };
   const [{ dragging }, drop] = useDrop(() => ({
     accept: ItemTypes.SCENE,
-    drop: (item: { templateId: string }) =>
-      handleInsertBeat(index, item.templateId),
+    drop: (item: { sceneId: string }) => handleInsertPanel(index, item.sceneId),
     collect: (monitor) => ({
       dragging: !!monitor.canDrop(),
     }),
   }));
 
+  const ref = useRef<HTMLDivElement>(null);
+  drop(ref);
+
   return (
     <div
-      ref={drop}
+      ref={ref}
       style={{
         height: "16px",
         backgroundColor: dragging ? "lightgreen" : "transparent",

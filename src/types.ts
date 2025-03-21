@@ -6,32 +6,33 @@ export type Character = Entity & {
   name: string;
 };
 
-export type CharacterState = "dead" | "heartbroken";
-
 export type CharacterPair = [string, string];
 
 export type SceneSlot = Entity & {
   label: string;
 };
 
-export type StoryState = {
-  characterStates: Record<string, Set<CharacterState>>;
-  loveRelationships: Set<CharacterPair>;
-  event: string;
+export const initialStoryState = {
+  dead: {} as Record<string, boolean>,
+  heartbroken: {} as Record<string, boolean>,
+  loves: {} as Record<string, string>,
+  event: undefined as string | undefined,
 };
 
-export type SceneTemplate = Entity & {
+export type StoryState = typeof initialStoryState;
+
+export type Scene = Entity & {
   name: string;
   slots: SceneSlot[];
   outcomeLogic: (
     state: StoryState,
     assigned: Record<string, Character>
-  ) => StoryState;
+  ) => void;
 };
 
 export type Puzzle = Entity & {
   title: string;
-  sceneTemplates: string[];
+  scenes: string[];
   characters: string[];
   isWinning: (state: StoryState) => boolean;
   initialStoryState: StoryState;
@@ -42,13 +43,13 @@ export type Chapter = Entity & {
   puzzles: string[];
 };
 
-export type StoryBeat = {
-  templateId: string;
+export type Panel = {
+  sceneId: string;
   slotAssignedCharacters: Record<string, string>;
 };
 
 export type PuzzleState = {
-  storyBeats: StoryBeat[];
+  panels: Panel[];
 };
 
 export type GameState = {

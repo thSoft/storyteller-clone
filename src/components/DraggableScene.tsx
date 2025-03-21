@@ -1,14 +1,12 @@
 import React, { useRef } from "react";
 import { useDrag } from "react-dnd";
-import { SceneTemplate } from "../types";
+import { Scene } from "../types";
 import { ItemTypes } from "./ItemTypes";
 
-export const DraggableScene: React.FC<{ template: SceneTemplate }> = ({
-  template,
-}) => {
+export const DraggableScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.SCENE,
-    item: { templateId: template.id },
+    item: { sceneId: scene.id },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -28,7 +26,7 @@ export const DraggableScene: React.FC<{ template: SceneTemplate }> = ({
         border: "1px solid",
       }}
     >
-      {template.name}
+      {scene.name}
     </div>
   );
 };
