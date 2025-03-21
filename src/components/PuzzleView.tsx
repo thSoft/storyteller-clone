@@ -41,7 +41,7 @@ export const PuzzleView: React.FC<{
   currentPuzzleId: string;
 }> = ({ puzzle, currentPuzzleId }) => {
   const panels = useSelector(
-    (state: RootState) => state.puzzleStates[currentPuzzleId].panels
+    (state: RootState) => state.puzzleStates[currentPuzzleId]?.panels ?? []
   );
   const states = getStates(panels, puzzle.initialStoryState);
   const puzzleScenes = resolve(puzzle.scenes, scenes);
@@ -50,7 +50,7 @@ export const PuzzleView: React.FC<{
   return (
     <DndProvider backend={HTML5Backend}>
       <h1>
-        {puzzle.title}
+        {puzzle.prompt}
         {puzzle.isWinning(states[states.length - 1]) && " - Victory"}
       </h1>
       <div style={{ display: "flex", gap: "12px" }}>
