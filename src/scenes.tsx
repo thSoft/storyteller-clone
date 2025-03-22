@@ -94,6 +94,14 @@ export const attack: Scene = {
     if (!attacker || !defender) {
       return;
     }
+    if (state.dead[attacker.id]) {
+      state.event = `${attacker.name} was already defeated.`;
+      return;
+    }
+    if (state.dead[defender.id]) {
+      state.event = `${defender.name} was already defeated.`;
+      return;
+    }
     switch (attacker.id) {
       case knight.id:
         switch (defender.id) {
@@ -148,6 +156,9 @@ export const attack: Scene = {
         case "cracked":
           state.castleHealth = "collapsed";
           state.dead[dragon.id] = true;
+          if (!state.princessIsFree) {
+            state.dead[princess.id] = true;
+          }
           return ` The castle collapsed, squashing ${dragon.name}${
             state.princessIsFree ? "" : ` and ${princess.name}`
           }.`;
