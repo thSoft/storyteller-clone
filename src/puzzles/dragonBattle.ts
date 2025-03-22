@@ -5,7 +5,7 @@ import { initialStoryState, Puzzle } from "../types";
 export const dragonBattle: Puzzle = {
   id: "dragonBattle",
   title: "Dragon Battle",
-  prompt: "Dragon Is Defeated, Princess Escapes",
+  prompt: "Dragon Is Defeated And Princess Is Free",
   scenes: [attack.id, escape.id],
   characters: [knight.id, princess.id, dragon.id],
   isWinning: (state) => {
