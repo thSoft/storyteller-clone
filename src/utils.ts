@@ -2,7 +2,11 @@ import { characters } from "./characters";
 import { Entity, EntityMap } from "./types";
 
 export function entityMap<T extends Entity>(items: T[]): EntityMap<T> {
-  return Object.fromEntries(items.map((item) => [item.id, item]));
+  const result = Object.fromEntries(items.map((item) => [item.id, item]));
+  if (Object.keys(result).length !== items.length) {
+    throw new Error("Duplicate entity IDs found.");
+  }
+  return result;
 }
 
 export function resolve<T extends Entity>(

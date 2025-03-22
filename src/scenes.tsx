@@ -1,4 +1,11 @@
-import { firebird, jackFrost, neptune } from "./characters";
+import {
+  dragon,
+  firebird,
+  jackFrost,
+  knight,
+  neptune,
+  princess,
+} from "./characters";
 import { EntityMap, Scene } from "./types";
 import { areRelated, entityMap } from "./utils";
 
@@ -75,4 +82,111 @@ export const duel: Scene = {
   },
 };
 
-export const scenes: EntityMap<Scene> = entityMap([love, death, duel]);
+const attackerSlot = { id: "attacker", label: "Attacker" };
+const defenderSlot = { id: "defender", label: "Defender" };
+export const attack: Scene = {
+  id: "attack",
+  name: "✊ Attack",
+  slots: [attackerSlot, defenderSlot],
+  outcomeLogic: (state, assigned) => {
+    const attacker = assigned[attackerSlot.id];
+    const defender = assigned[defenderSlot.id];
+    if (!attacker || !defender) {
+      return;
+    }
+    switch (attacker.id) {
+      case knight.id:
+        switch (defender.id) {
+          case dragon.id:
+            state.distracted[dragon.id] = true;
+            state.event = `${knight.name} attacked ${dragon.name}, distracting it.`;
+            break;
+          case princess.id:
+            state.event = `${knight.name} could never attack ${princess.name}.`;
+            break;
+        }
+        break;
+      case dragon.id:
+        switch (defender.id) {
+          case knight.id:
+            if (state.dragonCanBreatheFire) {
+              state.dead[knight.id] = true;
+              state.event = `${dragon.name} attacked ${knight.name}, burning him to a crisp.`;
+            } else {
+              const eventPostfix = hitCastle();
+              state.event = `${dragon.name} attacked ${knight.name} with its tail, but ${knight.name} dodged. The tail hit the castle.${eventPostfix}`;
+            }
+            break;
+          case princess.id:
+            if (state.dragonCanBreatheFire) {
+              state.dead[princess.id] = true;
+              state.event = `${dragon.name} attacked ${princess.name}, burning her to a crisp.`;
+            } else {
+              const eventPostfix = hitCastle();
+              state.event = `${dragon.name} attacked ${princess} with its tail, but the tail only hit the castle.${eventPostfix}`;
+            }
+            break;
+        }
+        break;
+      case princess.id:
+        switch (defender.id) {
+          case dragon.id:
+            state.dragonCanBreatheFire = false;
+            state.event = `${princess.name} poured a bucket of water on ${dragon.name}, preventing it from breathing fire.`;
+            break;
+          case knight.id:
+            state.event = `${princess.name} poured a bucket of water on ${knight.name}, dousing him.`;
+            break;
+        }
+        break;
+    }
+    function hitCastle(): string {
+      switch (state.castleHealth) {
+        case "intact":
+          state.castleHealth = "cracked";
+          return " The castle cracked.";
+        case "cracked":
+          state.castleHealth = "collapsed";
+          state.dead[dragon.id] = true;
+          return ` The castle collapsed, squashing ${dragon.name}${
+            state.princessIsFree ? "" : ` and ${princess.name}`
+          }.`;
+        case "collapsed":
+          return "";
+      }
+    }
+  },
+};
+
+export const escape: Scene = {
+  id: "escape",
+  name: "🚪 Escape",
+  slots: [],
+  outcomeLogic: (state) => {
+    switch (state.castleHealth) {
+      case "intact":
+        state.event = "The castle was intact. No one could escape.";
+        break;
+      case "cracked":
+        if (state.distracted[dragon.id]) {
+          state.princessIsFree = true;
+          state.event = `The castle was cracked, and ${dragon.name} was distracted, so ${princess.name} escaped.`;
+          break;
+        } else {
+          state.event = `${princess.name} tried to escape, but ${dragon.name} didn't let her out.`;
+          break;
+        }
+      case "collapsed":
+        state.event = "The castle had collapsed. No one could escape.";
+        break;
+    }
+  },
+};
+
+export const scenes: EntityMap<Scene> = entityMap([
+  love,
+  death,
+  duel,
+  attack,
+  escape,
+]);
