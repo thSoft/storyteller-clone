@@ -17,6 +17,10 @@ export const initialStoryState = {
   heartbroken: {} as Record<string, boolean>,
   loves: {} as Record<string, string>,
   defeated: {} as Record<string, boolean>,
+  distracted: {} as Record<string, boolean>,
+  castleHealth: "intact" as "intact" | "cracked" | "collapsed",
+  princessIsFree: false,
+  dragonCanBreatheFire: true,
   event: undefined as string | undefined,
 };
 

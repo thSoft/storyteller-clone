@@ -1,0 +1,15 @@
+import { dragon, knight, princess } from "../characters";
+import { attack, escape } from "../scenes";
+import { initialStoryState, Puzzle } from "../types";
+
+export const dragonBattle: Puzzle = {
+  id: "dragonBattle",
+  title: "Dragon Battle",
+  prompt: "Dragon Is Defeated, Princess Escapes",
+  scenes: [attack.id, escape.id],
+  characters: [knight.id, princess.id, dragon.id],
+  isWinning: (state) => {
+    return state.dead[dragon.id] === true && state.princessIsFree === true;
+  },
+  initialStoryState: initialStoryState,
+};

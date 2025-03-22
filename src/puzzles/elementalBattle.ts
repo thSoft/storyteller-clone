@@ -6,8 +6,8 @@ export const elementalBattle: Puzzle = {
   id: "elementalBattle",
   title: "Elemental Battle",
   prompt: "Firebird Remains",
-  characters: [firebird.id, jackFrost.id, neptune.id],
   scenes: [duel.id],
+  characters: [firebird.id, jackFrost.id, neptune.id],
   isWinning: (state) => {
     return (
       !state.defeated[firebird.id] &&
