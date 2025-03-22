@@ -16,7 +16,6 @@ export const initialStoryState = {
   dead: {} as Record<string, boolean>,
   heartbroken: {} as Record<string, boolean>,
   loves: {} as Record<string, string>,
-  defeated: {} as Record<string, boolean>,
   distracted: {} as Record<string, boolean>,
   castleHealth: "intact" as "intact" | "cracked" | "collapsed",
   princessIsFree: false,

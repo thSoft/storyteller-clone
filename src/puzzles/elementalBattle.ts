@@ -10,9 +10,9 @@ export const elementalBattle: Puzzle = {
   characters: [firebird.id, jackFrost.id, neptune.id],
   isWinning: (state) => {
     return (
-      !state.defeated[firebird.id] &&
-      state.defeated[jackFrost.id] === true &&
-      state.defeated[neptune.id] === true
+      !state.dead[firebird.id] &&
+      state.dead[jackFrost.id] === true &&
+      state.dead[neptune.id] === true
     );
   },
   initialStoryState: initialStoryState,

@@ -64,16 +64,16 @@ export const duel: Scene = {
       [jackFrost.id, neptune.id],
       [neptune.id, firebird.id],
     ]);
-    if (fighter1 && state.defeated[fighter1.id]) {
+    if (fighter1 && state.dead[fighter1.id]) {
       state.event = `${fighter1.name} was already defeated.`;
-    } else if (fighter2 && state.defeated[fighter2.id]) {
+    } else if (fighter2 && state.dead[fighter2.id]) {
       state.event = `${fighter2.name} was already defeated.`;
     } else if (fighter1 && fighter2) {
       if (defeats[fighter1.id] === fighter2.id) {
-        state.defeated[fighter2.id] = true;
+        state.dead[fighter2.id] = true;
         state.event = `${fighter1.name} defeated ${fighter2.name}.`;
       } else if (defeats[fighter2.id] === fighter1.id) {
-        state.defeated[fighter1.id] = true;
+        state.dead[fighter1.id] = true;
         state.event = `${fighter2.name} defeated ${fighter1.name}.`;
       } else {
         state.event = "The duel ended in a draw.";
