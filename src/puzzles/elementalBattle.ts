@@ -1,5 +1,5 @@
 import { firebird, jackFrost, neptune } from "../characters";
-import { duel } from "../scenes";
+import { duel } from "../scenes/duel";
 import { initialStoryState, Puzzle } from "../types";
 
 export const elementalBattle: Puzzle = {

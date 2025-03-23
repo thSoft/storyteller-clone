@@ -1,4 +1,4 @@
-# Storyteller Remake
+# Storyteller Clone
 
 ## Getting Started
 

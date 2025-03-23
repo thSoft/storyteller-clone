@@ -1,5 +1,6 @@
 import { dragon, knight, princess } from "../characters";
-import { attack, escape } from "../scenes";
+import { attack } from "../scenes/attack";
+import { escape } from "../scenes/escape";
 import { initialStoryState, Puzzle } from "../types";
 
 export const dragonBattle: Puzzle = {
