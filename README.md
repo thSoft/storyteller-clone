@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-- Run `pnpm install`
+- Run `setup.sh`
 - Open the folder in Visual Studio Code
 - Run the following launch configurations:
   - _Start_
