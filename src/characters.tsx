@@ -13,6 +13,12 @@ export const princess: Character = { id: "princess", name: "👸 Princess" };
 
 export const dragon: Character = { id: "dragon", name: "🐉 Dragon" };
 
+export const miser: Character = { id: "miser", name: "🤵 Miser" };
+
+export const poorMan: Character = { id: "poorMan", name: "🥺 Poor man" };
+
+export const illBoy: Character = { id: "illBoy", name: "🤒 Ill boy" };
+
 export const characters: EntityMap<Character> = entityMap([
   firebird,
   jackFrost,
@@ -20,4 +26,7 @@ export const characters: EntityMap<Character> = entityMap([
   knight,
   princess,
   dragon,
+  miser,
+  poorMan,
+  illBoy,
 ]);
