@@ -1,5 +1,5 @@
 import { Scene } from "../types";
-import { areRelated } from "../utils";
+import { handleDead } from "./sceneUtils";
 
 const victimSlot = { id: "victim", label: "Victim" };
 const witnessSlot = { id: "witness", label: "Witness" };
@@ -10,18 +10,11 @@ export const death: Scene = {
   outcomeLogic: (state, assigned) => {
     const victim = assigned[victimSlot.id];
     const witness = assigned[witnessSlot.id];
-    if (victim) {
-      if (state.dead[victim.id] === true) {
-        state.event = `${victim.name} remained dead.`;
-      } else {
-        state.dead[victim.id] = true;
-        if (witness && areRelated(state.loves, victim.id, witness.id)) {
-          state.heartbroken[witness.id] = true;
-          state.event = `${witness.name} was heartbroken by the death of ${victim.name}.`;
-        } else {
-          state.event = `${victim.name} died.`;
-        }
-      }
-    }
+    if (!victim) return;
+    if (handleDead(state, victim)) return;
+    handleDead(state, witness);
+    state.dead[victim.id] = true;
+    state.event = `${victim.name} died.`;
+    handleDead(state, victim, witness);
   },
 };

@@ -16,16 +16,6 @@ export function resolve<T extends Entity>(
   return ids.map((id) => map[id]);
 }
 
-export function areRelated(
-  relationshipMap: Record<string, string>,
-  characterId1: string,
-  characterId2: string
-) {
-  return (
-    relationshipMap[characterId1] === characterId2 ||
-    relationshipMap[characterId2] === characterId1
-  );
-}
 export function resolveMap(slotAssignedCharacters: Record<string, string>) {
   return Object.fromEntries(
     Object.entries(slotAssignedCharacters).map(([slotId, characterId]) => [

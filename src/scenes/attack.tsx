@@ -1,5 +1,6 @@
 import { dragon, knight, princess } from "../characters";
 import { Scene } from "../types";
+import { handleDead } from "./sceneUtils";
 
 const attackerSlot = { id: "attacker", label: "Attacker" };
 const defenderSlot = { id: "defender", label: "Defender" };
@@ -10,17 +11,8 @@ export const attack: Scene = {
   outcomeLogic: (state, assigned) => {
     const attacker = assigned[attackerSlot.id];
     const defender = assigned[defenderSlot.id];
-    if (!attacker || !defender) {
-      return;
-    }
-    if (state.dead[attacker.id]) {
-      state.event = `${attacker.name} was already defeated.`;
-      return;
-    }
-    if (state.dead[defender.id]) {
-      state.event = `${defender.name} was already defeated.`;
-      return;
-    }
+    if (handleDead(state, attacker, defender)) return;
+    if (!attacker || !defender) return;
     switch (attacker.id) {
       case knight.id:
         switch (defender.id) {
@@ -40,8 +32,8 @@ export const attack: Scene = {
               state.dead[knight.id] = true;
               state.event = `${dragon.name} attacked ${knight.name}, burning him to a crisp.`;
             } else {
-              const eventPostfix = hitCastle();
-              state.event = `${dragon.name} attacked ${knight.name} with its tail, but ${knight.name} dodged. The tail hit the castle.${eventPostfix}`;
+              state.event = `${dragon.name} attacked ${knight.name} with its tail, but ${knight.name} dodged. The tail hit the castle.`;
+              state.event += hitCastle();
             }
             break;
           case princess.id:
@@ -49,8 +41,8 @@ export const attack: Scene = {
               state.dead[princess.id] = true;
               state.event = `${dragon.name} attacked ${princess.name}, burning her to a crisp.`;
             } else {
-              const eventPostfix = hitCastle();
-              state.event = `${dragon.name} attacked ${princess} with its tail, but the tail only hit the castle.${eventPostfix}`;
+              state.event = `${dragon.name} attacked ${princess} with its tail, but the tail only hit the castle.`;
+              state.event += hitCastle();
             }
             break;
         }
