@@ -17,6 +17,8 @@ export const initialStoryState = {
   heartbroken: {} as Record<string, boolean>,
   loves: {} as Record<string, string>,
   distracted: {} as Record<string, boolean>,
+  willingToGiveMoney: {} as Record<string, boolean>,
+  hasMoney: {} as Record<string, boolean>,
   castleHealth: "intact" as "intact" | "cracked" | "collapsed",
   princessIsFree: false,
   dragonCanBreatheFire: true,
