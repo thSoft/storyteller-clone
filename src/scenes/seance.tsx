@@ -9,9 +9,7 @@ export const seance: Scene = {
   outcomeLogic: (state, assigned) => {
     const person1 = assigned[person1Slot.id];
     const person2 = assigned[person2Slot.id];
-    if (!person1 || !person2) {
-      return;
-    }
+    if (!person1 || !person2) return;
     const deadPerson = state.dead[person1.id]
       ? person1
       : state.dead[person2.id]
@@ -24,12 +22,11 @@ export const seance: Scene = {
         ? person1
         : undefined;
     if (deadPerson && livingPerson) {
-      let eventPostfix = "";
+      state.event = `${livingPerson.name} saw the ghost of ${deadPerson.name}.`;
       if (state.hasMoney[livingPerson.id] && !state.hasMoney[deadPerson.id]) {
         state.willingToGiveMoney[livingPerson.id] = true;
-        eventPostfix = `${livingPerson.name} is moved by the ghost of ${deadPerson.name} and is now willing to give money to the poor.`;
+        state.event += ` ${livingPerson.name} is moved by the ghost of ${deadPerson.name} and is now willing to give money to the poor.`;
       }
-      state.event = `${livingPerson.name} saw the ghost of ${deadPerson.name}.${eventPostfix}`;
     }
   },
 };
