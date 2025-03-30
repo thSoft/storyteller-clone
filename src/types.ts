@@ -1,3 +1,5 @@
+import { StoryState } from "./storyState";
+
 export type Entity = { id: string };
 
 export type EntityMap<T extends Entity> = Record<string, T>;
@@ -11,21 +13,6 @@ export type CharacterPair = [string, string];
 export type SceneSlot = Entity & {
   label: string;
 };
-
-export const initialStoryState = {
-  dead: {} as Record<string, boolean>,
-  heartbroken: {} as Record<string, boolean>,
-  loves: {} as Record<string, string>,
-  distracted: {} as Record<string, boolean>,
-  willingToGiveMoney: {} as Record<string, boolean>,
-  hasMoney: {} as Record<string, boolean>,
-  castleHealth: "intact" as "intact" | "cracked" | "collapsed",
-  princessIsFree: false,
-  dragonCanBreatheFire: true,
-  event: undefined as string | undefined,
-};
-
-export type StoryState = typeof initialStoryState;
 
 export type Scene = Entity & {
   name: string;

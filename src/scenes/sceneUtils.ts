@@ -1,4 +1,5 @@
-import { Character, StoryState } from "../types";
+import { StoryState } from "../storyState";
+import { Character } from "../types";
 
 function areRelated(
   relationshipMap: Record<string, string>,
@@ -16,18 +17,11 @@ export function handleDead(
   person1: Character,
   person2?: Character
 ): boolean {
-  const deadPerson =
-    person1 && state.dead[person1.id]
-      ? person1
-      : person2 && state.dead[person2.id]
-      ? person2
-      : undefined;
-  const otherPerson =
-    deadPerson === person1
-      ? person2
-      : deadPerson === person2
-      ? person1
-      : undefined;
+  const [deadPerson, otherPerson] = getPerson(
+    (person) => state.dead[person.id],
+    person1,
+    person2
+  );
   if (deadPerson) {
     state.event = `${deadPerson.name} was dead.`;
   }
@@ -42,4 +36,17 @@ export function handleDead(
     state.event += ` ${otherPerson.name} was heartbroken by the death of ${deadPerson.name}.`;
   }
   return deadPerson !== undefined;
+}
+
+export function getPerson(
+  predicate: (person: Character) => boolean,
+  person1: Character | undefined,
+  person2?: Character
+): [Character | undefined, Character | undefined] {
+  if (person1 && predicate(person1)) {
+    return [person1, person2];
+  } else if (person2 && predicate(person2)) {
+    return [person2, person1];
+  }
+  return [undefined, undefined];
 }
