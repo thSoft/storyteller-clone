@@ -2,7 +2,8 @@ import { illBoy, miser, poorMan } from "../characters";
 import { begging } from "../scenes/begging";
 import { death } from "../scenes/death";
 import { seance } from "../scenes/seance";
-import { initialStoryState, Puzzle } from "../types";
+import { initialStoryState } from "../storyState";
+import { Puzzle } from "../types";
 
 export const christmasCarol: Puzzle = {
   id: "christmasCarol",

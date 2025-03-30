@@ -21,7 +21,7 @@ export const begging: Scene = {
         state.event = `${donor.name} refused to give money to ${beggar.name}.`;
       }
     } else {
-      state.event = `${donor.name} has no money to give to ${beggar.name}.`;
+      state.event = `${donor.name} had no money to give to ${beggar.name}.`;
     }
   },
 };

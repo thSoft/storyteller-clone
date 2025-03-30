@@ -4,7 +4,8 @@ import {
   setSlotCharacter,
 } from "../gameStateSlice";
 import { scenes } from "../scenes";
-import { Panel, SceneSlot, StoryState } from "../types";
+import { StoryState } from "../storyState";
+import { Panel, SceneSlot } from "../types";
 import { InsertionPoint } from "./InsertionPoint";
 import { SlotView } from "./SlotView";
 
