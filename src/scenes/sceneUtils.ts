@@ -50,3 +50,28 @@ export function getPerson(
   }
   return [undefined, undefined];
 }
+
+export function ifCharactersAre(
+  person1: Character,
+  person2: Character,
+  firstCharacterId: string,
+  secondCharacterId: string,
+  callback: (firstCharacter: Character, secondCharacter: Character) => void
+) {
+  if (person1.id === firstCharacterId && person2.id === secondCharacterId) {
+    callback(person1, person2);
+  } else if (
+    person1.id === secondCharacterId &&
+    person2.id === firstCharacterId
+  ) {
+    callback(person2, person1);
+  }
+}
+
+export function handleMeeting(
+  state: StoryState,
+  person1: Character,
+  person2: Character
+) {
+  state.event = `${person1.name} and ${person2.name} greeted each other heartily.`;
+}
