@@ -13,7 +13,7 @@ export const PanelView: React.FC<{
   panel: Panel;
   index: number;
   states: StoryState[];
-}> = ({ panel: panel, index, states }) => {
+}> = ({ panel, index, states }) => {
   const scene = scenes[panel.sceneId];
   const dispatch = useDispatch();
   const handleRemovePanel = () => {

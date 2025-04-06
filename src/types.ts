@@ -44,6 +44,7 @@ export type Panel = {
 
 export type PuzzleState = {
   panels: Panel[];
+  completed?: boolean;
 };
 
 export type GameState = {

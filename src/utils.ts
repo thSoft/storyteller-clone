@@ -1,5 +1,8 @@
+import { produce } from "immer";
 import { characters } from "./characters";
-import { Entity, EntityMap } from "./types";
+import { scenes } from "./scenes";
+import { StoryState } from "./storyState";
+import { Entity, EntityMap, Panel } from "./types";
 
 export function entityMap<T extends Entity>(items: T[]): EntityMap<T> {
   const result = Object.fromEntries(items.map((item) => [item.id, item]));
@@ -23,4 +26,30 @@ export function resolveMap(slotAssignedCharacters: Record<string, string>) {
       characters[characterId],
     ])
   );
+}
+
+export function getStates(
+  panels: Panel[],
+  initialState: StoryState
+): StoryState[] {
+  function computeState(
+    previousStates: StoryState[],
+    panel: Panel
+  ): StoryState[] {
+    const previousState = previousStates[previousStates.length - 1];
+    const scene = scenes[panel.sceneId];
+    if (scene) {
+      const assigned = resolveMap(panel.slotAssignedCharacters);
+      return [
+        ...previousStates,
+        produce(previousState, (draft) => {
+          draft.event = undefined;
+          scene.outcomeLogic(draft, assigned);
+        }),
+      ];
+    } else {
+      return previousStates;
+    }
+  }
+  return panels.reduce(computeState, [initialState]);
 }

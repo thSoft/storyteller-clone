@@ -91,6 +91,12 @@ const gameStateSlice = createSlice({
         puzzleState.panels.splice(index, 1);
       }
     },
+    markPuzzleCompleted(state, action: PayloadAction<{ puzzleId: string }>) {
+      const { puzzleId } = action.payload;
+      if (state.puzzleStates[puzzleId]) {
+        state.puzzleStates[puzzleId].completed = true;
+      }
+    },
   },
 });
 
@@ -100,6 +106,7 @@ export const {
   setSlotCharacter,
   addPanelToCurrentPuzzle,
   removePanelFromCurrentPuzzle,
+  markPuzzleCompleted,
 } = gameStateSlice.actions;
 
 export default gameStateSlice.reducer;

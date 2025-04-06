@@ -1,7 +1,11 @@
+import { ProgressView } from "./ProgressView";
 import { PuzzleBrowser } from "./PuzzleBrowser";
 
-function App() {
-  return <PuzzleBrowser />;
+export function App() {
+  return (
+    <>
+      <PuzzleBrowser />
+      <ProgressView />
+    </>
+  );
 }
-
-export default App;

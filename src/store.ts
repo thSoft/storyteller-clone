@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { PersistConfig, persistReducer, persistStore } from "redux-persist"; // defaults to localStorage for web
+import { PersistConfig, persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import gameStateReducer from "./gameStateSlice";
+import { listenerMiddleware } from "./listenerMiddleware";
 import { GameState } from "./types";
 
 const persistConfig: PersistConfig<GameState> = {
@@ -11,17 +12,18 @@ const persistConfig: PersistConfig<GameState> = {
 
 const persistedReducer = persistReducer(persistConfig, gameStateReducer);
 
+const options = {
+  serializableCheck: {
+    ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
+  },
+};
+
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
-      },
-    }),
+    getDefaultMiddleware(options).prepend(listenerMiddleware.middleware),
 });
 
 export const persistor = persistStore(store);
 
-export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

@@ -2,13 +2,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentPuzzleId } from "../gameStateSlice";
 import { puzzles } from "../puzzles";
-import { RootState } from "../store";
+import { GameState } from "../types";
 import { ChapterView } from "./ChapterView";
 import { PuzzleView } from "./PuzzleView";
 
 export const PuzzleBrowser: React.FC = () => {
   const currentPuzzleId = useSelector(
-    (state: RootState) => state.currentPuzzleId
+    (state: GameState) => state.currentPuzzleId
   );
   const dispatch = useDispatch();
 

@@ -2,14 +2,15 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentChapterId, setCurrentPuzzleId } from "../gameStateSlice";
 import { chapters, puzzles } from "../puzzles";
-import { RootState } from "../store";
+import { GameState } from "../types";
 
 export const ChapterView: React.FC = () => {
   const dispatch = useDispatch();
   const chapterIds = Object.keys(chapters);
   const currentChapterId = useSelector(
-    (state: RootState) => state.currentChapterId ?? chapterIds[0]
+    (state: GameState) => state.currentChapterId ?? chapterIds[0]
   );
+  const puzzleStates = useSelector((state: GameState) => state.puzzleStates);
 
   const currentChapterIndex = chapters[currentChapterId]
     ? chapterIds.indexOf(currentChapterId)
@@ -32,6 +33,9 @@ export const ChapterView: React.FC = () => {
     <div>
       <h2>
         Chapter {currentChapterIndex + 1}: {currentChapter?.title || "Unknown"}
+        {currentChapter.puzzles.every(
+          (puzzleId) => puzzleStates[puzzleId]?.completed
+        ) && " - Completed"}
       </h2>
 
       <div style={{ marginBottom: "1rem" }}>
@@ -50,6 +54,7 @@ export const ChapterView: React.FC = () => {
       <ul>
         {currentChapter?.puzzles.map((puzzleId) => (
           <li key={puzzleId}>
+            {puzzleStates[puzzleId]?.completed ? "✅" : "☐"}
             <button onClick={() => dispatch(setCurrentPuzzleId(puzzleId))}>
               {puzzles[puzzleId]?.title || puzzleId}
             </button>
