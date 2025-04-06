@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { puzzles } from "../puzzles";
 import { GameState } from "../types";
 
 export function ProgressView() {
@@ -7,9 +8,7 @@ export function ProgressView() {
       Object.values(state.puzzleStates).filter((puzzle) => puzzle.completed)
         .length
   );
-  const allPuzzleCount = useSelector(
-    (state: GameState) => Object.values(state.puzzleStates).length
-  );
+  const totalPuzzleCount = Object.keys(puzzles).length;
   return (
     <div
       style={{
@@ -23,9 +22,10 @@ export function ProgressView() {
         borderColor: "black",
       }}
     >
-      Progress: {completedPuzzleCount} / {allPuzzleCount} (
+      Progress: {completedPuzzleCount} / {totalPuzzleCount} (
       {Math.round(
-        (allPuzzleCount === 0 ? 0 : completedPuzzleCount / allPuzzleCount) * 100
+        (totalPuzzleCount === 0 ? 0 : completedPuzzleCount / totalPuzzleCount) *
+          100
       )}
       %)
     </div>
