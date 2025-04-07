@@ -30,7 +30,7 @@ export const initialStoryState = {
     [lenora.id]: true,
   } as Record<string, boolean>,
   angryAt: {} as Record<string, string>,
-  kidnapped: {} as Record<string, boolean>,
+  kidnapped: undefined as string | undefined,
   wineIsPoisonedBy: undefined as string | undefined,
   drunk: {} as Record<string, boolean>,
 };

@@ -1,6 +1,6 @@
 import { duchess } from "../characters";
 import { Scene } from "../types";
-import { getPerson, handleDead } from "./sceneUtils";
+import { getPerson, handlePreconditions } from "./sceneUtils";
 
 const person1Slot = { id: "person1", label: "Person 1" };
 const person2Slot = { id: "person2", label: "Person 2" };
@@ -11,7 +11,7 @@ export const ballroom: Scene = {
   outcomeLogic: (state, assigned) => {
     const person1 = assigned[person1Slot.id];
     const person2 = assigned[person2Slot.id];
-    if (handleDead(state, person1, person2)) return;
+    if (handlePreconditions(state, person1, person2)) return;
     const [personWithGun, otherPerson] = getPerson(
       (person) => state.personWithGun === person.id,
       person1,

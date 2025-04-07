@@ -1,6 +1,6 @@
 import { dragon, knight, princess } from "../characters";
 import { Scene } from "../types";
-import { handleDead } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 const attackerSlot = { id: "attacker", label: "Attacker" };
 const defenderSlot = { id: "defender", label: "Defender" };
@@ -11,7 +11,7 @@ export const attack: Scene = {
   outcomeLogic: (state, assigned) => {
     const attacker = assigned[attackerSlot.id];
     const defender = assigned[defenderSlot.id];
-    if (handleDead(state, attacker, defender)) return;
+    if (handlePreconditions(state, attacker, defender)) return;
     if (!attacker || !defender) return;
     switch (attacker.id) {
       case knight.id:

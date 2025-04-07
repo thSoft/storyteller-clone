@@ -1,6 +1,10 @@
 import { grandma, hunter, red, wolf } from "../characters";
 import { Scene } from "../types";
-import { handleDead, handleMeeting, ifCharactersAre } from "./sceneUtils";
+import {
+  handleMeeting,
+  handlePreconditions,
+  ifCharactersAre,
+} from "./sceneUtils";
 
 const person1Slot = { id: "person1", label: "Person 1" };
 const person2Slot = { id: "person2", label: "Person 2" };
@@ -11,12 +15,12 @@ export const forest: Scene = {
   outcomeLogic: (state, assigned) => {
     const person1 = assigned[person1Slot.id];
     const person2 = assigned[person2Slot.id];
-    if (handleDead(state, person1, person2)) return;
-    if (person1 === undefined || person2 === undefined) {
+    if (handlePreconditions(state, person1, person2)) return;
+    if (person1?.id === grandma.id || person2?.id === grandma.id) {
+      state.event = `${grandma.name} is very old, so she can't exit her house.`;
       return;
     }
-    if (person1.id === grandma.id || person2.id === grandma.id) {
-      state.event = `${grandma.name} is very old, so she can't exit her house.`;
+    if (person1 === undefined || person2 === undefined) {
       return;
     }
     ifCharactersAre(person1, person2, red.id, wolf.id, () => {

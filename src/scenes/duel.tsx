@@ -1,6 +1,6 @@
 import { firebird, jackFrost, neptune } from "../characters";
 import { Scene } from "../types";
-import { handleDead } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 const fighter1Slot = { id: "fighter1", label: "Fighter 1" };
 const fighter2Slot = { id: "fighter2", label: "Fighter 2" };
@@ -16,7 +16,7 @@ export const duel: Scene = {
       [jackFrost.id, neptune.id],
       [neptune.id, firebird.id],
     ]);
-    if (handleDead(state, fighter1, fighter2)) return;
+    if (handlePreconditions(state, fighter1, fighter2)) return;
     if (!fighter1 || !fighter2) return;
     if (defeats[fighter1.id] === fighter2.id) {
       state.dead[fighter2.id] = true;

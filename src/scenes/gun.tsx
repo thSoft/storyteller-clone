@@ -1,6 +1,6 @@
 import { butler } from "../characters";
 import { Scene } from "../types";
-import { handleDead } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 const personSlot = { id: "person", label: "Person" };
 export const gun: Scene = {
@@ -9,7 +9,7 @@ export const gun: Scene = {
   slots: [personSlot],
   outcomeLogic: (state, assigned) => {
     const person = assigned[personSlot.id];
-    if (handleDead(state, person)) return;
+    if (handlePreconditions(state, person)) return;
     if (!person) return;
     if (person.id === state.personWithGun) {
       state.personWithGun = undefined;

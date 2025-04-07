@@ -1,6 +1,6 @@
 import { characters } from "../characters";
 import { Character, Scene } from "../types";
-import { getPerson, getRelated, handleDead } from "./sceneUtils";
+import { getPerson, getRelated, handlePreconditions } from "./sceneUtils";
 
 const lover1Slot = { id: "lover1", label: "Lover 1" };
 const lover2Slot = { id: "lover2", label: "Lover 2" };
@@ -11,7 +11,7 @@ export const love: Scene = {
   outcomeLogic: (state, assigned) => {
     const lover1 = assigned[lover1Slot.id];
     const lover2 = assigned[lover2Slot.id];
-    if (handleDead(state, lover1, lover2)) return;
+    if (handlePreconditions(state, lover1, lover2)) return;
     if (!lover1 || !lover2) return;
     const inLoveWithSomeoneElse = (
       person: Character,

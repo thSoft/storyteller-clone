@@ -1,5 +1,5 @@
 import { Scene } from "../types";
-import { handleDead } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 const donorSlot = { id: "donor", label: "Donor" };
 const beggarSlot = { id: "beggar", label: "Beggar" };
@@ -10,7 +10,7 @@ export const begging: Scene = {
   outcomeLogic: (state, assigned) => {
     const donor = assigned[donorSlot.id];
     const beggar = assigned[beggarSlot.id];
-    if (handleDead(state, donor, beggar)) return;
+    if (handlePreconditions(state, donor, beggar)) return;
     if (!donor || !beggar) return;
     if (state.hasMoney[donor.id]) {
       if (state.willingToGiveMoney[donor.id]) {

@@ -1,6 +1,6 @@
 import { duchess } from "../characters";
 import { Scene } from "../types";
-import { handleDead } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 const personSlot = { id: "person", label: "Person" };
 export const safe: Scene = {
@@ -9,7 +9,7 @@ export const safe: Scene = {
   slots: [personSlot],
   outcomeLogic: (state, assigned) => {
     const person = assigned[personSlot.id];
-    if (handleDead(state, person)) return;
+    if (handlePreconditions(state, person)) return;
     if (!person) return;
     if (person.id === duchess.id) {
       state.guardFollowsDuchess = true;

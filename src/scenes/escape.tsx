@@ -1,13 +1,13 @@
 import { dragon, princess } from "../characters";
 import { Scene } from "../types";
-import { handleDead } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 export const escape: Scene = {
   id: "escape",
   name: "🚪 Escape",
   slots: [],
   outcomeLogic: (state) => {
-    if (handleDead(state, princess)) return;
+    if (handlePreconditions(state, princess)) return;
     switch (state.castleHealth) {
       case "intact":
         state.event = "The castle was intact. No one could escape.";

@@ -20,7 +20,7 @@ export const seance: Scene = {
       state.event = `${livingPerson.name} saw the ghost of ${deadPerson.name}.`;
       if (state.hasMoney[livingPerson.id] && !state.hasMoney[deadPerson.id]) {
         state.willingToGiveMoney[livingPerson.id] = true;
-        state.event += ` ${livingPerson.name} is moved by the ghost of ${deadPerson.name} and is now willing to give money to the poor.`;
+        state.event += ` ${livingPerson.name} was moved by the ghost of ${deadPerson.name} and became willing to give money to the poor.`;
       }
     }
   },

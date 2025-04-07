@@ -12,10 +12,14 @@ export function areRelated(
   );
 }
 
-export function handleDead(
+export function handlePreconditions(
   state: StoryState,
   person1: Character,
-  person2?: Character
+  person2?: Character,
+  options: { checkHeartbreak: boolean; onlyCheckKidnapper?: boolean } = {
+    checkHeartbreak: true,
+    onlyCheckKidnapper: false,
+  }
 ): boolean {
   const [deadPerson, otherPerson] = getPerson(
     (person) => state.dead[person.id],
@@ -24,7 +28,28 @@ export function handleDead(
   );
   if (deadPerson) {
     state.event = `${deadPerson.name} was dead.`;
+    if (options.checkHeartbreak) {
+      handleHeartbreakDueToDeath(state, deadPerson, otherPerson);
+    }
+    return true;
   }
+  const [kidnappedPerson] = getPerson(
+    (person) => state.kidnapped === person.id,
+    person1,
+    options.onlyCheckKidnapper ? undefined : person2
+  );
+  if (kidnappedPerson) {
+    state.event = `${kidnappedPerson.name} was kidnapped.`;
+    return true;
+  }
+  return false;
+}
+
+export function handleHeartbreakDueToDeath(
+  state: StoryState,
+  deadPerson: Character | undefined,
+  otherPerson: Character | undefined
+) {
   if (
     deadPerson &&
     otherPerson &&
@@ -35,7 +60,6 @@ export function handleDead(
     state.heartbroken[otherPerson.id] = true;
     state.event += ` ${otherPerson.name} was heartbroken by the death of ${deadPerson.name}.`;
   }
-  return deadPerson !== undefined;
 }
 
 export function getPerson(

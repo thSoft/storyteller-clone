@@ -1,6 +1,6 @@
 import { grandma, hunter, red, wolf } from "../characters";
 import { Scene } from "../types";
-import { getPerson, handleDead, handleMeeting } from "./sceneUtils";
+import { getPerson, handleMeeting, handlePreconditions } from "./sceneUtils";
 
 const inBedSlot = { id: "inBed", label: "Person in bed" };
 const notInBedSlot = { id: "notInBed", label: "Person not in bed" };
@@ -11,7 +11,7 @@ export const grandmasHouse: Scene = {
   outcomeLogic: (state, assigned) => {
     const inBed = assigned[inBedSlot.id];
     const notInBed = assigned[notInBedSlot.id];
-    if (handleDead(state, inBed, notInBed)) return;
+    if (handlePreconditions(state, inBed, notInBed)) return;
     if (inBed === undefined || notInBed === undefined) {
       return;
     }
