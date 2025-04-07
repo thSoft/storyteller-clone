@@ -33,6 +33,12 @@ export const grandma: Character = { id: "grandma", name: "👵 Grandma" };
 
 export const hunter: Character = { id: "hunter", name: "👮‍♂️ Hunter" };
 
+export const edgar: Character = { id: "edgar", name: "👨 Edgar" };
+
+export const lenora: Character = { id: "lenora", name: "🙎‍♀️ Lenora" };
+
+export const isobel: Character = { id: "isobel", name: "👩 Isobel" };
+
 export const characters: EntityMap<Character> = entityMap([
   firebird,
   jackFrost,
@@ -50,4 +56,7 @@ export const characters: EntityMap<Character> = entityMap([
   wolf,
   grandma,
   hunter,
+  edgar,
+  lenora,
+  isobel,
 ]);

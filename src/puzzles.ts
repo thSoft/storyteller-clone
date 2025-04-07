@@ -1,3 +1,4 @@
+import { backfire } from "./puzzles/backfire";
 import { christmasCarol } from "./puzzles/christmasCarol";
 import { cunningWolf } from "./puzzles/cunningWolf";
 import { dragonBattle } from "./puzzles/dragonBattle";
@@ -16,9 +17,15 @@ export const puzzles = entityMap([
   cunningWolf,
   outsmartedWolf,
   sacrifice,
+  backfire,
 ]);
 
 export const chapters: EntityMap<Chapter> = entityMap([
+  {
+    id: "brokenHearts",
+    title: "Broken Hearts Everywhere",
+    puzzles: [backfire.id],
+  },
   {
     id: "money",
     title: "Money, Money, Money",

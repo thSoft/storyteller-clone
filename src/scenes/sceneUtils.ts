@@ -1,7 +1,7 @@
 import { StoryState } from "../storyState";
 import { Character } from "../types";
 
-function areRelated(
+export function areRelated(
   relationshipMap: Record<string, string>,
   characterId1: string,
   characterId2: string
@@ -39,13 +39,13 @@ export function handleDead(
 }
 
 export function getPerson(
-  predicate: (person: Character) => boolean,
+  predicate: (person: Character, otherPerson: Character | undefined) => boolean,
   person1: Character | undefined,
   person2?: Character
 ): [Character | undefined, Character | undefined] {
-  if (person1 && predicate(person1)) {
+  if (person1 && predicate(person1, person2)) {
     return [person1, person2];
-  } else if (person2 && predicate(person2)) {
+  } else if (person2 && predicate(person2, person1)) {
     return [person2, person1];
   }
   return [undefined, undefined];
@@ -74,4 +74,15 @@ export function handleMeeting(
   person2: Character
 ) {
   state.event = `${person1.name} and ${person2.name} greeted each other heartily.`;
+}
+
+export function getRelated(
+  relationshipMap: Record<string, string>,
+  person: Character
+) {
+  const loveOfPersonId = relationshipMap[person.id];
+  if (loveOfPersonId !== undefined) return loveOfPersonId;
+  return Object.entries(relationshipMap).find(
+    ([_, loved]) => loved === person.id
+  )?.[0];
 }

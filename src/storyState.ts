@@ -1,4 +1,4 @@
-import { grandma, hunter, red } from "./characters";
+import { grandma, hunter, isobel, lenora, red } from "./characters";
 
 export const initialStoryState = {
   event: undefined as string | undefined,
@@ -22,6 +22,17 @@ export const initialStoryState = {
     [hunter.id]: true,
   },
   knowsAboutWolf: {} as Record<string, boolean>,
+  spiteful: {
+    [isobel.id]: true,
+    [lenora.id]: true,
+  } as Record<string, boolean>,
+  willingToKill: {
+    [lenora.id]: true,
+  } as Record<string, boolean>,
+  angryAt: {} as Record<string, string>,
+  kidnapped: {} as Record<string, boolean>,
+  wineIsPoisonedBy: undefined as string | undefined,
+  drunk: {} as Record<string, boolean>,
 };
 
 export type StoryState = typeof initialStoryState;
