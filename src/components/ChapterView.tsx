@@ -1,7 +1,10 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentChapterId, setCurrentPuzzleId } from "../gameStateSlice";
 import { chapters, puzzles } from "../puzzles";
+import {
+  setCurrentChapterId,
+  setCurrentPuzzleId,
+} from "../store/gameStateSlice";
 import { GameState } from "../types";
 
 export const ChapterView: React.FC = () => {

@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useDrop } from "react-dnd";
 import { useDispatch } from "react-redux";
-import { addPanelToCurrentPuzzle } from "../gameStateSlice";
+import { addPanelToCurrentPuzzle } from "../store/gameStateSlice";
 import { ItemTypes } from "./ItemTypes";
 
 export const InsertionPoint: React.FC<{

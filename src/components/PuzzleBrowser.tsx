@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentPuzzleId } from "../gameStateSlice";
 import { puzzles } from "../puzzles";
+import { setCurrentPuzzleId } from "../store/gameStateSlice";
 import { GameState } from "../types";
 import { ChapterView } from "./ChapterView";
 import { PuzzleView } from "./PuzzleView";

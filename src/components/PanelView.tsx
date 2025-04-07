@@ -1,9 +1,9 @@
 import { useDispatch } from "react-redux";
+import { scenes } from "../scenes";
 import {
   removePanelFromCurrentPuzzle,
   setSlotCharacter,
-} from "../gameStateSlice";
-import { scenes } from "../scenes";
+} from "../store/gameStateSlice";
 import { StoryState } from "../storyState";
 import { Panel, SceneSlot } from "../types";
 import { InsertionPoint } from "./InsertionPoint";

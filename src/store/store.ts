@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { PersistConfig, persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { GameState } from "../types";
 import gameStateReducer from "./gameStateSlice";
 import { listenerMiddleware } from "./listenerMiddleware";
-import { GameState } from "./types";
 
 const persistConfig: PersistConfig<GameState> = {
   key: "root",

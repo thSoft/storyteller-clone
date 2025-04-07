@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { chapters, puzzles } from "./puzzles";
-import { GameState, Panel } from "./types";
+import { chapters, puzzles } from "../puzzles";
+import { GameState, Panel } from "../types";
 
 const initialGameState: GameState = {
   currentPuzzleId: null,
