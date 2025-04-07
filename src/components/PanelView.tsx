@@ -37,7 +37,15 @@ export const PanelView: React.FC<{
           padding: "8px",
         }}
       >
-        <h3 style={{ marginTop: 0 }}>{scene?.name}</h3>
+        <h4 style={{ marginTop: 0 }}>
+          {scene?.name}{" "}
+          <button
+            style={{ float: "right" }}
+            onClick={() => handleRemovePanel()}
+          >
+            Remove
+          </button>
+        </h4>
         {scene?.slots.map((slot: SceneSlot) => (
           <SlotView
             key={slot.id}
@@ -48,8 +56,7 @@ export const PanelView: React.FC<{
             }
           />
         ))}
-        <p>{states[index + 1]?.event || "\u00A0"}</p>
-        <button onClick={() => handleRemovePanel()}>Remove</button>
+        <div>{states[index + 1]?.event || "\u00A0"}</div>
       </div>
       <InsertionPoint index={index + 1} />
     </span>
