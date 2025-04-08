@@ -2,8 +2,8 @@ import { firebird, jackFrost, neptune } from "../characters";
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
 
-const fighter1Slot = { id: "fighter1", label: "Fighter 1" };
-const fighter2Slot = { id: "fighter2", label: "Fighter 2" };
+export const fighter1Slot = { id: "fighter1", label: "Fighter 1" };
+export const fighter2Slot = { id: "fighter2", label: "Fighter 2" };
 export const duel: Scene = {
   id: "duel",
   name: "⚔️ Duel",

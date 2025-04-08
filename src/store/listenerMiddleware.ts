@@ -1,7 +1,7 @@
 import { createListenerMiddleware } from "@reduxjs/toolkit";
 import { puzzles } from "../puzzles";
+import { getStates } from "../simulator";
 import type { GameState } from "../types";
-import { getStates } from "../utils";
 import { markPuzzleCompleted } from "./gameStateSlice";
 
 export const listenerMiddleware = createListenerMiddleware<GameState>();
