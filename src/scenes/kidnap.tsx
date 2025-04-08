@@ -2,7 +2,7 @@ import { characters } from "../characters";
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
 
-const kidnapperSlot = { id: "kidnapper", label: "Kidnapper" };
+const kidnapperSlot = { id: "kidnapper", label: "Kidnapper/Rescuer" };
 const kidnappedSlot = { id: "kidnapped", label: "Kidnapped" };
 export const kidnap: Scene = {
   id: "kidnap",
@@ -14,10 +14,13 @@ export const kidnap: Scene = {
     if (
       handlePreconditions(state, kidnapper, kidnapped, {
         checkHeartbreak: false,
-        onlyCheckKidnapper: true,
       })
     )
       return;
+    if (state.kidnapped === kidnapper.id) {
+      state.event = `${kidnapper.name} was kidnapped.`;
+      return;
+    }
     if (!kidnapper || !kidnapped) return;
     if (state.kidnapped === kidnapped.id) {
       if (state.angryAt[kidnapper.id] === kidnapped.id) {

@@ -16,9 +16,9 @@ export function handlePreconditions(
   state: StoryState,
   person1: Character,
   person2?: Character,
-  options: { checkHeartbreak: boolean; onlyCheckKidnapper?: boolean } = {
+  options: { checkHeartbreak?: boolean; checkKidnap?: boolean } = {
     checkHeartbreak: true,
-    onlyCheckKidnapper: false,
+    checkKidnap: true,
   }
 ): boolean {
   const [deadPerson, otherPerson] = getPerson(
@@ -33,14 +33,16 @@ export function handlePreconditions(
     }
     return true;
   }
-  const [kidnappedPerson] = getPerson(
-    (person) => state.kidnapped === person.id,
-    person1,
-    options.onlyCheckKidnapper ? undefined : person2
-  );
-  if (kidnappedPerson) {
-    state.event = `${kidnappedPerson.name} was kidnapped.`;
-    return true;
+  if (options.checkKidnap) {
+    const [kidnappedPerson] = getPerson(
+      (person) => state.kidnapped === person.id,
+      person1,
+      person2
+    );
+    if (kidnappedPerson) {
+      state.event = `${kidnappedPerson.name} was kidnapped.`;
+      return true;
+    }
   }
   return false;
 }
