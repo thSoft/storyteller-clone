@@ -47,11 +47,14 @@ export const PuzzleView: React.FC<{
         </div>
 
         <div>
-          <h2>Story:</h2>
-          <InsertionPoint index={0} />
+          <h2>
+            Story ({panels.length} / {puzzle.maxPanelCount} panels):
+          </h2>
+          <InsertionPoint puzzle={puzzle} index={0} />
           {panels.map((panel, index) => {
             return (
               <PanelView
+                puzzle={puzzle}
                 panel={panel}
                 index={index}
                 states={states}

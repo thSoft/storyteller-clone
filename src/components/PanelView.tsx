@@ -5,15 +5,16 @@ import {
   setSlotCharacter,
 } from "../store/gameStateSlice";
 import { StoryState } from "../storyState";
-import { Panel, SceneSlot } from "../types";
+import { Panel, Puzzle, SceneSlot } from "../types";
 import { InsertionPoint } from "./InsertionPoint";
 import { SlotView } from "./SlotView";
 
 export const PanelView: React.FC<{
+  puzzle: Puzzle;
   panel: Panel;
   index: number;
   states: StoryState[];
-}> = ({ panel, index, states }) => {
+}> = ({ puzzle, panel, index, states }) => {
   const scene = scenes[panel.sceneId];
   const dispatch = useDispatch();
   const handleRemovePanel = () => {
@@ -58,7 +59,7 @@ export const PanelView: React.FC<{
         ))}
         <div>{states[index + 1]?.event || "\u00A0"}</div>
       </div>
-      <InsertionPoint index={index + 1} />
+      <InsertionPoint puzzle={puzzle} index={index + 1} />
     </span>
   );
 };

@@ -73,6 +73,13 @@ const gameStateSlice = createSlice({
       }
       const puzzleState = state.puzzleStates[state.currentPuzzleId];
       if (puzzleState) {
+        if (
+          puzzleState.panels.length >=
+          puzzles[state.currentPuzzleId].maxPanelCount
+        ) {
+          console.warn("Cannot add more panels. Max panel count reached.");
+          return; // Prevent adding the panel
+        }
         puzzleState.panels.splice(index, 0, panel);
       } else {
         state.puzzleStates[state.currentPuzzleId] = { panels: [panel] };
