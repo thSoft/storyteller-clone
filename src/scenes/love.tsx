@@ -2,8 +2,8 @@ import { characters } from "../characters";
 import { Character, Scene } from "../types";
 import { getPerson, getRelated, handlePreconditions } from "./sceneUtils";
 
-const lover1Slot = { id: "lover1", label: "Lover 1" };
-const lover2Slot = { id: "lover2", label: "Lover 2" };
+export const lover1Slot = { id: "lover1", label: "Lover 1" };
+export const lover2Slot = { id: "lover2", label: "Lover 2" };
 export const love: Scene = {
   id: "love",
   name: "❤️ Love",

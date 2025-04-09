@@ -2,13 +2,13 @@ import { characters } from "../characters";
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
 
-const personSlot = { id: "person", label: "Person" };
+export const poisonerSlot = { id: "person", label: "Person" };
 export const poison: Scene = {
   id: "poison",
   name: "☠️ Poison",
-  slots: [personSlot],
+  slots: [poisonerSlot],
   outcomeLogic: (state, assigned) => {
-    const person = assigned[personSlot.id];
+    const person = assigned[poisonerSlot.id];
     if (handlePreconditions(state, person)) return;
     if (!person) return;
     const victimId = state.angryAt[person.id];

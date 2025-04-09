@@ -17,4 +17,5 @@ export const elementalBattle: Puzzle = {
     );
   },
   initialStoryState: initialStoryState,
+  maxPanelCount: 3,
 };

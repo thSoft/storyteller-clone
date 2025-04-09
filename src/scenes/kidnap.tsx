@@ -2,8 +2,8 @@ import { characters } from "../characters";
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
 
-const kidnapperSlot = { id: "kidnapper", label: "Kidnapper/Rescuer" };
-const kidnappedSlot = { id: "kidnapped", label: "Kidnapped" };
+export const kidnapperSlot = { id: "kidnapper", label: "Kidnapper/Rescuer" };
+export const kidnappedSlot = { id: "kidnapped", label: "Kidnapped" };
 export const kidnap: Scene = {
   id: "kidnap",
   name: "🔐 Kidnap",

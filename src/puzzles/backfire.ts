@@ -19,4 +19,5 @@ export const backfire: Puzzle = {
     );
   },
   initialStoryState: initialStoryState,
+  maxPanelCount: 8,
 };

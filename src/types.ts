@@ -30,6 +30,7 @@ export type Puzzle = Entity & {
   characters: string[];
   isWinning: (state: StoryState) => boolean;
   initialStoryState: StoryState;
+  maxPanelCount: number;
 };
 
 export type Chapter = Entity & {

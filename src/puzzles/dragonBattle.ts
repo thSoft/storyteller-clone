@@ -14,4 +14,5 @@ export const dragonBattle: Puzzle = {
     return state.dead[dragon.id] === true && state.princessIsFree === true;
   },
   initialStoryState: initialStoryState,
+  maxPanelCount: 6,
 };

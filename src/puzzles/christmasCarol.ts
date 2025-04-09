@@ -17,4 +17,5 @@ export const christmasCarol: Puzzle = {
     );
   },
   initialStoryState: { ...initialStoryState, hasMoney: { [miser.id]: true } },
+  maxPanelCount: 4,
 };

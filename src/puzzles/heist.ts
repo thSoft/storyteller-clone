@@ -17,4 +17,5 @@ export const heist: Puzzle = {
     hasMoney: { [duke.id]: true },
     knowsCodeOfSafe: { [duke.id]: true },
   },
+  maxPanelCount: 6,
 };

@@ -16,4 +16,5 @@ export const sacrifice: Puzzle = {
     !state.dead[grandma.id] &&
     !state.dead[hunter.id],
   initialStoryState: initialStoryState,
+  maxPanelCount: 4,
 };
