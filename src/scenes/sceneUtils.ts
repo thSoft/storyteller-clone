@@ -1,3 +1,4 @@
+import { grandma, hunter, red, wolf } from "../characters";
 import { StoryState } from "../storyState";
 import { Character } from "../types";
 
@@ -16,8 +17,8 @@ export function handlePreconditions(
   state: StoryState,
   person1: Character,
   person2?: Character,
-  options: { checkHeartbreak?: boolean; checkKidnap?: boolean } = {
-    checkHeartbreak: true,
+  options: { checkDeathWitnessing?: boolean; checkKidnap?: boolean } = {
+    checkDeathWitnessing: true,
     checkKidnap: true,
   }
 ): boolean {
@@ -28,8 +29,8 @@ export function handlePreconditions(
   );
   if (deadPerson) {
     state.event = `${deadPerson.name} was dead.`;
-    if (options.checkHeartbreak) {
-      handleHeartbreakDueToDeath(state, deadPerson, otherPerson);
+    if (options.checkDeathWitnessing) {
+      handleDeathWitnessing(state, deadPerson, otherPerson);
     }
     return true;
   }
@@ -47,7 +48,7 @@ export function handlePreconditions(
   return false;
 }
 
-export function handleHeartbreakDueToDeath(
+export function handleDeathWitnessing(
   state: StoryState,
   deadPerson: Character | undefined,
   otherPerson: Character | undefined
@@ -61,6 +62,10 @@ export function handleHeartbreakDueToDeath(
   ) {
     state.heartbroken[otherPerson.id] = true;
     state.event += ` ${otherPerson.name} was heartbroken by the death of ${deadPerson.name}.`;
+  }
+  if (deadPerson && otherPerson && state.wolfLike[otherPerson.id]) {
+    state.disappointed[otherPerson.id] = true;
+    state.event += ` ${otherPerson.name} was disappointed that he/she couldn't eat ${deadPerson.name}.`;
   }
 }
 
@@ -80,26 +85,97 @@ export function getPerson(
 export function ifCharactersAre(
   person1: Character,
   person2: Character,
-  firstCharacterId: string,
-  secondCharacterId: string,
+  predicate: (person: Character, otherPerson: Character) => boolean,
   callback: (firstCharacter: Character, secondCharacter: Character) => void
-) {
-  if (person1.id === firstCharacterId && person2.id === secondCharacterId) {
+): boolean {
+  if (predicate(person1, person2)) {
     callback(person1, person2);
-  } else if (
-    person1.id === secondCharacterId &&
-    person2.id === firstCharacterId
-  ) {
+    return true;
+  } else if (predicate(person2, person1)) {
     callback(person2, person1);
+    return true;
   }
+  return false;
 }
 
-export function handleMeeting(
+export function handleLittleRedRidingHoodCharactersMeeting(
   state: StoryState,
   person1: Character,
-  person2: Character
+  person2: Character,
+  hunterInBed: boolean,
+  wolfLikeInBed: boolean
 ) {
-  state.event = `${person1.name} and ${person2.name} greeted each other heartily.`;
+  if (
+    ifCharactersAre(
+      person1,
+      person2,
+      (theHunter, theWolfLike) =>
+        theHunter.id === hunter.id && state.wolfLike[theWolfLike.id],
+      (theHunter, theWolfLike) => {
+        state.knowsAboutWolf[theHunter.id] = true;
+        if (state.bullets[theHunter.id] === 0) {
+          if (wolfLikeInBed) {
+            state.event = `${hunter.name} tried to shoot ${theWolfLike.name}, but he didn't have any bullets. Fortunately ${theWolfLike.name} was sleeping.`;
+          } else {
+            state.dead[hunter.id] = true;
+            state.event = `${hunter.name} tried to shoot ${theWolfLike.name}, but he didn't have any bullets. ${theWolfLike.name} ate him.`;
+          }
+        } else {
+          state.bullets[theHunter.id]--;
+          if (!hunterInBed && !wolfLikeInBed) {
+            state.event = `${theHunter.name} nearly shot ${theWolfLike.name}, but it was quicker and he escaped. ${hunter.name} is now aware of ${theWolfLike.name}'s presence.`;
+          } else {
+            state.dead[theWolfLike.id] = true;
+            if (wolfLikeInBed) {
+              state.event = `${hunter.name} shot ${theWolfLike.name} while ${theWolfLike.name} was sleeping.`;
+            } else {
+              state.event = `${hunter.name} shot ${theWolfLike.name} because ${theWolfLike.name} didn't realize who is hiding under the blanket.`;
+            }
+          }
+        }
+      }
+    )
+  )
+    return;
+
+  const [werewolf, otherPerson] = getPerson(
+    (person) => state.wolfLike[person.id],
+    person1,
+    person2
+  );
+  if (werewolf) {
+    if (otherPerson) {
+      if (state.wolfLike[otherPerson.id] || otherPerson.id === wolf.id) {
+        state.event = `${person1.name} and ${person2.name} howled at each other heartily.`;
+      } else {
+        state.dead[otherPerson.id] = true;
+        state.event = `${werewolf.name} met ${otherPerson?.name} and ate him/her.`;
+      }
+    }
+  } else {
+    if (
+      ifCharactersAre(
+        person1,
+        person2,
+        (a, b) => a.id === red.id && b.id === hunter.id,
+        () => {
+          if (state.knowsAboutWolf[hunter.id]) {
+            state.knowsAboutWolf[red.id] = true;
+            state.event = `${hunter.name} warned ${red.name} that ${wolf.name} is dangerous and she should not tell him where ${grandma.name} lives.`;
+          } else {
+            if (state.knowsAboutWolf[red.id]) {
+              state.knowsAboutWolf[hunter.id] = true;
+              state.event = `${red.name} told ${hunter.name} that she met the ${wolf.name} and told him where ${grandma.name} lives.`;
+            } else {
+              state.event = `${hunter.name} and ${red.name} greeted each other heartily.`;
+            }
+          }
+        }
+      )
+    )
+      return;
+    state.event = `${person1.name} and ${person2.name} greeted each other heartily.`;
+  }
 }
 
 export function getRelated(

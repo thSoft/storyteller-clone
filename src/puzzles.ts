@@ -1,9 +1,11 @@
+import { ammunition } from "./puzzles/ammunition";
 import { backfire } from "./puzzles/backfire";
 import { christmasCarol } from "./puzzles/christmasCarol";
 import { cunningWolf } from "./puzzles/cunningWolf";
 import { dragonBattle } from "./puzzles/dragonBattle";
 import { elementalBattle } from "./puzzles/elementalBattle";
 import { heist } from "./puzzles/heist";
+import { missedMeal } from "./puzzles/missedMeal";
 import { outsmartedWolf } from "./puzzles/outsmartedWolf";
 import { sacrifice } from "./puzzles/sacrifice";
 import { Chapter, EntityMap } from "./types";
@@ -18,6 +20,8 @@ export const puzzles = entityMap([
   outsmartedWolf,
   sacrifice,
   backfire,
+  missedMeal,
+  ammunition,
 ]);
 
 export const chapters: EntityMap<Chapter> = entityMap([
@@ -39,6 +43,12 @@ export const chapters: EntityMap<Chapter> = entityMap([
   {
     id: "red",
     title: "Little Red Riding Hood Variations",
-    puzzles: [cunningWolf.id, outsmartedWolf.id, sacrifice.id],
+    puzzles: [
+      cunningWolf.id,
+      outsmartedWolf.id,
+      missedMeal.id,
+      sacrifice.id,
+      ammunition.id,
+    ],
   },
 ]);

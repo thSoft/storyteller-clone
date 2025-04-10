@@ -13,7 +13,7 @@ export const kidnap: Scene = {
     const kidnapped = assigned[kidnappedSlot.id];
     if (
       handlePreconditions(state, kidnapper, kidnapped, {
-        checkHeartbreak: false,
+        checkDeathWitnessing: false,
       })
     )
       return;

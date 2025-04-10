@@ -1,7 +1,7 @@
-import { grandma, hunter, red, wolf } from "../characters";
+import { grandma, red, wolf } from "../characters";
 import { Scene } from "../types";
 import {
-  handleMeeting,
+  handleLittleRedRidingHoodCharactersMeeting,
   handlePreconditions,
   ifCharactersAre,
 } from "./sceneUtils";
@@ -23,32 +23,30 @@ export const forest: Scene = {
     if (person1 === undefined || person2 === undefined) {
       return;
     }
-    ifCharactersAre(person1, person2, red.id, wolf.id, () => {
-      if (state.knowsAboutWolf[red.id]) {
-        state.dead[red.id] = true;
-        state.event = `${wolf.name} asked ${red.name} where is ${grandma.name}'s house, but she refused to answer, so ${wolf.name} ate her.`;
-      } else {
-        state.knowsAboutWolf[red.id] = true;
-        state.knowsLocationOfGrandma[wolf.id] = true;
-        state.event = `${wolf.name} asked ${red.name} where is ${grandma.name}'s house, and she told him.`;
-      }
-    });
-    ifCharactersAre(person1, person2, red.id, hunter.id, () => {
-      if (state.knowsAboutWolf[hunter.id]) {
-        state.knowsAboutWolf[red.id] = true;
-        state.event = `${hunter.name} warned ${red.name} that ${wolf.name} is dangerous and she should not tell him where ${grandma.name} lives.`;
-      } else {
-        if (state.knowsAboutWolf[red.id]) {
-          state.knowsAboutWolf[hunter.id] = true;
-          state.event = `${red.name} told ${hunter.name} that she met the ${wolf.name} and told him where ${grandma.name} lives.`;
-        } else {
-          handleMeeting(state, person1, person2);
+    if (
+      ifCharactersAre(
+        person1,
+        person2,
+        (a, b) => a.id === red.id && b.id === wolf.id,
+        () => {
+          if (state.knowsAboutWolf[red.id]) {
+            state.dead[red.id] = true;
+            state.event = `${wolf.name} asked ${red.name} where is ${grandma.name}'s house, but she refused to answer, so ${wolf.name} ate her.`;
+          } else {
+            state.knowsAboutWolf[red.id] = true;
+            state.knowsLocationOfGrandma[wolf.id] = true;
+            state.event = `${wolf.name} asked ${red.name} where is ${grandma.name}'s house, and she told him.`;
+          }
         }
-      }
-    });
-    ifCharactersAre(person1, person2, wolf.id, hunter.id, () => {
-      state.knowsAboutWolf[hunter.id] = true;
-      state.event = `${hunter.name} nearly shot ${wolf.name}, but he was quicker and he escaped. ${hunter.name} is now aware of ${wolf.name}'s presence.`;
-    });
+      )
+    )
+      return;
+    handleLittleRedRidingHoodCharactersMeeting(
+      state,
+      person1,
+      person2,
+      false,
+      false
+    );
   },
 };

@@ -9,6 +9,7 @@ import { grandmasHouse } from "./scenes/grandmasHouse";
 import { gun } from "./scenes/gun";
 import { kidnap } from "./scenes/kidnap";
 import { love } from "./scenes/love";
+import { moon } from "./scenes/moon";
 import { poison } from "./scenes/poison";
 import { safe } from "./scenes/safe";
 import { seance } from "./scenes/seance";
@@ -32,4 +33,5 @@ export const scenes: EntityMap<Scene> = entityMap([
   kidnap,
   poison,
   wine,
+  moon,
 ]);
