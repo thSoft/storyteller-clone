@@ -1,6 +1,6 @@
 import { scenes } from "./scenes";
 import { getStates } from "./simulator";
-import { Panel, Puzzle } from "./types";
+import { Character, Panel, Puzzle, Scene } from "./types";
 
 function testPuzzleWinCondition(
   puzzle: Puzzle,
@@ -204,4 +204,17 @@ export function runPuzzleTests(
       }
     );
   });
+}
+
+export function panel(scene: Scene, ...assignments: Character[]): Panel {
+  return {
+    sceneId: scene.id,
+    slotAssignedCharacters: scene.slots.reduce(
+      (result, slot, index) => ({
+        ...result,
+        [slot.id]: assignments[index].id,
+      }),
+      {} as Record<string, string>
+    ),
+  };
 }
