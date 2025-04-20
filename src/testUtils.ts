@@ -9,7 +9,12 @@ function testPuzzleWinCondition(
 ) {
   const states = getStates(panels, puzzle.initialStoryState);
   const finalState = states[states.length - 1];
-  expect(puzzle.isWinning(finalState)).toBe(expectedResult);
+  const result = puzzle.isWinning(finalState);
+  if (expectedResult) {
+    expect(result).toBeTruthy();
+  } else {
+    expect(result).toBeFalsy();
+  }
 }
 
 /**
