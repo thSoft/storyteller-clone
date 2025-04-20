@@ -3,10 +3,12 @@ import { puzzles } from "../puzzles";
 import { GameState } from "../types";
 
 export function ProgressView() {
-  const completedPuzzleCount = useSelector(
-    (state: GameState) =>
+  const completedPuzzleCount = useSelector((state: GameState) =>
+    Math.min(
       Object.values(state.puzzleStates).filter((puzzle) => puzzle.completed)
-        .length
+        .length,
+      Object.keys(puzzles).length
+    )
   );
   const totalPuzzleCount = Object.keys(puzzles).length;
   return (

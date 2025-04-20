@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
+    "graphology": "^0.26.0",
     "immer": "^10.1.1",
     "react": "^19.0.0",
     "react-dnd": "^16.0.1",

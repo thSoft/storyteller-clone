@@ -17,7 +17,7 @@ export const death: Scene = {
       })
     )
       return;
-    state.dead[victim.id] = true;
+    state.graph.setNodeAttribute(victim.id, "dead", true);
     state.event = `${victim.name} died.`;
     handleDeathWitnessing(state, victim, witness);
   },

@@ -1,7 +1,7 @@
 import { produce } from "immer";
 import { characters } from "./characters";
 import { scenes } from "./scenes";
-import { StoryState } from "./storyState";
+import { StoryState, cloneGraph } from "./storyState";
 import { Panel } from "./types";
 
 function resolveMap(slotAssignedCharacters: Record<string, string>) {
@@ -29,6 +29,7 @@ export function getStates(
         ...previousStates,
         produce(previousState, (draft) => {
           draft.event = undefined;
+          draft.graph = cloneGraph(draft.graph);
           scene.outcomeLogic(draft, assigned);
         }),
       ];

@@ -1,15 +1,26 @@
-import { StoryState } from "../storyState";
+import { RelationType, StoryGraph, StoryState } from "../storyState";
 import { Character } from "../types";
 
 export function areRelated(
-  relationshipMap: Record<string, string>,
+  graph: StoryGraph,
+  type: RelationType,
   characterId1: string,
-  characterId2: string
+  characterId2: string,
+  directed: boolean = true
 ) {
-  return (
-    relationshipMap[characterId1] === characterId2 ||
-    relationshipMap[characterId2] === characterId1
-  );
+  if (directed) {
+    return graph.someDirectedEdge(
+      characterId1,
+      characterId2,
+      (_, edgeAttributes) => edgeAttributes.type === type
+    );
+  } else {
+    return graph.someUndirectedEdge(
+      characterId1,
+      characterId2,
+      (_, edgeAttributes) => edgeAttributes.type === type
+    );
+  }
 }
 
 export function handlePreconditions(
@@ -22,7 +33,7 @@ export function handlePreconditions(
   }
 ): boolean {
   const [deadPerson, otherPerson] = getPerson(
-    (person) => state.dead[person.id],
+    (person) => state.graph.getNodeAttributes(person.id).dead === true,
     person1,
     person2
   );
@@ -44,11 +55,11 @@ export function handleDeathWitnessing(
   if (
     deadPerson &&
     otherPerson &&
-    areRelated(state.loves, deadPerson.id, otherPerson.id) &&
-    !state.dead[otherPerson.id] &&
-    !state.heartbroken[otherPerson.id]
+    areRelated(state.graph, "loves", deadPerson.id, otherPerson.id) &&
+    !state.graph.getNodeAttributes(otherPerson.id).dead &&
+    !state.graph.getNodeAttributes(otherPerson.id).heartbroken
   ) {
-    state.heartbroken[otherPerson.id] = true;
+    state.graph.setNodeAttribute(otherPerson.id, "heartbroken", true);
     state.event += ` ${otherPerson.name} was heartbroken by the death of ${deadPerson.name}.`;
   }
 }
@@ -66,29 +77,14 @@ export function getPerson(
   return [undefined, undefined];
 }
 
-export function ifCharactersAre(
-  person1: Character,
-  person2: Character,
-  predicate: (person: Character, otherPerson: Character) => boolean,
-  callback: (firstCharacter: Character, secondCharacter: Character) => void
-): boolean {
-  if (predicate(person1, person2)) {
-    callback(person1, person2);
-    return true;
-  } else if (predicate(person2, person1)) {
-    callback(person2, person1);
-    return true;
-  }
-  return false;
-}
-
 export function getRelated(
-  relationshipMap: Record<string, string>,
+  graph: StoryGraph,
+  type: RelationType,
   person: Character
-) {
-  const loveOfPersonId = relationshipMap[person.id];
-  if (loveOfPersonId !== undefined) return loveOfPersonId;
-  return Object.entries(relationshipMap).find(
-    ([_, loved]) => loved === person.id
-  )?.[0];
+): string | undefined {
+  return graph
+    .mapOutEdges(person.id, (_0, edgeAttributes, _1, target) =>
+      edgeAttributes.type === type ? target : undefined
+    )
+    .filter((target) => target !== undefined)[0];
 }

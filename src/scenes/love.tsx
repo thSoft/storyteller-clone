@@ -17,7 +17,7 @@ export const love: Scene = {
       person: Character,
       otherPerson: Character | undefined
     ): boolean => {
-      const lover = getRelated(state.loves, person);
+      const lover = getRelated(state.graph, "loves", person);
       return lover !== undefined && lover !== otherPerson?.id;
     };
     const [engaged, rejected] = getPerson(
@@ -35,21 +35,23 @@ export const love: Scene = {
       return;
     }
     if (engaged !== undefined && rejected !== undefined) {
-      const theThirdOneId = getRelated(state.loves, engaged);
+      const theThirdOneId = getRelated(state.graph, "loves", engaged);
       if (theThirdOneId === undefined) return;
       const theThirdOne = characters[theThirdOneId];
       if (theThirdOne === undefined) return;
       state.event = `${engaged.name} rejected ${rejected.name} because of ${theThirdOne.name}.`;
-      if (state.spiteful[rejected.id]) {
-        state.angryAt[rejected.id] = theThirdOne.id;
+      if (state.graph.getNodeAttributes(rejected.id).spiteful) {
+        state.graph.addEdge(rejected.id, theThirdOne.id, {
+          type: "angryAt",
+        });
         state.event += ` ${rejected.name} got angry at ${theThirdOne.name}.`;
       } else {
-        state.heartbroken[rejected.id] = true;
+        state.graph.setNodeAttribute(rejected.id, "heartbroken", true);
         state.event += ` ${rejected.name} was heartbroken.`;
       }
       return;
     }
-    state.loves[lover1.id] = lover2.id;
+    state.graph.addEdge(lover1.id, lover2.id, { type: "loves" });
     state.event = `${lover1.name} and ${lover2.name} fell in love.`;
   },
 };

@@ -1,5 +1,5 @@
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
+import { areRelated, handlePreconditions } from "./sceneUtils";
 
 export const shooterSlot = { id: "shooter", label: "Shooter" };
 export const targetSlot = { id: "target", label: "Target" };
@@ -12,19 +12,19 @@ export const hit: Scene = {
     const target = assigned[targetSlot.id];
     if (!shooter || !target) return;
     if (handlePreconditions(state, shooter, target)) return;
-    if (!state.wantsToKill[shooter.id].includes(target.id)) {
+    if (!areRelated(state.graph, "wantsToKill", shooter.id, target.id)) {
       state.event = `${shooter.name} didn't want to kill ${target.name}.`;
       return;
     }
-    if (state.doesNotKill[shooter.id]) {
+    if (state.graph.getNodeAttributes(shooter.id).doesNotKill) {
       state.event = `${shooter.name} doesn't want to get his hands dirty.`;
       return;
     }
-    if (state.personWithGun !== shooter.id) {
+    if (state.graph.getAttribute("personWithGun") !== shooter.id) {
       state.event = `${shooter.name} doesn't have a gun.`;
       return;
     }
-    state.dead[target.id] = true;
+    state.graph.setNodeAttribute(target.id, "dead", true);
     state.event = `${shooter.name} shot ${target.name}.`;
   },
 };

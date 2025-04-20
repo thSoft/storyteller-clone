@@ -1,5 +1,5 @@
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
+import { areRelated, handlePreconditions } from "./sceneUtils";
 
 export const ordererSlot = { id: "orderer", label: "Orderer" };
 export const executorSlot = { id: "executor", label: "Executor" };
@@ -14,18 +14,18 @@ export const deal: Scene = {
     const target = assigned[targetSlot.id];
     if (!orderer || !executor || !target) return;
     if (handlePreconditions(state, orderer, executor)) return;
-    if (!state.wantsToKill[orderer.id].includes(target.id)) {
+    if (!areRelated(state.graph, "wantsToKill", orderer.id, target.id)) {
       state.event = `${orderer.name} doesn't want to kill ${target.name}.`;
       return;
     }
-    state.wantsToKill[executor.id] = state.wantsToKill[executor.id]
-      ? [...state.wantsToKill[executor.id], target.id]
-      : [target.id];
-    if (state.personWithGun !== orderer.id) {
+    state.graph.addDirectedEdge(executor.id, target.id, {
+      type: "wantsToKill",
+    });
+    if (state.graph.getAttribute("personWithGun") !== orderer.id) {
       state.event = `${orderer.name} ordered ${executor.name} to kill ${target.name} and told him to get a gun.`;
       return;
     }
-    state.personWithGun = executor.id;
+    state.graph.setAttribute("personWithGun", executor.id);
     state.event = `${orderer.name} ordered ${executor.name} to kill ${target.name} and handed him a gun in a violin case.`;
   },
 };
