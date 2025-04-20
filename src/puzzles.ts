@@ -1,54 +1,13 @@
-import { ammunition } from "./puzzles/ammunition";
-import { backfire } from "./puzzles/backfire";
-import { christmasCarol } from "./puzzles/christmasCarol";
-import { cunningWolf } from "./puzzles/cunningWolf";
-import { dragonBattle } from "./puzzles/dragonBattle";
-import { elementalBattle } from "./puzzles/elementalBattle";
-import { heist } from "./puzzles/heist";
-import { missedMeal } from "./puzzles/missedMeal";
-import { outsmartedWolf } from "./puzzles/outsmartedWolf";
-import { sacrifice } from "./puzzles/sacrifice";
+import { successfulHit } from "./puzzles/successfulHit";
 import { Chapter, EntityMap } from "./types";
 import { entityMap } from "./utils";
 
-export const puzzles = entityMap([
-  christmasCarol,
-  heist,
-  elementalBattle,
-  dragonBattle,
-  cunningWolf,
-  outsmartedWolf,
-  sacrifice,
-  backfire,
-  missedMeal,
-  ammunition,
-]);
+export const puzzles = entityMap([successfulHit]);
 
 export const chapters: EntityMap<Chapter> = entityMap([
   {
-    id: "brokenHearts",
-    title: "Broken Hearts Everywhere",
-    puzzles: [backfire.id],
-  },
-  {
-    id: "money",
-    title: "Money, Money, Money",
-    puzzles: [christmasCarol.id, heist.id],
-  },
-  {
-    id: "battles",
-    title: "Epic Battles",
-    puzzles: [elementalBattle.id, dragonBattle.id],
-  },
-  {
-    id: "red",
-    title: "Little Red Riding Hood Variations",
-    puzzles: [
-      cunningWolf.id,
-      outsmartedWolf.id,
-      missedMeal.id,
-      sacrifice.id,
-      ammunition.id,
-    ],
+    id: "mafia",
+    title: "Mafia",
+    puzzles: [successfulHit.id],
   },
 ]);

@@ -1,62 +1,38 @@
 import { Character, EntityMap } from "./types";
 import { entityMap } from "./utils";
 
-export const firebird: Character = { id: "firebird", name: "🔥 The Firebird" };
+export const donMarcello: Character = {
+  id: "donMarcello",
+  name: "Don Marcello",
+};
 
-export const jackFrost: Character = { id: "jackFrost", name: "❄️ Jack Frost" };
+export const vincenzo: Character = { id: "vincenzo", name: "Vincenzo" };
 
-export const neptune: Character = { id: "neptune", name: "💧 Neptune" };
+export const lucia: Character = { id: "lucia", name: "Lucia" };
 
-export const knight: Character = { id: "knight", name: "🏇 Knight" };
+export const dario: Character = { id: "dario", name: "Dario" };
 
-export const princess: Character = { id: "princess", name: "👸 Princess" };
+export const nico: Character = { id: "nico", name: "Nico" };
 
-export const dragon: Character = { id: "dragon", name: "🐉 Dragon" };
+export const donRomano: Character = { id: "donRomano", name: "Don Romano" };
 
-export const miser: Character = { id: "miser", name: "🤑 Miser" };
+export const alessio: Character = { id: "alessio", name: "Alessio" };
 
-export const poorMan: Character = { id: "poorMan", name: "🥺 Poor man" };
+export const bruno: Character = { id: "bruno", name: "Bruno" };
 
-export const illBoy: Character = { id: "illBoy", name: "🤒 Ill boy" };
-
-export const duke: Character = { id: "duke", name: "🧔‍♂️ Duke" };
-
-export const duchess: Character = { id: "duchess", name: "👩‍🦰 Duchess" };
-
-export const butler: Character = { id: "butler", name: "🤵 Butler" };
-
-export const red: Character = { id: "red", name: "👩‍🦰 Red" };
-
-export const wolf: Character = { id: "wolf", name: "🐺 Wolf" };
-
-export const grandma: Character = { id: "grandma", name: "👵 Grandma" };
-
-export const hunter: Character = { id: "hunter", name: "👮‍♂️ Hunter" };
-
-export const edgar: Character = { id: "edgar", name: "👨 Edgar" };
-
-export const lenora: Character = { id: "lenora", name: "🙎‍♀️ Lenora" };
-
-export const isobel: Character = { id: "isobel", name: "👩 Isobel" };
+export const inspectorRinaldi: Character = {
+  id: "inspectorRinaldi",
+  name: "Inspector Rinaldi",
+};
 
 export const characters: EntityMap<Character> = entityMap([
-  firebird,
-  jackFrost,
-  neptune,
-  knight,
-  princess,
-  dragon,
-  miser,
-  poorMan,
-  illBoy,
-  duke,
-  duchess,
-  butler,
-  red,
-  wolf,
-  grandma,
-  hunter,
-  edgar,
-  lenora,
-  isobel,
+  donMarcello,
+  vincenzo,
+  lucia,
+  dario,
+  nico,
+  donRomano,
+  alessio,
+  bruno,
+  inspectorRinaldi,
 ]);
