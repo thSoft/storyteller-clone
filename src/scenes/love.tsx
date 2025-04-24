@@ -1,6 +1,6 @@
 import { characters } from "../characters";
 import { Character, Scene } from "../types";
-import { getPerson, getRelated, handlePreconditions } from "./sceneUtils";
+import { areRelated, getCharacter, getRelated, getState, handlePreconditions } from "./sceneUtils";
 
 export const lover1Slot = { id: "lover1", label: "Lover 1" };
 export const lover2Slot = { id: "lover2", label: "Lover 2" };
@@ -13,34 +13,22 @@ export const love: Scene = {
     const lover2 = assigned[lover2Slot.id];
     if (handlePreconditions(state, lover1, lover2)) return;
     if (!lover1 || !lover2) return;
-    const inLoveWithSomeoneElse = (
-      person: Character,
-      otherPerson: Character | undefined
-    ): boolean => {
-      const lover = getRelated(state.graph, "loves", person);
-      return lover !== undefined && lover !== otherPerson?.id;
+    const inLoveWithSomeoneElse = (character: Character, otherCharacter: Character | undefined): boolean => {
+      return otherCharacter !== undefined && areRelated(state, character.id, "loves", otherCharacter.id);
     };
-    const [engaged, rejected] = getPerson(
-      inLoveWithSomeoneElse,
-      lover1,
-      lover2
-    );
-    const [engaged2, _] = getPerson(inLoveWithSomeoneElse, lover2, lover1);
-    if (
-      engaged !== undefined &&
-      engaged2 !== undefined &&
-      engaged.id !== engaged2.id
-    ) {
+    const [engaged, rejected] = getCharacter(inLoveWithSomeoneElse, lover1, lover2);
+    const [engaged2, _] = getCharacter(inLoveWithSomeoneElse, lover2, lover1);
+    if (engaged !== undefined && engaged2 !== undefined && engaged.id !== engaged2.id) {
       state.event = `Both ${engaged.name} and ${engaged2.name} were already in love with someone else.`;
       return;
     }
     if (engaged !== undefined && rejected !== undefined) {
-      const theThirdOneId = getRelated(state.graph, "loves", engaged);
+      const theThirdOneId = getRelated(state, engaged.id, "loves")[0];
       if (theThirdOneId === undefined) return;
       const theThirdOne = characters[theThirdOneId];
       if (theThirdOne === undefined) return;
       state.event = `${engaged.name} rejected ${rejected.name} because of ${theThirdOne.name}.`;
-      if (state.graph.getNodeAttributes(rejected.id).spiteful) {
+      if (getState(state, rejected.id, "spiteful")) {
         state.graph.addEdge(rejected.id, theThirdOne.id, {
           type: "angryAt",
         });

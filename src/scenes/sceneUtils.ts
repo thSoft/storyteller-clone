@@ -1,21 +1,52 @@
-import { RelationType, StoryGraph, StoryState } from "../storyState";
+import { NodeAttributes, RelationType, StoryState } from "../storyState";
 import { Character } from "../types";
 
-export function areRelated(
-  graph: StoryGraph,
-  type: RelationType,
+export function addRelation(
+  state: StoryState,
   characterId1: string,
+  type: RelationType,
   characterId2: string,
-  directed: boolean = true
+  undirected: boolean = false
 ) {
-  if (directed) {
-    return graph.someDirectedEdge(
+  if (undirected) {
+    state.graph.addUndirectedEdge(characterId1, characterId2, { type });
+  } else {
+    state.graph.addDirectedEdge(characterId1, characterId2, { type });
+  }
+}
+
+export function setState<AttributeName extends keyof NodeAttributes>(
+  state: StoryState,
+  characterId: string,
+  name: AttributeName,
+  value: NodeAttributes[AttributeName]
+) {
+  state.graph.setNodeAttribute(characterId, name, value);
+}
+
+export function getState<AttributeName extends keyof NodeAttributes>(
+  state: StoryState,
+  characterId: string,
+  name: AttributeName
+): NodeAttributes[AttributeName] {
+  return state.graph.getNodeAttribute(characterId, name);
+}
+
+export function areRelated(
+  state: StoryState,
+  characterId1: string,
+  type: RelationType,
+  characterId2: string,
+  undirected: boolean = false
+) {
+  if (undirected) {
+    return state.graph.someUndirectedEdge(
       characterId1,
       characterId2,
       (_, edgeAttributes) => edgeAttributes.type === type
     );
   } else {
-    return graph.someUndirectedEdge(
+    return state.graph.someDirectedEdge(
       characterId1,
       characterId2,
       (_, edgeAttributes) => edgeAttributes.type === type
@@ -23,24 +54,43 @@ export function areRelated(
   }
 }
 
+export function getCharacter(
+  predicate: (character: Character, otherCharacter: Character | undefined) => boolean,
+  character1: Character | undefined,
+  character2?: Character
+): [Character | undefined, Character | undefined] {
+  if (character1 && predicate(character1, character2)) {
+    return [character1, character2];
+  } else if (character2 && predicate(character2, character1)) {
+    return [character2, character1];
+  }
+  return [undefined, undefined];
+}
+
+export function getRelated(state: StoryState, characterId: string, type: RelationType): string[] {
+  return state.graph
+    .mapOutEdges(characterId, (_0, edgeAttributes, _1, target) => (edgeAttributes.type === type ? target : undefined))
+    .filter((target) => target !== undefined);
+}
+
 export function handlePreconditions(
   state: StoryState,
-  person1: Character,
-  person2?: Character,
+  character1: Character,
+  character2?: Character,
   options: { checkDeathWitnessing?: boolean; checkKidnap?: boolean } = {
     checkDeathWitnessing: true,
     checkKidnap: true,
   }
 ): boolean {
-  const [deadPerson, otherPerson] = getPerson(
-    (person) => state.graph.getNodeAttributes(person.id).dead === true,
-    person1,
-    person2
+  const [deadCharacter, otherCharacter] = getCharacter(
+    (character) => state.graph.getNodeAttributes(character.id).dead === true,
+    character1,
+    character2
   );
-  if (deadPerson) {
-    state.event = `${deadPerson.name} was dead.`;
+  if (deadCharacter) {
+    state.event = `${deadCharacter.name} was dead.`;
     if (options.checkDeathWitnessing) {
-      handleDeathWitnessing(state, deadPerson, otherPerson);
+      handleDeathWitnessing(state, deadCharacter, otherCharacter);
     }
     return true;
   }
@@ -49,42 +99,17 @@ export function handlePreconditions(
 
 export function handleDeathWitnessing(
   state: StoryState,
-  deadPerson: Character | undefined,
-  otherPerson: Character | undefined
+  deadCharacter: Character | undefined,
+  otherCharacter: Character | undefined
 ) {
   if (
-    deadPerson &&
-    otherPerson &&
-    areRelated(state.graph, "loves", deadPerson.id, otherPerson.id) &&
-    !state.graph.getNodeAttributes(otherPerson.id).dead &&
-    !state.graph.getNodeAttributes(otherPerson.id).heartbroken
+    deadCharacter &&
+    otherCharacter &&
+    areRelated(state, deadCharacter.id, "loves", otherCharacter.id) &&
+    !state.graph.getNodeAttributes(otherCharacter.id).dead &&
+    !state.graph.getNodeAttributes(otherCharacter.id).heartbroken
   ) {
-    state.graph.setNodeAttribute(otherPerson.id, "heartbroken", true);
-    state.event += ` ${otherPerson.name} was heartbroken by the death of ${deadPerson.name}.`;
+    state.graph.setNodeAttribute(otherCharacter.id, "heartbroken", true);
+    state.event += ` ${otherCharacter.name} was heartbroken by the death of ${deadCharacter.name}.`;
   }
-}
-
-export function getPerson(
-  predicate: (person: Character, otherPerson: Character | undefined) => boolean,
-  person1: Character | undefined,
-  person2?: Character
-): [Character | undefined, Character | undefined] {
-  if (person1 && predicate(person1, person2)) {
-    return [person1, person2];
-  } else if (person2 && predicate(person2, person1)) {
-    return [person2, person1];
-  }
-  return [undefined, undefined];
-}
-
-export function getRelated(
-  graph: StoryGraph,
-  type: RelationType,
-  person: Character
-): string | undefined {
-  return graph
-    .mapOutEdges(person.id, (_0, edgeAttributes, _1, target) =>
-      edgeAttributes.type === type ? target : undefined
-    )
-    .filter((target) => target !== undefined)[0];
 }

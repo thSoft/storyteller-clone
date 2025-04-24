@@ -1,8 +1,12 @@
 import { Scene } from "../types";
-import { handleDeathWitnessing, handlePreconditions } from "./sceneUtils";
+import {
+  handleDeathWitnessing,
+  handlePreconditions,
+  setState,
+} from "./sceneUtils";
 
-const victimSlot = { id: "victim", label: "Victim" };
-const witnessSlot = { id: "witness", label: "Witness" };
+export const victimSlot = { id: "victim", label: "Victim" };
+export const witnessSlot = { id: "witness", label: "Witness" };
 export const death: Scene = {
   id: "death",
   name: "🪦 Death",
@@ -17,7 +21,7 @@ export const death: Scene = {
       })
     )
       return;
-    state.graph.setNodeAttribute(victim.id, "dead", true);
+    setState(state, victim.id, "dead", true);
     state.event = `${victim.name} died.`;
     handleDeathWitnessing(state, victim, witness);
   },
