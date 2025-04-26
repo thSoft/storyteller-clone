@@ -9,11 +9,11 @@ import { Puzzle } from "../types";
 export const successfulHit: Puzzle = {
   id: "successfulHit",
   title: "Successful Hit",
-  prompt: `A Successful Hit`,
+  prompt: "Promotion for Successful Hit",
   scenes: [deal.id, hit.id, disclose.id],
   characters: [donMarcello.id, vincenzo.id, donRomano.id, alessio.id],
   isWinning: (state) =>
-    getState(state, alessio.id, "dead") === true && getState(state, donMarcello.id, "content") === true,
+    getState(state, alessio.id, "dead") === true && getState(state, vincenzo.id, "rewarded") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
 };

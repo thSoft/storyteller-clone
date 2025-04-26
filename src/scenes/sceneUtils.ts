@@ -17,11 +17,24 @@ export function addRelation(
 
 export function setState<AttributeName extends keyof NodeAttributes>(
   state: StoryState,
-  characterId: string,
+  characterId: string | undefined,
   name: AttributeName,
   value: NodeAttributes[AttributeName]
 ) {
-  state.graph.setNodeAttribute(characterId, name, value);
+  if (characterId) {
+    state.graph.setNodeAttribute(characterId, name, value);
+  }
+}
+
+export function setStates<AttributeName extends keyof NodeAttributes>(
+  state: StoryState,
+  characterIds: Array<string | undefined>,
+  name: AttributeName,
+  value: NodeAttributes[AttributeName]
+) {
+  characterIds.forEach((characterId) => {
+    setState(state, characterId, name, value);
+  });
 }
 
 export function getState<AttributeName extends keyof NodeAttributes>(
@@ -112,4 +125,8 @@ export function handleDeathWitnessing(
     state.graph.setNodeAttribute(otherCharacter.id, "heartbroken", true);
     state.event += ` ${otherCharacter.name} was heartbroken by the death of ${deadCharacter.name}.`;
   }
+}
+
+export function getEavesdropperId(state: StoryState): string | undefined {
+  return state.graph.getAttribute("eavesdropperId");
 }

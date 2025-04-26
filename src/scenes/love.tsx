@@ -1,6 +1,17 @@
 import { characters } from "../characters";
+import { Thought } from "../storyState";
 import { Character, Scene } from "../types";
-import { areRelated, getCharacter, getRelated, getState, handlePreconditions } from "./sceneUtils";
+import {
+  addRelation,
+  areRelated,
+  getCharacter,
+  getEavesdropperId,
+  getRelated,
+  getState,
+  handlePreconditions,
+  setState,
+  setStates,
+} from "./sceneUtils";
 
 export const lover1Slot = { id: "lover1", label: "Lover 1" };
 export const lover2Slot = { id: "lover2", label: "Lover 2" };
@@ -29,17 +40,23 @@ export const love: Scene = {
       if (theThirdOne === undefined) return;
       state.event = `${engaged.name} rejected ${rejected.name} because of ${theThirdOne.name}.`;
       if (getState(state, rejected.id, "spiteful")) {
-        state.graph.addEdge(rejected.id, theThirdOne.id, {
-          type: "angryAt",
-        });
+        addRelation(state, rejected.id, "angryAt", theThirdOne.id);
         state.event += ` ${rejected.name} got angry at ${theThirdOne.name}.`;
       } else {
-        state.graph.setNodeAttribute(rejected.id, "heartbroken", true);
+        setState(state, rejected.id, "heartbroken", true);
         state.event += ` ${rejected.name} was heartbroken.`;
       }
       return;
     }
-    state.graph.addEdge(lover1.id, lover2.id, { type: "loves" });
+    addRelation(state, lover1.id, "loves", lover2.id);
+
+    const thought: Thought = {
+      type: "loves",
+      lover1Id: lover1.id,
+      lover2Id: lover2.id,
+    };
+    setStates(state, [lover1.id, getEavesdropperId(state)], "awareOf", thought);
+
     state.event = `${lover1.name} and ${lover2.name} fell in love.`;
   },
 };

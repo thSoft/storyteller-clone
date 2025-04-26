@@ -18,22 +18,20 @@ export interface NodeAttributes {
   doesNotSteal?: boolean;
   knowsSecretCode?: boolean;
   fired?: boolean;
+  rewarded?: boolean;
 }
 
 export type Thought =
-  | {
-      type: "killed";
-      killerId: string;
-      victimId: string;
-    }
-  | {
-      type: "robbed";
-      thiefId: string | undefined;
-    };
+  | { type: "killed"; killerId?: string; victimId: string }
+  | { type: "robbed"; thiefId: string | undefined }
+  | { type: "deal"; ordererId: string; executorId: string; targetId?: string }
+  | { type: "loves"; lover1Id: string; lover2Id: string }
+  | { type: "confiscated"; confiscatorId: string; confiscatedId: string };
 
 export interface GraphAttributes {
   personWithGun?: string;
   bankRobbed?: boolean;
+  eavesdropperId?: string;
 }
 
 export interface StoryState {
@@ -66,20 +64,4 @@ export function getInitialStoryState(): StoryState {
 
 function createGraph() {
   return new MultiDirectedGraph<NodeAttributes, EdgeAttributes, GraphAttributes>();
-}
-
-export function cloneGraph(graph: StoryGraph): StoryGraph {
-  const newGraph = createGraph();
-  newGraph.mergeAttributes(graph.getAttributes());
-  graph.forEachNode((node) => {
-    newGraph.addNode(node, { ...graph.getNodeAttributes(node) });
-  });
-  graph.forEachEdge((_0, edgeAttributes, source, target, _1, _2, undirected) => {
-    if (undirected) {
-      newGraph.addUndirectedEdge(source, target, { ...edgeAttributes });
-    } else {
-      newGraph.addDirectedEdge(source, target, { ...edgeAttributes });
-    }
-  });
-  return newGraph;
 }

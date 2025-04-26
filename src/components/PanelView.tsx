@@ -1,13 +1,12 @@
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { scenes } from "../scenes";
-import {
-  removePanelFromCurrentPuzzle,
-  setSlotCharacter,
-} from "../store/gameStateSlice";
+import { removePanelFromCurrentPuzzle, setSlotCharacter } from "../store/gameStateSlice";
 import { StoryState } from "../storyState";
 import { Panel, Puzzle, SceneSlot } from "../types";
 import { InsertionPoint } from "./InsertionPoint";
 import { SlotView } from "./SlotView";
+import { StoryGraphView } from "./StoryGraphView";
 
 export const PanelView: React.FC<{
   puzzle: Puzzle;
@@ -17,9 +16,12 @@ export const PanelView: React.FC<{
 }> = ({ puzzle, panel, index, states }) => {
   const scene = scenes[panel.sceneId];
   const dispatch = useDispatch();
+  const [showGraph, setShowGraph] = useState(false);
+
   const handleRemovePanel = () => {
     dispatch(removePanelFromCurrentPuzzle({ index: index }));
   };
+
   const handleAssignCharacter = (slotId: string, characterId: string) => {
     dispatch(
       setSlotCharacter({
@@ -29,6 +31,12 @@ export const PanelView: React.FC<{
       })
     );
   };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowGraph(true);
+  };
+
   return (
     <span>
       <div
@@ -37,13 +45,11 @@ export const PanelView: React.FC<{
           border: "1px solid black",
           padding: "8px",
         }}
+        onContextMenu={handleContextMenu}
       >
         <h4 style={{ marginTop: 0 }}>
           {scene?.name}{" "}
-          <button
-            style={{ float: "right" }}
-            onClick={() => handleRemovePanel()}
-          >
+          <button style={{ float: "right" }} onClick={() => handleRemovePanel()}>
             Remove
           </button>
         </h4>
@@ -52,12 +58,11 @@ export const PanelView: React.FC<{
             key={slot.id}
             slot={slot}
             assignedCharacter={panel.slotAssignedCharacters[slot.id]}
-            onAssignCharacter={(characterId) =>
-              handleAssignCharacter(slot.id, characterId)
-            }
+            onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
           />
         ))}
         <div>{states[index + 1]?.event || "\u00A0"}</div>
+        {showGraph && states[index + 1] && <StoryGraphView graph={states[index + 1].graph} width={800} height={400} />}
       </div>
       <InsertionPoint puzzle={puzzle} index={index + 1} />
     </span>

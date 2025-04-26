@@ -10,8 +10,6 @@ export const vincenzo: Character = { id: "vincenzo", name: "Vincenzo" };
 
 export const lucia: Character = { id: "lucia", name: "Lucia" };
 
-export const dario: Character = { id: "dario", name: "Dario" };
-
 export const nico: Character = { id: "nico", name: "Nico" };
 
 export const donRomano: Character = { id: "donRomano", name: "Don Romano" };
@@ -29,7 +27,6 @@ export const characters: EntityMap<Character> = entityMap([
   donMarcello,
   vincenzo,
   lucia,
-  dario,
   nico,
   donRomano,
   alessio,

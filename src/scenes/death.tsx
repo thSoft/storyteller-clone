@@ -1,9 +1,6 @@
+import { characters } from "../characters";
 import { Scene } from "../types";
-import {
-  handleDeathWitnessing,
-  handlePreconditions,
-  setState,
-} from "./sceneUtils";
+import { getEavesdropperId, handleDeathWitnessing, handlePreconditions, setState } from "./sceneUtils";
 
 export const victimSlot = { id: "victim", label: "Victim" };
 export const witnessSlot = { id: "witness", label: "Witness" };
@@ -21,8 +18,15 @@ export const death: Scene = {
       })
     )
       return;
+
     setState(state, victim.id, "dead", true);
     state.event = `${victim.name} died.`;
+
     handleDeathWitnessing(state, victim, witness);
+
+    const eavesdropperId = getEavesdropperId(state);
+    if (eavesdropperId) {
+      handleDeathWitnessing(state, victim, characters[eavesdropperId]);
+    }
   },
 };

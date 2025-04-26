@@ -1,5 +1,6 @@
+import { Thought } from "../storyState";
 import { Scene } from "../types";
-import { getState, handlePreconditions, setState } from "./sceneUtils";
+import { getEavesdropperId, getState, handlePreconditions, setStates } from "./sceneUtils";
 
 export const thiefSlot = { id: "thief", label: "Thief" };
 export const heist: Scene = {
@@ -19,10 +20,11 @@ export const heist: Scene = {
       return;
     }
     state.graph.setAttribute("bankRobbed", true);
-    setState(state, thief.id, "awareOf", {
+    const thought: Thought = {
       type: "robbed",
       thiefId: thief.id,
-    });
+    };
+    setStates(state, [thief.id, getEavesdropperId(state)], "awareOf", thought);
     state.event = `${thief.name} robbed the bank.`;
   },
 };

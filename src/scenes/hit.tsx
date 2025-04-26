@@ -1,5 +1,6 @@
+import { Thought } from "../storyState";
 import { Scene } from "../types";
-import { areRelated, getState, handlePreconditions, setState } from "./sceneUtils";
+import { areRelated, getEavesdropperId, getState, handlePreconditions, setState, setStates } from "./sceneUtils";
 
 export const shooterSlot = { id: "shooter", label: "Shooter" };
 export const targetSlot = { id: "target", label: "Target" };
@@ -25,11 +26,12 @@ export const hit: Scene = {
       return;
     }
     setState(state, target.id, "dead", true);
-    setState(state, shooter.id, "awareOf", {
+    const thought: Thought = {
       type: "killed",
       killerId: shooter.id,
       victimId: target.id,
-    });
+    };
+    setStates(state, [shooter.id, getEavesdropperId(state)], "awareOf", thought);
     state.event = `${shooter.name} shot ${target.name}.`;
   },
 };
