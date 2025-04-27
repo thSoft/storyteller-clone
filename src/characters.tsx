@@ -33,3 +33,7 @@ export const characters: EntityMap<Character> = entityMap([
   bruno,
   inspectorRinaldi,
 ]);
+
+export const mafiaCharacters = [donMarcello, vincenzo, lucia, nico, donRomano, alessio, bruno, inspectorRinaldi].map(
+  (character) => character.id
+);

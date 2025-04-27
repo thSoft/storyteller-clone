@@ -1,21 +1,23 @@
-import { donMarcello, inspectorRinaldi, vincenzo } from "../characters";
+import { alessio, donMarcello, vincenzo } from "../characters";
 import { confrontation } from "../scenes/confrontation";
 import { deal } from "../scenes/deal";
 import { disclose } from "../scenes/disclose";
-import { eavesdrop } from "../scenes/eavesdrop";
+import { hit } from "../scenes/hit";
+import { shield } from "../scenes/shield";
 import { panel, runPuzzleTests } from "../testUtils";
 import { Panel } from "../types";
-import { failedHit } from "./failedHit";
+import { stagedDeath } from "./stagedDeath";
 
 const validSolutions = [
   [
-    panel(eavesdrop, inspectorRinaldi),
     panel(deal, donMarcello, vincenzo),
-    panel(confrontation, inspectorRinaldi, vincenzo),
+    panel(shield, alessio),
+    panel(hit, vincenzo, alessio),
     panel(disclose, vincenzo, donMarcello),
+    panel(confrontation, alessio, donMarcello),
   ],
 ];
 
 const invalidSolutions: Panel[][] = [[]];
 
-runPuzzleTests(failedHit, validSolutions, invalidSolutions);
+runPuzzleTests(stagedDeath, validSolutions, invalidSolutions);

@@ -22,8 +22,12 @@ export const love: Scene = {
   outcomeLogic: (state, assigned) => {
     const lover1 = assigned[lover1Slot.id];
     const lover2 = assigned[lover2Slot.id];
-    if (handlePreconditions(state, lover1, lover2)) return;
     if (!lover1 || !lover2) return;
+    if (handlePreconditions(state, lover1, lover2)) return;
+    if (getState(state, lover1.id, "sex") === getState(state, lover2.id, "sex")) {
+      state.event = `${lover1.name} and ${lover2.name} are of the same sex.`;
+      return;
+    }
     const inLoveWithSomeoneElse = (character: Character, otherCharacter: Character | undefined): boolean => {
       return otherCharacter !== undefined && areRelated(state, character.id, "loves", otherCharacter.id);
     };
@@ -55,7 +59,7 @@ export const love: Scene = {
       lover1Id: lover1.id,
       lover2Id: lover2.id,
     };
-    setStates(state, [lover1.id, getEavesdropperId(state)], "awareOf", thought);
+    setStates(state, [lover1.id, lover2.id, getEavesdropperId(state)], "awareOf", thought);
 
     state.event = `${lover1.name} and ${lover2.name} fell in love.`;
   },

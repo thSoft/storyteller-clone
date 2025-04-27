@@ -25,13 +25,17 @@ export const hit: Scene = {
       state.event = `${shooter.name} didn't have a gun.`;
       return;
     }
-    setState(state, target.id, "dead", true);
+    state.event = `${shooter.name} shot ${target.name}.`;
+    if (getState(state, target.id, "protectedFromMurder")) {
+      state.event += ` Fortunately, ${target.name} was protected by the bulletproof vest.`;
+    } else {
+      setState(state, target.id, "dead", true);
+    }
     const thought: Thought = {
       type: "killed",
       killerId: shooter.id,
       victimId: target.id,
     };
     setStates(state, [shooter.id, getEavesdropperId(state)], "awareOf", thought);
-    state.event = `${shooter.name} shot ${target.name}.`;
   },
 };

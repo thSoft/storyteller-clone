@@ -90,13 +90,12 @@ export function handlePreconditions(
   state: StoryState,
   character1: Character,
   character2?: Character,
-  options: { checkDeathWitnessing?: boolean; checkKidnap?: boolean } = {
+  options: { checkDeathWitnessing?: boolean } = {
     checkDeathWitnessing: true,
-    checkKidnap: true,
   }
 ): boolean {
   const [deadCharacter, otherCharacter] = getCharacter(
-    (character) => state.graph.getNodeAttributes(character.id).dead === true,
+    (character) => getState(state, character.id, "dead") === true,
     character1,
     character2
   );
@@ -105,6 +104,34 @@ export function handlePreconditions(
     if (options.checkDeathWitnessing) {
       handleDeathWitnessing(state, deadCharacter, otherCharacter);
     }
+    return true;
+  }
+
+  if (getState(state, character1.id, "arrested")) {
+    state.event = `${character1.name} was arrested.`;
+    return true;
+  }
+  if (character2 && getState(state, character2.id, "arrested")) {
+    state.event = `${character2.name} was arrested.`;
+    return true;
+  }
+
+  const [shockedCharacter, believedDeadCharacter] = getCharacter(
+    (character, otherCharacter) => {
+      const thought = getState(state, character.id, "awareOf");
+      return (
+        thought !== undefined &&
+        thought.type === "killed" &&
+        thought.victimId === otherCharacter?.id &&
+        !getState(state, otherCharacter.id, "dead")
+      );
+    },
+    character1,
+    character2
+  );
+  if (shockedCharacter && believedDeadCharacter) {
+    setState(state, shockedCharacter.id, "shocked", true);
+    state.event = `${shockedCharacter.name} was shocked by the sight of ${believedDeadCharacter.name} because he/she believed him/her to be dead.`;
     return true;
   }
   return false;

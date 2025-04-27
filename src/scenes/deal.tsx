@@ -22,13 +22,13 @@ export const deal: Scene = {
     const executor = assigned[executorSlot.id];
     if (!orderer || !executor) return;
     if (handlePreconditions(state, orderer, executor)) return;
-    if (!areRelated(state, executor.id, "obeys", orderer.id)) {
-      state.event = `${executor.name} doesn't obey ${orderer.name}.`;
-      return;
-    }
     const targetIds = getRelated(state, orderer.id, "wantsToKill");
     // Order hit
     if (targetIds.length > 0) {
+      if (!areRelated(state, executor.id, "obeys", orderer.id)) {
+        state.event = `${executor.name} doesn't obey ${orderer.name}.`;
+        return;
+      }
       for (const targetId of targetIds) {
         addRelation(state, executor.id, "wantsToKill", targetId);
       }
@@ -46,8 +46,18 @@ export const deal: Scene = {
     }
     // Order heist
     if (getState(state, orderer.id, "knowsSecretCode")) {
+      if (!areRelated(state, executor.id, "obeys", orderer.id)) {
+        state.event = `${executor.name} doesn't obey ${orderer.name}.`;
+        return;
+      }
       setStates(state, [executor.id, getEavesdropperId(state)], "knowsSecretCode", true);
       state.event = `${orderer.name} ordered ${executor.name} to rob the bank and told him the secret code of the safe.`;
+      handleDealClosed();
+    }
+    // Join police
+    if (getState(state, orderer.id, "worksForPolice")) {
+      setState(state, executor.id, "worksForPolice", true);
+      state.event = `${orderer.name} persuaded ${executor.name} to join the police.`;
       handleDealClosed();
     }
 

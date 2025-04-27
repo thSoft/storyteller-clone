@@ -2,11 +2,7 @@ import { scenes } from "./scenes";
 import { getStates } from "./simulator";
 import { Character, Panel, Puzzle, Scene } from "./types";
 
-function testPuzzleWinCondition(
-  puzzle: Puzzle,
-  panels: Panel[],
-  expectedResult: boolean
-) {
+function testPuzzleWinCondition(puzzle: Puzzle, panels: Panel[], expectedResult: boolean) {
   const states = getStates(panels, puzzle.initialStoryState);
   const finalState = states[states.length - 1];
   const result = puzzle.isWinning(finalState);
@@ -38,23 +34,15 @@ function generateMoreValidSolutions(
   }
 
   // Helper function to assign characters to slots without duplicates
-  function assignCharactersToSlots(
-    slots: { id: string }[],
-    characters: string[]
-  ): Record<string, string> {
+  function assignCharactersToSlots(slots: { id: string }[], characters: string[]): Record<string, string> {
     const assignedCharacters = new Set<string>();
     const slotAssignments: Record<string, string> = {};
 
     slots.forEach((slot) => {
       // Filter out characters already assigned to other slots
-      const availableCharacters = characters.filter(
-        (character) => !assignedCharacters.has(character)
-      );
+      const availableCharacters = characters.filter((character) => !assignedCharacters.has(character));
 
-      const randomCharacter =
-        availableCharacters[
-          Math.floor(Math.random() * availableCharacters.length)
-        ];
+      const randomCharacter = availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
       slotAssignments[slot.id] = randomCharacter;
       assignedCharacters.add(randomCharacter); // Mark the character as assigned
     });
@@ -69,35 +57,24 @@ function generateMoreValidSolutions(
     // Randomly decide whether to change the scene or modify character assignments
     if (Math.random() < 0.5) {
       // Change the scene
-      const randomSceneId =
-        puzzle.scenes[Math.floor(Math.random() * puzzle.scenes.length)];
+      const randomSceneId = puzzle.scenes[Math.floor(Math.random() * puzzle.scenes.length)];
       modifiedPanel.sceneId = randomSceneId;
 
       // Update character assignments based on the new scene's slots
       const newScene = scenes[randomSceneId];
       if (newScene) {
-        modifiedPanel.slotAssignedCharacters = assignCharactersToSlots(
-          newScene.slots,
-          characters
-        );
+        modifiedPanel.slotAssignedCharacters = assignCharactersToSlots(newScene.slots, characters);
       }
     } else {
       // Modify character assignments
       const slotIds = Object.keys(modifiedPanel.slotAssignedCharacters);
       const randomSlot = slotIds[Math.floor(Math.random() * slotIds.length)];
-      const assignedCharacters = new Set(
-        Object.values(modifiedPanel.slotAssignedCharacters)
-      );
+      const assignedCharacters = new Set(Object.values(modifiedPanel.slotAssignedCharacters));
 
       // Filter out characters already assigned to other slots
-      const availableCharacters = characters.filter(
-        (character) => !assignedCharacters.has(character)
-      );
+      const availableCharacters = characters.filter((character) => !assignedCharacters.has(character));
 
-      const randomCharacter =
-        availableCharacters[
-          Math.floor(Math.random() * availableCharacters.length)
-        ];
+      const randomCharacter = availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
       modifiedPanel.slotAssignedCharacters[randomSlot] = randomCharacter;
     }
 
@@ -112,9 +89,7 @@ function generateMoreValidSolutions(
     const numModifications = Math.floor(Math.random() * maxModifications) + 1;
     for (let i = 0; i < numModifications; i++) {
       const randomIndex = Math.floor(Math.random() * modifiedSolution.length);
-      modifiedSolution[randomIndex] = modifyPanel(
-        modifiedSolution[randomIndex]
-      );
+      modifiedSolution[randomIndex] = modifyPanel(modifiedSolution[randomIndex]);
     }
 
     return modifiedSolution;
@@ -126,19 +101,11 @@ function generateMoreValidSolutions(
       const newSolution = modifySolution(knownSolution);
 
       // Check if the new solution satisfies the win condition
-      if (
-        puzzle.isWinning(
-          getStates(newSolution, puzzle.initialStoryState).pop()!
-        )
-      ) {
+      if (puzzle.isWinning(getStates(newSolution, puzzle.initialStoryState).pop()!)) {
         // Ensure the solution is unique
         if (
-          !knownValidSolutions.some((known) =>
-            isEqualSolution(known, newSolution)
-          ) &&
-          !generatedSolutions.some((generated) =>
-            isEqualSolution(generated, newSolution)
-          )
+          !knownValidSolutions.some((known) => isEqualSolution(known, newSolution)) &&
+          !generatedSolutions.some((generated) => isEqualSolution(generated, newSolution))
         ) {
           generatedSolutions.push(newSolution);
         }
@@ -155,18 +122,12 @@ function isEqualSolution(solution1: Panel[], solution2: Panel[]): boolean {
   return solution1.every(
     (panel, index) =>
       panel.sceneId === solution2[index].sceneId &&
-      isEqual(
-        panel.slotAssignedCharacters,
-        solution2[index].slotAssignedCharacters
-      )
+      isEqual(panel.slotAssignedCharacters, solution2[index].slotAssignedCharacters)
   );
 }
 
 // Helper function to compare two objects for equality
-function isEqual(
-  obj1: Record<string, string>,
-  obj2: Record<string, string>
-): boolean {
+function isEqual(obj1: Record<string, string>, obj2: Record<string, string>): boolean {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
   if (keys1.length !== keys2.length) return false;
@@ -179,35 +140,25 @@ function isEqual(
  * @param validSolutions Array of Panel[] that should satisfy the win condition.
  * @param invalidSolutions Array of Panel[] that should not satisfy the win condition.
  */
-export function runPuzzleTests(
-  puzzle: Puzzle,
-  validSolutions: Panel[][],
-  invalidSolutions: Panel[][]
-) {
+export function runPuzzleTests(puzzle: Puzzle, validSolutions: Panel[][], invalidSolutions: Panel[][]) {
   describe(`Puzzle: ${puzzle.title}`, () => {
     validSolutions.forEach((validPanels, index) => {
-      it(`should satisfy the win condition with valid solution #${
-        index + 1
-      }`, () => {
+      it(`should satisfy the win condition with valid solution #${index + 1}`, () => {
         testPuzzleWinCondition(puzzle, validPanels, true);
       });
     });
 
     invalidSolutions.forEach((invalidPanels, index) => {
-      it(`should not satisfy the win condition with invalid solution #${
-        index + 1
-      }`, () => {
+      it(`should not satisfy the win condition with invalid solution #${index + 1}`, () => {
         testPuzzleWinCondition(puzzle, invalidPanels, false);
       });
     });
 
-    generateMoreValidSolutions(puzzle, validSolutions, 100).forEach(
-      (panels, index) => {
-        it(`has another valid solution #${index + 1}`, () => {
-          console.log(panels);
-        });
-      }
-    );
+    generateMoreValidSolutions(puzzle, validSolutions, 100).forEach((panels, index) => {
+      it(`has another valid solution #${index + 1}`, () => {
+        console.log(panels);
+      });
+    });
   });
 }
 
@@ -217,7 +168,7 @@ export function panel(scene: Scene, ...assignments: Character[]): Panel {
     slotAssignedCharacters: scene.slots.reduce(
       (result, slot, index) => ({
         ...result,
-        [slot.id]: assignments[index].id,
+        [slot.id]: assignments[index]?.id,
       }),
       {} as Record<string, string>
     ),
