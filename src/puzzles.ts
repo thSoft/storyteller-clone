@@ -4,7 +4,7 @@ import { stagedDeath } from "./puzzles/stagedDeath";
 import { successfulHeist } from "./puzzles/successfulHeist";
 import { successfulHit } from "./puzzles/successfulHit";
 import { vincenzoTakesOver } from "./puzzles/vincenzoTakesOver";
-import { Chapter, EntityMap } from "./types";
+import { Book, EntityMap } from "./types";
 import { entityMap } from "./utils";
 
 export const puzzles = entityMap([
@@ -16,7 +16,7 @@ export const puzzles = entityMap([
   stagedDeath,
 ]);
 
-export const chapters: EntityMap<Chapter> = entityMap([
+export const books: EntityMap<Book> = entityMap([
   {
     id: "mafia",
     title: "Mafia",

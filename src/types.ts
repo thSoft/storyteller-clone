@@ -17,10 +17,7 @@ export type SceneSlot = Entity & {
 export type Scene = Entity & {
   name: string;
   slots: SceneSlot[];
-  outcomeLogic: (
-    state: StoryState,
-    assigned: Record<string, Character>
-  ) => void;
+  outcomeLogic: (state: StoryState, assigned: Record<string, Character>) => void;
 };
 
 export type Puzzle = Entity & {
@@ -33,7 +30,7 @@ export type Puzzle = Entity & {
   maxPanelCount: number;
 };
 
-export type Chapter = Entity & {
+export type Book = Entity & {
   title: string;
   puzzles: string[];
 };
@@ -49,7 +46,7 @@ export type PuzzleState = {
 };
 
 export type GameState = {
-  currentChapterId: string | null;
+  currentBookId: string | null;
   currentPuzzleId: string | null;
   puzzleStates: Record<string, PuzzleState>;
 };
