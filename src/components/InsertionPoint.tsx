@@ -1,22 +1,19 @@
 import React, { useRef } from "react";
 import { useDrop } from "react-dnd";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addPanelToCurrentPuzzle } from "../store/gameStateSlice";
-import { GameState, Puzzle } from "../types";
+import { Puzzle } from "../types";
 import { ItemTypes } from "./ItemTypes";
 
 export const InsertionPoint: React.FC<{
   puzzle: Puzzle;
   index: number;
-}> = ({ puzzle, index }) => {
+  panelCount: number;
+}> = ({ puzzle, index, panelCount }) => {
   const dispatch = useDispatch();
-  const panels = useSelector(
-    (state: GameState) =>
-      state.puzzleStates[state.currentPuzzleId!]?.panels ?? []
-  );
 
   const handleInsertPanel = (index: number, sceneId: string) => {
-    if (panels.length < puzzle.maxPanelCount) {
+    if (panelCount < puzzle.maxPanelCount) {
       dispatch(
         addPanelToCurrentPuzzle({
           panel: {
@@ -31,7 +28,7 @@ export const InsertionPoint: React.FC<{
 
   const [{ dragging }, drop] = useDrop(() => ({
     accept: ItemTypes.SCENE,
-    canDrop: () => panels.length < puzzle.maxPanelCount, // Disallow dropping if maxPanelCount is reached
+    canDrop: () => panelCount < puzzle.maxPanelCount, // Disallow dropping if maxPanelCount is reached
     drop: (item: { sceneId: string }) => handleInsertPanel(index, item.sceneId),
     collect: (monitor) => ({
       dragging: !!monitor.canDrop(),
@@ -46,10 +43,7 @@ export const InsertionPoint: React.FC<{
       ref={ref}
       style={{
         height: "16px",
-        backgroundColor:
-          panels.length < puzzle.maxPanelCount && dragging
-            ? "lightgreen"
-            : "transparent",
+        backgroundColor: panelCount < puzzle.maxPanelCount && dragging ? "lightgreen" : "transparent",
         margin: "4px 0",
       }}
     />

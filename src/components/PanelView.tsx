@@ -14,7 +14,8 @@ export const PanelView: React.FC<{
   panel: Panel;
   index: number;
   states: StoryState[];
-}> = ({ puzzle, panel, index, states }) => {
+  panelCount: number;
+}> = ({ puzzle, panel, index, states, panelCount }) => {
   const scene = scenes[panel.sceneId];
   const dispatch = useDispatch();
   const [showGraph, setShowGraph] = useState(false);
@@ -66,7 +67,7 @@ export const PanelView: React.FC<{
         <div>{toFirstUpper(state?.event) || "\u00A0"}</div>
         {showGraph && state && <StoryGraphView graph={state.graph} width={800} height={400} />}
       </div>
-      <InsertionPoint puzzle={puzzle} index={index + 1} />
+      <InsertionPoint puzzle={puzzle} index={index + 1} panelCount={panelCount} />
     </span>
   );
 };
