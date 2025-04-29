@@ -7,7 +7,6 @@ export const shield: Scene = {
   slots: [protectedSlot],
   outcomeLogic: (state, assigned) => {
     const protectedCharacter = assigned[protectedSlot.id];
-    if (!protectedCharacter) return;
     if (handlePreconditions(state, protectedCharacter)) return;
     setState(state, protectedCharacter.id, "protectedFromMurder", true);
     state.event = `${protectedCharacter.name} put on a bulletproof vest.`;

@@ -7,7 +7,6 @@ export const eavesdrop: Scene = {
   slots: [eavesdropperSlot],
   outcomeLogic: (state, assigned) => {
     const eavesdropper = assigned[eavesdropperSlot.id];
-    if (!eavesdropper) return;
     if (handlePreconditions(state, eavesdropper)) return;
     state.graph.setAttribute("eavesdropperId", eavesdropper.id);
     state.event = `${eavesdropper.name} eavesdropped on the following event.`;

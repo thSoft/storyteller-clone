@@ -17,6 +17,7 @@ export type CharacterPair = [string, string];
 
 export type SceneSlot = Entity & {
   label: string;
+  optional?: boolean;
 };
 
 export type Scene = Entity & {

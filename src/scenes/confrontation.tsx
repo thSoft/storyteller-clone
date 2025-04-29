@@ -11,7 +11,6 @@ export const confrontation: Scene = {
   outcomeLogic: (state, assigned) => {
     const confronter = assigned[confronterSlot.id];
     const confronted = assigned[confrontedSlot.id];
-    if (!confronter || !confronted) return;
     if (handlePreconditions(state, confronter, confronted)) return;
     const thoughtOfConfronter = getState(state, confronter.id, "awareOf");
     if (thoughtOfConfronter === undefined) {

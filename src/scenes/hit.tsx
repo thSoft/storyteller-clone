@@ -11,7 +11,6 @@ export const hit: Scene = {
   outcomeLogic: (state, assigned) => {
     const shooter = assigned[shooterSlot.id];
     const target = assigned[targetSlot.id];
-    if (!shooter || !target) return;
     if (handlePreconditions(state, shooter, target)) return;
     if (!areRelated(state, shooter.id, "wantsToKill", target.id)) {
       state.event = `${shooter.name} didn't want to kill ${target.name}.`;

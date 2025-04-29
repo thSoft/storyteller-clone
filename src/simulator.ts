@@ -22,6 +22,11 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
       return [
         ...previousStates,
         produce(previousState, (draft) => {
+          const unassignedSlots = scene.slots.filter((slot) => !slot.optional && !assigned[slot.id]);
+          if (unassignedSlots.length > 0) {
+            draft.event = "Please drag and drop characters to the slots that are not optional.";
+            return;
+          }
           draft.event = undefined;
           draft.graph = draft.graph.copy();
           scene.outcomeLogic(draft, assignedWithImpersonation);

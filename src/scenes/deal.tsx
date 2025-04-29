@@ -20,7 +20,6 @@ export const deal: Scene = {
   outcomeLogic: (state, assigned) => {
     const orderer = assigned[ordererSlot.id];
     const executor = assigned[executorSlot.id];
-    if (!orderer || !executor) return;
     if (handlePreconditions(state, orderer, executor)) return;
     const targetIds = getRelated(state, orderer.id, "wantsToKill");
     // Order hit

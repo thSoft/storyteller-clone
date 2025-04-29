@@ -8,7 +8,6 @@ export const takeover: Scene = {
   slots: [overtakerSlot],
   outcomeLogic: (state, assigned) => {
     const overtaker = assigned[overtakerSlot.id];
-    if (!overtaker) return;
     if (handlePreconditions(state, overtaker)) return;
     if (getState(state, overtaker.id, "headOfFamily")) {
       state.event = `${overtaker.name} is already the head of the family.`;

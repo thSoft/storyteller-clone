@@ -10,7 +10,6 @@ export const disclose: Scene = {
   outcomeLogic: (state, assigned) => {
     const speaker = assigned[speakerSlot.id];
     const listener = assigned[listenerSlot.id];
-    if (!speaker || !listener) return;
     if (handlePreconditions(state, speaker, listener)) return;
     const thought = getState(state, speaker.id, "awareOf");
     if (thought === undefined) {

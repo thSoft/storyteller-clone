@@ -9,7 +9,6 @@ export const heist: Scene = {
   slots: [thiefSlot],
   outcomeLogic: (state, assigned) => {
     const thief = assigned[thiefSlot.id];
-    if (!thief) return;
     if (handlePreconditions(state, thief)) return;
     if (getState(state, thief.id, "doesNotSteal")) {
       state.event = `${thief.name} doesn't want to get his hands dirty.`;

@@ -11,8 +11,7 @@ export const SlotView: React.FC<{
 }> = ({ slot, assignedCharacter, onAssignCharacter }) => {
   const [{ dragging }, drop] = useDrop(() => ({
     accept: ItemTypes.CHARACTER,
-    drop: (item: { characterId: string }) =>
-      onAssignCharacter(item.characterId),
+    drop: (item: { characterId: string }) => onAssignCharacter(item.characterId),
     collect: (monitor) => ({
       dragging: monitor.canDrop(),
     }),
@@ -21,12 +20,11 @@ export const SlotView: React.FC<{
   const ref = useRef<HTMLSpanElement>(null);
   drop(ref);
 
-  const character = assignedCharacter
-    ? characters[assignedCharacter]
-    : undefined;
+  const character = assignedCharacter ? characters[assignedCharacter] : undefined;
   return (
     <div style={{ margin: "10px 0" }}>
-      {slot.label}:{" "}
+      {slot.label}
+      {slot.optional ? " (optional)" : ""}:{" "}
       <span
         ref={ref}
         style={{

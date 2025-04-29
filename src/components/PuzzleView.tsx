@@ -16,9 +16,7 @@ export const PuzzleView: React.FC<{
   puzzle: Puzzle;
   currentPuzzleId: string;
 }> = ({ puzzle, currentPuzzleId }) => {
-  const panels = useSelector(
-    (state: GameState) => state.puzzleStates[currentPuzzleId]?.panels ?? []
-  );
+  const panels = useSelector((state: GameState) => state.puzzleStates[currentPuzzleId]?.panels ?? []);
   const states = getStates(panels, puzzle.initialStoryState);
   const puzzleScenes = resolve(puzzle.scenes, scenes);
   const puzzleCharacters = resolve(puzzle.characters, characters);
@@ -51,17 +49,13 @@ export const PuzzleView: React.FC<{
             Story ({panels.length} / {puzzle.maxPanelCount} panels):
           </h2>
           <InsertionPoint puzzle={puzzle} index={0} />
-          {panels.map((panel, index) => {
-            return (
-              <PanelView
-                puzzle={puzzle}
-                panel={panel}
-                index={index}
-                states={states}
-                key={index}
-              />
-            );
-          })}
+          {panels.length > 0 ? (
+            panels.map((panel, index) => {
+              return <PanelView puzzle={puzzle} panel={panel} index={index} states={states} key={index} />;
+            })
+          ) : (
+            <div>Please drag and drop scenes here.</div>
+          )}
         </div>
       </div>
     </DndProvider>

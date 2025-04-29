@@ -22,7 +22,6 @@ export const love: Scene = {
   outcomeLogic: (state, assigned) => {
     const lover1 = assigned[lover1Slot.id];
     const lover2 = assigned[lover2Slot.id];
-    if (!lover1 || !lover2) return;
     if (handlePreconditions(state, lover1, lover2)) return;
     if (getState(state, lover1.id, "sex") === getState(state, lover2.id, "sex")) {
       state.event = `${lover1.name} and ${lover2.name} are of the same sex.`;
