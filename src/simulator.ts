@@ -2,8 +2,9 @@ import { produce } from "immer";
 import { characters } from "./characters";
 import { scenes } from "./scenes";
 import { eavesdrop } from "./scenes/eavesdrop";
+import { getRelated } from "./scenes/sceneUtils";
 import { StoryState } from "./storyState";
-import { Panel } from "./types";
+import { Character, CharacterWithImpersonation, Panel } from "./types";
 
 function resolveMap(slotAssignedCharacters: Record<string, string>) {
   return Object.fromEntries(
@@ -17,12 +18,13 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
     const scene = scenes[panel.sceneId];
     if (scene) {
       const assigned = resolveMap(panel.slotAssignedCharacters);
+      const assignedWithImpersonation = handleImpersonation(previousState, assigned);
       return [
         ...previousStates,
         produce(previousState, (draft) => {
           draft.event = undefined;
           draft.graph = draft.graph.copy();
-          scene.outcomeLogic(draft, assigned);
+          scene.outcomeLogic(draft, assignedWithImpersonation);
 
           if (scene.id !== eavesdrop.id) {
             draft.graph.setAttribute("eavesdropperId", undefined);
@@ -34,4 +36,21 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
     }
   }
   return panels.reduce(computeState, [initialState]);
+}
+
+function handleImpersonation(
+  state: StoryState,
+  assigned: Record<string, Character>
+): Record<string, CharacterWithImpersonation> {
+  const result = Object.entries(assigned)
+    .filter(([_, value]) => value !== undefined)
+    .map(([slotId, character]) => {
+      const impersonatedIds = getRelated(state, character.id, "impersonates");
+      const actually = character;
+      const seemingly = impersonatedIds.length > 0 ? characters[impersonatedIds[0]] : character;
+      const name =
+        impersonatedIds.length > 0 ? `seemingly ${seemingly.name} (actually ${character.name})` : character.name;
+      return [slotId, { ...character, seemingly, actually, name }];
+    });
+  return Object.fromEntries(result);
 }

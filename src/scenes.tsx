@@ -5,6 +5,7 @@ import { disclose } from "./scenes/disclose";
 import { eavesdrop } from "./scenes/eavesdrop";
 import { heist } from "./scenes/heist";
 import { hit } from "./scenes/hit";
+import { impersonate } from "./scenes/impersonate";
 import { love } from "./scenes/love";
 import { shield } from "./scenes/shield";
 import { takeover } from "./scenes/takeover";
@@ -22,6 +23,7 @@ export const scenes: EntityMap<Scene> = entityMap([
   confrontation,
   shield,
   takeover,
+  impersonate,
 ]);
 
 export const mafiaScenes = [love, death, deal, hit, disclose, heist, eavesdrop, confrontation, shield, takeover].map(

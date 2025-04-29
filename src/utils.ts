@@ -8,9 +8,10 @@ export function entityMap<T extends Entity>(items: T[]): EntityMap<T> {
   return result;
 }
 
-export function resolve<T extends Entity>(
-  ids: string[],
-  map: EntityMap<T>
-): T[] {
+export function resolve<T extends Entity>(ids: string[], map: EntityMap<T>): T[] {
   return ids.map((id) => map[id]);
+}
+
+export function toFirstUpper(string: string | undefined): string {
+  return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
 }

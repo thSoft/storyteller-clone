@@ -5,7 +5,7 @@ import { eavesdrop } from "../scenes/eavesdrop";
 import { love } from "../scenes/love";
 import { panel, runPuzzleTests } from "../testUtils";
 import { Panel } from "../types";
-import { disownedChild } from "./disownedChild";
+import { disownment } from "./disownedChild";
 
 const validSolutions = [
   [panel(eavesdrop, donMarcello), panel(love, lucia, alessio), panel(confrontation, donMarcello, lucia)],
@@ -16,4 +16,4 @@ const validSolutions = [
 
 const invalidSolutions: Panel[][] = [[]];
 
-runPuzzleTests(disownedChild, validSolutions, invalidSolutions);
+runPuzzleTests(disownment, validSolutions, invalidSolutions);

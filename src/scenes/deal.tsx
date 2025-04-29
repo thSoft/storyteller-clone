@@ -25,12 +25,14 @@ export const deal: Scene = {
     const targetIds = getRelated(state, orderer.id, "wantsToKill");
     // Order hit
     if (targetIds.length > 0) {
-      if (!areRelated(state, executor.id, "obeys", orderer.id)) {
+      if (!areRelated(state, executor.seemingly.id, "obeys", orderer.id)) {
         state.event = `${executor.name} doesn't obey ${orderer.name}.`;
         return;
       }
-      for (const targetId of targetIds) {
-        addRelation(state, executor.id, "wantsToKill", targetId);
+      if (executor.actually.id === executor.seemingly.id) {
+        for (const targetId of targetIds) {
+          addRelation(state, executor.id, "wantsToKill", targetId);
+        }
       }
       const targetNames = targetIds
         .map((id) => characters[id]?.name)
@@ -63,10 +65,10 @@ export const deal: Scene = {
 
     function handleDealClosed() {
       addRelation(state, executor.id, "isBoundByDealWith", orderer.id);
-      setState(state, getEavesdropperId(state), "awareOf", {
+      setStates(state, [orderer.id, executor.id, getEavesdropperId(state)], "awareOf", {
         type: "deal",
         ordererId: orderer.id,
-        executorId: executor.id,
+        executorId: executor.seemingly.id,
       });
     }
   },

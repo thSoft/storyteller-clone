@@ -8,6 +8,11 @@ export type Character = Entity & {
   name: string;
 };
 
+export type CharacterWithImpersonation = Character & {
+  seemingly: Character;
+  actually: Character;
+};
+
 export type CharacterPair = [string, string];
 
 export type SceneSlot = Entity & {
@@ -17,7 +22,7 @@ export type SceneSlot = Entity & {
 export type Scene = Entity & {
   name: string;
   slots: SceneSlot[];
-  outcomeLogic: (state: StoryState, assigned: Record<string, Character>) => void;
+  outcomeLogic: (state: StoryState, assigned: Record<string, CharacterWithImpersonation>) => void;
 };
 
 export type Puzzle = Entity & {

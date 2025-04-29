@@ -4,6 +4,7 @@ import { scenes } from "../scenes";
 import { removePanelFromCurrentPuzzle, setSlotCharacter } from "../store/gameStateSlice";
 import { StoryState } from "../storyState";
 import { Panel, Puzzle, SceneSlot } from "../types";
+import { toFirstUpper } from "../utils";
 import { InsertionPoint } from "./InsertionPoint";
 import { SlotView } from "./SlotView";
 import { StoryGraphView } from "./StoryGraphView";
@@ -37,6 +38,7 @@ export const PanelView: React.FC<{
     setShowGraph(true);
   };
 
+  const state = states[index + 1];
   return (
     <span>
       <div
@@ -61,8 +63,8 @@ export const PanelView: React.FC<{
             onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
           />
         ))}
-        <div>{states[index + 1]?.event || "\u00A0"}</div>
-        {showGraph && states[index + 1] && <StoryGraphView graph={states[index + 1].graph} width={800} height={400} />}
+        <div>{toFirstUpper(state?.event) || "\u00A0"}</div>
+        {showGraph && state && <StoryGraphView graph={state.graph} width={800} height={400} />}
       </div>
       <InsertionPoint puzzle={puzzle} index={index + 1} />
     </span>

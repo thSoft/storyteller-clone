@@ -84,7 +84,7 @@ export const StoryGraphView: React.FC<StoryGraphViewProps> = ({ graph, width, he
     // Draw edges
     // First, group edges by source and target
     const edgeGroups = new Map<string, string[]>();
-    layoutGraph.forEachEdge((edge, attributes, source, target) => {
+    layoutGraph.forEachEdge((edge, _, source, target) => {
       const key = `${source}-${target}`;
       const originalAttributes = graph.getEdgeAttributes(edge);
       const edgeType = originalAttributes.type;
@@ -97,7 +97,7 @@ export const StoryGraphView: React.FC<StoryGraphViewProps> = ({ graph, width, he
     });
 
     // Draw edges and consolidated labels
-    layoutGraph.forEachEdge((edge, attributes, source, target) => {
+    layoutGraph.forEachEdge((_0, _1, source, target) => {
       const sourcePos = layoutGraph.getNodeAttributes(source) as NodePosition;
       const targetPos = layoutGraph.getNodeAttributes(target) as NodePosition;
 
@@ -166,7 +166,7 @@ export const StoryGraphView: React.FC<StoryGraphViewProps> = ({ graph, width, he
     });
 
     // Draw nodes
-    layoutGraph.forEachNode((node, attributes) => {
+    layoutGraph.forEachNode((node) => {
       const pos = layoutGraph.getNodeAttributes(node) as NodePosition;
 
       // Scale and center the coordinates

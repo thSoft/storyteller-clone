@@ -12,7 +12,14 @@ import {
 } from "./characters";
 import { addRelation, setState } from "./scenes/sceneUtils";
 
-export type RelationType = "wantsToKill" | "obeys" | "loves" | "angryAt" | "isBoundByDealWith" | "childOf";
+export type RelationType =
+  | "wantsToKill"
+  | "obeys"
+  | "loves"
+  | "angryAt"
+  | "isBoundByDealWith"
+  | "childOf"
+  | "impersonates";
 
 export interface EdgeAttributes {
   type: RelationType;
@@ -35,7 +42,8 @@ export interface NodeAttributes {
   headOfFamily?: boolean;
   successors?: string[];
   disowned?: boolean;
-  shocked?: boolean;
+  shockedByGun?: boolean;
+  shockedByAlive?: boolean;
   sex?: "male" | "female";
 }
 

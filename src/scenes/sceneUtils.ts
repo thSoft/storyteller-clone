@@ -1,4 +1,4 @@
-import { NodeAttributes, RelationType, StoryState } from "../storyState";
+import { EdgeAttributes, NodeAttributes, RelationType, StoryState } from "../storyState";
 import { Character } from "../types";
 
 export function addRelation(
@@ -12,6 +12,26 @@ export function addRelation(
     state.graph.addUndirectedEdge(characterId1, characterId2, { type });
   } else {
     state.graph.addDirectedEdge(characterId1, characterId2, { type });
+  }
+}
+
+export function removeRelation(
+  state: StoryState,
+  characterId1: string,
+  type: RelationType,
+  characterId2: string,
+  undirected: boolean = false
+) {
+  if (undirected) {
+    state.graph.forEachUndirectedEdge(characterId1, characterId2, removeEdge);
+  } else {
+    state.graph.forEachDirectedEdge(characterId1, characterId2, removeEdge);
+  }
+
+  function removeEdge(edge: string, edgeAttributes: EdgeAttributes) {
+    if (edgeAttributes.type === type) {
+      state.graph.dropEdge(edge);
+    }
   }
 }
 
@@ -86,6 +106,12 @@ export function getRelated(state: StoryState, characterId: string, type: Relatio
     .filter((target) => target !== undefined);
 }
 
+export function getRelatedBy(state: StoryState, characterId: string, type: RelationType): string[] {
+  return state.graph
+    .mapInEdges(characterId, (_0, edgeAttributes, source) => (edgeAttributes.type === type ? source : undefined))
+    .filter((source) => source !== undefined);
+}
+
 export function handlePreconditions(
   state: StoryState,
   character1: Character,
@@ -130,7 +156,7 @@ export function handlePreconditions(
     character2
   );
   if (shockedCharacter && believedDeadCharacter) {
-    setState(state, shockedCharacter.id, "shocked", true);
+    setState(state, shockedCharacter.id, "shockedByAlive", true);
     state.event = `${shockedCharacter.name} was shocked by the sight of ${believedDeadCharacter.name} because he/she believed him/her to be dead.`;
     return true;
   }
