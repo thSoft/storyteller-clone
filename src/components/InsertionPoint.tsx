@@ -46,6 +46,8 @@ export const InsertionPoint: React.FC<{
         backgroundColor: panelCount < puzzle.maxPanelCount && dragging ? "lightgreen" : "transparent",
         margin: "4px 0",
       }}
-    />
+    >
+      {panelCount === 0 && "Please drag and drop scenes here."}
+    </div>
   );
 };

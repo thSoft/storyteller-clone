@@ -49,22 +49,18 @@ export const PuzzleView: React.FC<{
             Story ({panels.length} / {puzzle.maxPanelCount} panels):
           </h2>
           <InsertionPoint puzzle={puzzle} index={0} panelCount={panels.length} />
-          {panels.length > 0 ? (
-            panels.map((panel, index) => {
-              return (
-                <PanelView
-                  puzzle={puzzle}
-                  panel={panel}
-                  index={index}
-                  states={states}
-                  key={index}
-                  panelCount={panels.length}
-                />
-              );
-            })
-          ) : (
-            <div>Please drag and drop scenes here.</div>
-          )}
+          {panels.map((panel, index) => {
+            return (
+              <PanelView
+                puzzle={puzzle}
+                panel={panel}
+                index={index}
+                states={states}
+                key={index}
+                panelCount={panels.length}
+              />
+            );
+          })}
         </div>
       </div>
     </DndProvider>
