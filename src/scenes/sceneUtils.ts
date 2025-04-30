@@ -1,5 +1,74 @@
-import { EdgeAttributes, NodeAttributes, RelationType, StoryState } from "../storyState";
+import { EdgeAttributes, GraphAttributes, NodeAttributes, RelationType, StoryState } from "../storyState";
 import { Character } from "../types";
+
+// Helper functions
+
+export function getCharacter(
+  predicate: (character: Character, otherCharacter: Character | undefined) => boolean,
+  character1: Character | undefined,
+  character2?: Character
+): [Character | undefined, Character | undefined] {
+  if (character1 && predicate(character1, character2)) {
+    return [character1, character2];
+  } else if (character2 && predicate(character2, character1)) {
+    return [character2, character1];
+  }
+  return [undefined, undefined];
+}
+
+// Read state
+
+export function getState<AttributeName extends keyof NodeAttributes>(
+  state: StoryState,
+  characterId: string,
+  name: AttributeName
+): NodeAttributes[AttributeName] {
+  return state.graph.getNodeAttribute(characterId, name);
+}
+
+export function areRelated(
+  state: StoryState,
+  characterId1: string,
+  type: RelationType,
+  characterId2: string,
+  undirected: boolean = false
+) {
+  if (undirected) {
+    return state.graph.someUndirectedEdge(
+      characterId1,
+      characterId2,
+      (_, edgeAttributes) => edgeAttributes.type === type
+    );
+  } else {
+    return state.graph.someDirectedEdge(
+      characterId1,
+      characterId2,
+      (_, edgeAttributes) => edgeAttributes.type === type
+    );
+  }
+}
+
+export function getRelated(state: StoryState, characterId: string, type: RelationType): string[] {
+  return state.graph
+    .mapOutEdges(characterId, (_0, edgeAttributes, _1, target) => (edgeAttributes.type === type ? target : undefined))
+    .filter((target) => target !== undefined);
+}
+
+export function getRelatedBy(state: StoryState, characterId: string, type: RelationType): string[] {
+  return state.graph
+    .mapInEdges(characterId, (_0, edgeAttributes, source) => (edgeAttributes.type === type ? source : undefined))
+    .filter((source) => source !== undefined);
+}
+
+// Write state
+
+export function setGlobalState<AttributeName extends keyof GraphAttributes>(
+  state: StoryState,
+  name: AttributeName,
+  value: GraphAttributes[AttributeName]
+) {
+  state.graph.setAttribute(name, value);
+}
 
 export function addRelation(
   state: StoryState,
@@ -57,60 +126,7 @@ export function setStates<AttributeName extends keyof NodeAttributes>(
   });
 }
 
-export function getState<AttributeName extends keyof NodeAttributes>(
-  state: StoryState,
-  characterId: string,
-  name: AttributeName
-): NodeAttributes[AttributeName] {
-  return state.graph.getNodeAttribute(characterId, name);
-}
-
-export function areRelated(
-  state: StoryState,
-  characterId1: string,
-  type: RelationType,
-  characterId2: string,
-  undirected: boolean = false
-) {
-  if (undirected) {
-    return state.graph.someUndirectedEdge(
-      characterId1,
-      characterId2,
-      (_, edgeAttributes) => edgeAttributes.type === type
-    );
-  } else {
-    return state.graph.someDirectedEdge(
-      characterId1,
-      characterId2,
-      (_, edgeAttributes) => edgeAttributes.type === type
-    );
-  }
-}
-
-export function getCharacter(
-  predicate: (character: Character, otherCharacter: Character | undefined) => boolean,
-  character1: Character | undefined,
-  character2?: Character
-): [Character | undefined, Character | undefined] {
-  if (character1 && predicate(character1, character2)) {
-    return [character1, character2];
-  } else if (character2 && predicate(character2, character1)) {
-    return [character2, character1];
-  }
-  return [undefined, undefined];
-}
-
-export function getRelated(state: StoryState, characterId: string, type: RelationType): string[] {
-  return state.graph
-    .mapOutEdges(characterId, (_0, edgeAttributes, _1, target) => (edgeAttributes.type === type ? target : undefined))
-    .filter((target) => target !== undefined);
-}
-
-export function getRelatedBy(state: StoryState, characterId: string, type: RelationType): string[] {
-  return state.graph
-    .mapInEdges(characterId, (_0, edgeAttributes, source) => (edgeAttributes.type === type ? source : undefined))
-    .filter((source) => source !== undefined);
-}
+// Common scene logic
 
 export function handlePreconditions(
   state: StoryState,

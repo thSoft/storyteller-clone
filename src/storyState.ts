@@ -10,7 +10,7 @@ import {
   nico,
   vincenzo,
 } from "./characters";
-import { addRelation, setState } from "./scenes/sceneUtils";
+import { addRelation, setGlobalState, setState } from "./scenes/sceneUtils";
 
 export type RelationType =
   | "wantsToKill"
@@ -78,7 +78,7 @@ export function getInitialStoryState(): StoryState {
     graph,
   };
   // Initialize the initial state
-  graph.setAttribute("personWithGun", donMarcello.id);
+  setGlobalState(result, "personWithGun", donMarcello.id);
   setState(result, donMarcello.id, "headOfFamily", true);
   setState(result, donMarcello.id, "doesNotKill", true);
   addRelation(result, donMarcello.id, "wantsToKill", alessio.id);

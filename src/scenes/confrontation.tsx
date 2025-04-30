@@ -1,6 +1,6 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { getCharacter, getRelated, getState, handlePreconditions, setState } from "./sceneUtils";
+import { getCharacter, getRelated, getState, handlePreconditions, setGlobalState, setState } from "./sceneUtils";
 
 export const confronterSlot = { id: "confronter", label: "Confronter" };
 export const confrontedSlot = { id: "confronted", label: "Confronted" };
@@ -24,7 +24,7 @@ export const confrontation: Scene = {
             state.graph.getAttribute("personWithGun") === confronted.id &&
             getState(state, confronter.id, "worksForPolice")
           ) {
-            state.graph.setAttribute("personWithGun", confronter.id);
+            setGlobalState(state, "personWithGun", confronter.id);
             setState(state, confronted.id, "awareOf", {
               type: "confiscated",
               confiscatorId: confronter.id,

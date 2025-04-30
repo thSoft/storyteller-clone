@@ -1,6 +1,6 @@
 import { Thought } from "../storyState";
 import { Scene } from "../types";
-import { getEavesdropperId, getState, handlePreconditions, setStates } from "./sceneUtils";
+import { getEavesdropperId, getState, handlePreconditions, setGlobalState, setStates } from "./sceneUtils";
 
 export const thiefSlot = { id: "thief", label: "Thief" };
 export const heist: Scene = {
@@ -18,7 +18,7 @@ export const heist: Scene = {
       state.event = `${thief.name} didn't know the secret code of the safe.`;
       return;
     }
-    state.graph.setAttribute("bankRobbed", true);
+    setGlobalState(state, "bankRobbed", true);
     const thought: Thought = {
       type: "robbed",
       thiefId: thief.id,

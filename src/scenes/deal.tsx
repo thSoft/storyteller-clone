@@ -7,6 +7,7 @@ import {
   getRelated,
   getState,
   handlePreconditions,
+  setGlobalState,
   setState,
   setStates,
 } from "./sceneUtils";
@@ -38,7 +39,7 @@ export const deal: Scene = {
         .filter((name) => name !== undefined)
         .join(", ");
       if (state.graph.getAttribute("personWithGun") === orderer.id) {
-        state.graph.setAttribute("personWithGun", executor.id);
+        setGlobalState(state, "personWithGun", executor.id);
         state.event = `${orderer.name} ordered ${executor.name} to kill ${targetNames} and handed him a gun in a violin case.`;
       } else {
         state.event = `${orderer.name} ordered ${executor.name} to kill ${targetNames} and told him to get a gun.`;

@@ -2,7 +2,7 @@ import { produce } from "immer";
 import { characters } from "./characters";
 import { scenes } from "./scenes";
 import { eavesdrop } from "./scenes/eavesdrop";
-import { getRelated } from "./scenes/sceneUtils";
+import { getRelated, setGlobalState } from "./scenes/sceneUtils";
 import { StoryState } from "./storyState";
 import { Character, CharacterWithImpersonation, Panel } from "./types";
 
@@ -32,7 +32,7 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
           scene.outcomeLogic(draft, assignedWithImpersonation);
 
           if (scene.id !== eavesdrop.id) {
-            draft.graph.setAttribute("eavesdropperId", undefined);
+            setGlobalState(draft, "eavesdropperId", undefined);
           }
         }),
       ];
