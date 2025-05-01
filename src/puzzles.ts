@@ -1,4 +1,5 @@
 import { entityMap, EntityMap } from "./entities";
+import { arrestedForMurder } from "./puzzles/arrestedForMurder";
 import { disownment } from "./puzzles/disownedChild";
 import { failedHit } from "./puzzles/failedHit";
 import { outsmarted } from "./puzzles/outsmarted";
@@ -16,6 +17,7 @@ export const puzzles = entityMap([
   vincenzoTakesOver,
   stagedDeath,
   outsmarted,
+  arrestedForMurder,
 ]);
 
 export const books: EntityMap<Book> = entityMap([
@@ -30,6 +32,7 @@ export const books: EntityMap<Book> = entityMap([
       outsmarted.id,
       stagedDeath.id,
       vincenzoTakesOver.id,
+      arrestedForMurder.id,
     ],
   },
 ]);
