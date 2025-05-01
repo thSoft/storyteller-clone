@@ -13,4 +13,5 @@ export const stagedDeath: Puzzle = {
   isWinning: (state) => state.getState(donMarcello.id, "shockedByAlive") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 5,
+  dependsOn: outsmarted.id,
 };

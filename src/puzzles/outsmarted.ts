@@ -13,4 +13,5 @@ export const outsmarted: Puzzle = {
   isWinning: (state) => state.getState(donMarcello.id, "shockedByGun") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
+  dependsOn: disownment.id,
 };

@@ -14,4 +14,5 @@ export const successfulHeist: Puzzle = {
     state.getGlobalState("bankRobber")?.id === bruno.id && state.getState(bruno.id, "rewarded") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
+  dependsOn: successfulHit.id,
 };

@@ -1,6 +1,4 @@
-import { alessio, inspectorRinaldi, vincenzo } from "../characters";
-import { confrontation } from "../scenes/confrontation";
-import { eavesdrop } from "../scenes/eavesdrop";
+import { alessio, vincenzo } from "../characters";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
 import { successfulHeist } from "./successfulHeist";
@@ -8,10 +6,12 @@ import { successfulHeist } from "./successfulHeist";
 export const failedHit: Puzzle = {
   id: "failedHit",
   title: "Failed Hit",
-  prompt: "Fired for Failed Hit",
-  scenes: [...successfulHeist.scenes, eavesdrop.id, confrontation.id],
-  characters: [...successfulHeist.characters, inspectorRinaldi.id],
-  isWinning: (state) => !state.getState(alessio.id, "dead") && state.getState(vincenzo.id, "fired") === true,
+  prompt: "Failed Hit",
+  scenes: [...successfulHeist.scenes],
+  characters: [...successfulHeist.characters],
+  isWinning: (state) =>
+    state.getState(alessio.id, "dead") === false && state.getState(vincenzo.id, "promoted") === false,
   initialStoryState: getInitialStoryState(),
-  maxPanelCount: 4,
+  maxPanelCount: 3,
+  dependsOn: successfulHeist.id,
 };

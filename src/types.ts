@@ -25,6 +25,7 @@ export type Puzzle = Entity & {
   isWinning: (state: StateProxy) => boolean;
   initialStoryState: StoryState;
   maxPanelCount: number;
+  dependsOn?: string;
 };
 
 export type Book = Entity & {

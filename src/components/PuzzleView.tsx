@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { characters } from "../characters";
 import { resolve } from "../entities";
 import { books } from "../puzzles";
-import { isPuzzleWon } from "../puzzleUtils";
+import { getPuzzleTooltip, isPuzzleEnabled, isPuzzleWon } from "../puzzleUtils";
 import { scenes } from "../scenes";
 import { getStates } from "../simulator";
 import { setCurrentPuzzleId } from "../store/gameStateSlice";
@@ -20,6 +20,7 @@ export const PuzzleView: React.FC<{
   currentPuzzleId: string;
 }> = ({ puzzle, currentPuzzleId }) => {
   const dispatch = useDispatch();
+  const gameState = useSelector((state: GameState) => state);
   const panels = useSelector((state: GameState) => state.puzzleStates[currentPuzzleId]?.panels ?? []);
   const currentBookId = useSelector((state: GameState) => state.currentBookId);
   const states = getStates(panels, puzzle.initialStoryState);
@@ -31,6 +32,10 @@ export const PuzzleView: React.FC<{
   const hasPreviousPuzzle = currentPuzzleIndex > 0;
   const hasNextPuzzle = currentPuzzleIndex < (currentBook?.puzzles.length ?? 0) - 1;
 
+  const nextPuzzleId = hasNextPuzzle && currentBook ? currentBook.puzzles[currentPuzzleIndex + 1] : null;
+  const isNextPuzzleEnabled = nextPuzzleId ? isPuzzleEnabled(nextPuzzleId, gameState) : false;
+  const nextPuzzleTooltip = nextPuzzleId ? getPuzzleTooltip(nextPuzzleId, gameState) : undefined;
+
   const handlePreviousPuzzle = () => {
     if (hasPreviousPuzzle && currentBook) {
       dispatch(setCurrentPuzzleId(currentBook.puzzles[currentPuzzleIndex - 1]));
@@ -38,7 +43,7 @@ export const PuzzleView: React.FC<{
   };
 
   const handleNextPuzzle = () => {
-    if (hasNextPuzzle && currentBook) {
+    if (hasNextPuzzle && currentBook && isNextPuzzleEnabled) {
       dispatch(setCurrentPuzzleId(currentBook.puzzles[currentPuzzleIndex + 1]));
     }
   };
@@ -52,7 +57,12 @@ export const PuzzleView: React.FC<{
         <button onClick={() => dispatch(setCurrentPuzzleId(null))} style={{ marginLeft: "1rem" }}>
           ↑ Back to Puzzle List
         </button>
-        <button onClick={handleNextPuzzle} disabled={!hasNextPuzzle} style={{ marginLeft: "1rem" }}>
+        <button
+          onClick={handleNextPuzzle}
+          disabled={!isNextPuzzleEnabled}
+          style={{ marginLeft: "1rem" }}
+          title={nextPuzzleTooltip}
+        >
           Next Puzzle →
         </button>
       </div>

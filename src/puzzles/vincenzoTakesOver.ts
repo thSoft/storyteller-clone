@@ -2,6 +2,7 @@ import { mafiaCharacters, vincenzo } from "../characters";
 import { mafiaScenes } from "../scenes";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
+import { stagedDeath } from "./stagedDeath";
 
 export const vincenzoTakesOver: Puzzle = {
   id: "vincenzoTakesOver",
@@ -12,4 +13,5 @@ export const vincenzoTakesOver: Puzzle = {
   isWinning: (state) => state.getState(vincenzo.id, "headOfFamily") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
+  dependsOn: stagedDeath.id,
 };

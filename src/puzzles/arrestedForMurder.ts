@@ -2,6 +2,7 @@ import { alessio, mafiaCharacters, vincenzo } from "../characters";
 import { mafiaScenes } from "../scenes";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
+import { vincenzoTakesOver } from "./vincenzoTakesOver";
 
 export const arrestedForMurder: Puzzle = {
   id: "arrestedForMurder",
@@ -13,4 +14,5 @@ export const arrestedForMurder: Puzzle = {
     state.areRelated(vincenzo.id, "killed", alessio.id) && state.getState(vincenzo.id, "arrested") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
+  dependsOn: vincenzoTakesOver.id,
 };

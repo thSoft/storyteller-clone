@@ -1,9 +1,27 @@
+import { puzzles } from "./puzzles";
 import { getStates } from "./simulator";
 import { createStateProxy } from "./stateProxy";
-import { Panel, Puzzle } from "./types";
+import { GameState, Panel, Puzzle } from "./types";
 
 export function isPuzzleWon(puzzle: Puzzle, panels: Panel[]): boolean {
   const states = getStates(panels, puzzle.initialStoryState);
   const lastState = states[states.length - 1];
   return puzzle.isWinning(createStateProxy(lastState));
+}
+
+export function isPuzzleEnabled(puzzleId: string, gameState: GameState): boolean {
+  const puzzle = puzzles[puzzleId];
+  if (!puzzle.dependsOn) return true;
+  return gameState.puzzleStates[puzzle.dependsOn]?.completed === true;
+}
+
+export function getPuzzleTooltip(puzzleId: string, gameState: GameState): string | undefined {
+  const puzzle = puzzles[puzzleId];
+  if (!puzzle.dependsOn) return undefined;
+  const isEnabled = isPuzzleEnabled(puzzleId, gameState);
+  if (!isEnabled) {
+    const dependencyPuzzle = puzzles[puzzle.dependsOn];
+    return `Complete "${dependencyPuzzle.title}" first`;
+  }
+  return undefined;
 }
