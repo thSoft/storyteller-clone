@@ -1,10 +1,11 @@
-import { produce } from "immer";
 import { characters } from "./characters";
 import { scenes } from "./scenes";
 import { eavesdrop } from "./scenes/eavesdrop";
-import { getRelated, setGlobalState } from "./scenes/sceneUtils";
+import { createStateProxy } from "./stateProxy";
 import { StoryState } from "./storyState";
-import { Character, CharacterWithImpersonation, Panel } from "./types";
+import { Panel } from "./types";
+
+// Public functions
 
 function resolveMap(slotAssignedCharacters: Record<string, string>) {
   return Object.fromEntries(
@@ -18,44 +19,37 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
     const scene = scenes[panel.sceneId];
     if (scene) {
       const assigned = resolveMap(panel.slotAssignedCharacters);
-      const assignedWithImpersonation = handleImpersonation(previousState, assigned);
-      return [
-        ...previousStates,
-        produce(previousState, (draft) => {
-          const unassignedSlots = scene.slots.filter((slot) => !slot.optional && !assigned[slot.id]);
-          if (unassignedSlots.length > 0) {
-            draft.event = "Please drag and drop characters to the slots that are not optional.";
-            return;
-          }
-          draft.event = undefined;
-          draft.graph = draft.graph.copy();
-          scene.outcomeLogic(draft, assignedWithImpersonation);
+      const newState = previousState.copy();
+      // Deep copy believedStoryState attributes
+      newState.forEachNode((node) => {
+        const believedState = newState.getNodeAttribute(node, "believedStoryState");
+        if (believedState) {
+          newState.setNodeAttribute(node, "believedStoryState", believedState.copy());
+        }
+      });
+      const state = createStateProxy(newState);
+      const unassignedSlots = scene.slots.filter((slot) => !slot.optional && !assigned[slot.id]);
+      if (unassignedSlots.length > 0) {
+        state.setGlobalState("event", "Please drag and drop characters to the slots that are not optional.");
+        return [...previousStates, newState];
+      }
 
-          if (scene.id !== eavesdrop.id) {
-            setGlobalState(draft, "eavesdropperId", undefined);
-          }
-        }),
-      ];
+      const participantIds = [
+        ...Object.values(assigned).map((character) => character.id),
+        state.getGlobalState("eavesdropper")?.id,
+      ].filter((id) => id !== undefined);
+      const stateWithParticipants = createStateProxy(newState, participantIds);
+
+      state.setGlobalState("event", undefined);
+      scene.outcomeLogic(stateWithParticipants, assigned);
+
+      if (scene.id !== eavesdrop.id) {
+        state.setGlobalState("eavesdropper", undefined);
+      }
+      return [...previousStates, newState];
     } else {
       return previousStates;
     }
   }
   return panels.reduce(computeState, [initialState]);
-}
-
-function handleImpersonation(
-  state: StoryState,
-  assigned: Record<string, Character>
-): Record<string, CharacterWithImpersonation> {
-  const result = Object.entries(assigned)
-    .filter(([_, value]) => value !== undefined)
-    .map(([slotId, character]) => {
-      const impersonatedIds = getRelated(state, character.id, "impersonates");
-      const actually = character;
-      const seemingly = impersonatedIds.length > 0 ? characters[impersonatedIds[0]] : character;
-      const name =
-        impersonatedIds.length > 0 ? `seemingly ${seemingly.name} (actually ${character.name})` : character.name;
-      return [slotId, { ...character, seemingly, actually, name }];
-    });
-  return Object.fromEntries(result);
 }

@@ -1,5 +1,5 @@
 import { Scene } from "../types";
-import { handlePreconditions, setGlobalState } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 export const eavesdropperSlot = { id: "eavesdropper", label: "Eavesdropper" };
 
@@ -10,7 +10,7 @@ export const eavesdrop: Scene = {
   outcomeLogic: (state, assigned) => {
     const eavesdropper = assigned[eavesdropperSlot.id];
     if (handlePreconditions(state, eavesdropper)) return;
-    setGlobalState(state, "eavesdropperId", eavesdropper.id);
-    state.event = `${eavesdropper.name} eavesdropped on the following event.`;
+    state.setGlobalState("eavesdropper", eavesdropper);
+    state.setGlobalState("event", `${eavesdropper.name} eavesdropped on the following event.`);
   },
 };

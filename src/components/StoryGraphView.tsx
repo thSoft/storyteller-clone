@@ -1,10 +1,11 @@
+import Graph from "graphology";
 import { circular } from "graphology-layout";
 import { useEffect, useRef } from "react";
 import { characters } from "../characters";
-import { StoryGraph } from "../storyState";
+import { StoryState } from "../storyState";
 
 interface StoryGraphViewProps {
-  graph: StoryGraph;
+  graph: StoryState;
   width: number;
   height: number;
 }
@@ -187,7 +188,7 @@ export const StoryGraphView: React.FC<StoryGraphViewProps> = ({ graph, width, he
         characters[node]?.name || node,
         "",
         ...Object.entries(originalAttributes)
-          .filter(([_, value]) => value !== undefined && value !== null)
+          .filter(([_, value]) => value !== undefined && value !== null && !(value instanceof Graph))
           .map(([key, value]) => `${key}: ${JSON.stringify(value)}`),
       ];
 

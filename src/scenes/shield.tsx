@@ -1,5 +1,5 @@
 import { Scene } from "../types";
-import { handlePreconditions, setState } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 export const protectedSlot = { id: "protected", label: "Protected" };
 export const shield: Scene = {
   id: "shield",
@@ -8,7 +8,7 @@ export const shield: Scene = {
   outcomeLogic: (state, assigned) => {
     const protectedCharacter = assigned[protectedSlot.id];
     if (handlePreconditions(state, protectedCharacter)) return;
-    setState(state, protectedCharacter.id, "protectedFromMurder", true);
-    state.event = `${protectedCharacter.name} put on a bulletproof vest.`;
+    state.setState(protectedCharacter.id, "protectedFromMurder", true);
+    state.setGlobalState("event", `${protectedCharacter.name} put on a bulletproof vest.`);
   },
 };

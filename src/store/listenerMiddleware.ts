@@ -1,6 +1,6 @@
 import { createListenerMiddleware } from "@reduxjs/toolkit";
+import { isPuzzleWon as checkPuzzleWon } from "../puzzleUtils";
 import { puzzles } from "../puzzles";
-import { getStates } from "../simulator";
 import type { GameState } from "../types";
 import { markPuzzleCompleted } from "./gameStateSlice";
 
@@ -13,14 +13,14 @@ listenerMiddleware.startListening({
   effect: async (_, listenerApi) => {
     const nextState = listenerApi.getState() as GameState;
     for (const puzzleId of Object.keys(nextState.puzzleStates)) {
-      if (isPuzzleWon(nextState, puzzleId)) {
+      if (checkPuzzleState(nextState, puzzleId)) {
         listenerApi.dispatch(markPuzzleCompleted({ puzzleId }));
       }
     }
   },
 });
 
-function isPuzzleWon(state: GameState, puzzleId: string): boolean {
+function checkPuzzleState(state: GameState, puzzleId: string): boolean {
   const puzzleState = state.puzzleStates[puzzleId];
   if (!puzzleState) {
     return false;
@@ -29,6 +29,5 @@ function isPuzzleWon(state: GameState, puzzleId: string): boolean {
   if (!puzzle) {
     return false;
   }
-  const states = getStates(puzzleState.panels, puzzle.initialStoryState);
-  return puzzle.isWinning(states[states.length - 1]);
+  return checkPuzzleWon(puzzle, puzzleState.panels);
 }

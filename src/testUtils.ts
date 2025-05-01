@@ -1,11 +1,9 @@
+import { isPuzzleWon } from "./puzzleUtils";
 import { scenes } from "./scenes";
-import { getStates } from "./simulator";
 import { Character, Panel, Puzzle, Scene } from "./types";
 
 function testPuzzleWinCondition(puzzle: Puzzle, panels: Panel[], expectedResult: boolean) {
-  const states = getStates(panels, puzzle.initialStoryState);
-  const finalState = states[states.length - 1];
-  const result = puzzle.isWinning(finalState);
+  const result = isPuzzleWon(puzzle, panels);
   if (expectedResult) {
     expect(result).toBeTruthy();
   } else {
@@ -34,17 +32,35 @@ function generateMoreValidSolutions(
   }
 
   // Helper function to assign characters to slots without duplicates
-  function assignCharactersToSlots(slots: { id: string }[], characters: string[]): Record<string, string> {
+  function assignCharactersToSlots(
+    slots: { id: string; optional?: boolean }[],
+    characters: string[]
+  ): Record<string, string> {
     const assignedCharacters = new Set<string>();
     const slotAssignments: Record<string, string> = {};
 
-    slots.forEach((slot) => {
-      // Filter out characters already assigned to other slots
-      const availableCharacters = characters.filter((character) => !assignedCharacters.has(character));
+    // First assign characters to mandatory slots
+    const mandatorySlots = slots.filter((slot) => !slot.optional);
+    const optionalSlots = slots.filter((slot) => slot.optional);
 
-      const randomCharacter = availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
-      slotAssignments[slot.id] = randomCharacter;
-      assignedCharacters.add(randomCharacter); // Mark the character as assigned
+    // Assign to mandatory slots first
+    mandatorySlots.forEach((slot) => {
+      const availableCharacters = characters.filter((character) => !assignedCharacters.has(character));
+      if (availableCharacters.length > 0) {
+        const randomCharacter = availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
+        slotAssignments[slot.id] = randomCharacter;
+        assignedCharacters.add(randomCharacter);
+      }
+    });
+
+    // Then assign to optional slots
+    optionalSlots.forEach((slot) => {
+      const availableCharacters = characters.filter((character) => !assignedCharacters.has(character));
+      if (availableCharacters.length > 0) {
+        const randomCharacter = availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
+        slotAssignments[slot.id] = randomCharacter;
+        assignedCharacters.add(randomCharacter);
+      }
     });
 
     return slotAssignments;
@@ -59,23 +75,50 @@ function generateMoreValidSolutions(
       // Change the scene
       const randomSceneId = puzzle.scenes[Math.floor(Math.random() * puzzle.scenes.length)];
       modifiedPanel.sceneId = randomSceneId;
+      modifiedPanel.slotAssignedCharacters = {};
 
       // Update character assignments based on the new scene's slots
       const newScene = scenes[randomSceneId];
       if (newScene) {
-        modifiedPanel.slotAssignedCharacters = assignCharactersToSlots(newScene.slots, characters);
+        // First assign characters to mandatory slots
+        const mandatorySlots = newScene.slots.filter((slot) => !slot.optional);
+        const optionalSlots = newScene.slots.filter((slot) => slot.optional);
+
+        // Assign characters to mandatory slots first
+        const mandatoryAssignments = assignCharactersToSlots(mandatorySlots, characters);
+        Object.assign(modifiedPanel.slotAssignedCharacters, mandatoryAssignments);
+
+        // Then assign remaining characters to optional slots
+        const remainingCharacters = characters.filter((char) => !Object.values(mandatoryAssignments).includes(char));
+        const optionalAssignments = assignCharactersToSlots(optionalSlots, remainingCharacters);
+        Object.assign(modifiedPanel.slotAssignedCharacters, optionalAssignments);
       }
     } else {
-      // Modify character assignments
-      const slotIds = Object.keys(modifiedPanel.slotAssignedCharacters);
-      const randomSlot = slotIds[Math.floor(Math.random() * slotIds.length)];
-      const assignedCharacters = new Set(Object.values(modifiedPanel.slotAssignedCharacters));
+      // Modify character assignments while respecting mandatory slots
+      const currentScene = scenes[modifiedPanel.sceneId];
+      if (currentScene) {
+        const mandatorySlots = currentScene.slots.filter((slot) => !slot.optional);
+        const optionalSlots = currentScene.slots.filter((slot) => slot.optional);
 
-      // Filter out characters already assigned to other slots
-      const availableCharacters = characters.filter((character) => !assignedCharacters.has(character));
+        // Only modify optional slots or ensure mandatory slots have assignments
+        const slotsToModify = [...optionalSlots];
+        if (mandatorySlots.some((slot) => !modifiedPanel.slotAssignedCharacters[slot.id])) {
+          slotsToModify.push(...mandatorySlots.filter((slot) => !modifiedPanel.slotAssignedCharacters[slot.id]));
+        }
 
-      const randomCharacter = availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
-      modifiedPanel.slotAssignedCharacters[randomSlot] = randomCharacter;
+        if (slotsToModify.length > 0) {
+          const randomSlot = slotsToModify[Math.floor(Math.random() * slotsToModify.length)];
+          const assignedCharacters = new Set(Object.values(modifiedPanel.slotAssignedCharacters));
+
+          // Filter out characters already assigned to other slots
+          const availableCharacters = characters.filter((character) => !assignedCharacters.has(character));
+
+          if (availableCharacters.length > 0) {
+            const randomCharacter = availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
+            modifiedPanel.slotAssignedCharacters[randomSlot.id] = randomCharacter;
+          }
+        }
+      }
     }
 
     return modifiedPanel;
@@ -101,7 +144,7 @@ function generateMoreValidSolutions(
       const newSolution = modifySolution(knownSolution);
 
       // Check if the new solution satisfies the win condition
-      if (puzzle.isWinning(getStates(newSolution, puzzle.initialStoryState).pop()!)) {
+      if (isPuzzleWon(puzzle, newSolution)) {
         // Ensure the solution is unique
         if (
           !knownValidSolutions.some((known) => isEqualSolution(known, newSolution)) &&
@@ -165,10 +208,10 @@ export function runPuzzleTests(puzzle: Puzzle, validSolutions: Panel[][], invali
 export function panel(scene: Scene, ...assignments: Character[]): Panel {
   return {
     sceneId: scene.id,
-    slotAssignedCharacters: scene.slots.reduce(
-      (result, slot, index) => ({
+    slotAssignedCharacters: assignments.reduce(
+      (result, assignment, index) => ({
         ...result,
-        [slot.id]: assignments[index]?.id,
+        [scene.slots[index].id]: assignment.id,
       }),
       {} as Record<string, string>
     ),

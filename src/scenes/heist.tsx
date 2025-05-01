@@ -1,29 +1,23 @@
-import { Thought } from "../storyState";
 import { Scene } from "../types";
-import { getEavesdropperId, getState, handlePreconditions, setGlobalState, setStates } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
-export const thiefSlot = { id: "thief", label: "Thief" };
+export const robberSlot = { id: "robber", label: "Robber" };
 export const heist: Scene = {
   id: "heist",
   name: "💰 Heist",
-  slots: [thiefSlot],
+  slots: [robberSlot],
   outcomeLogic: (state, assigned) => {
-    const thief = assigned[thiefSlot.id];
-    if (handlePreconditions(state, thief)) return;
-    if (getState(state, thief.id, "doesNotSteal")) {
-      state.event = `${thief.name} doesn't want to get his hands dirty.`;
+    const robber = assigned[robberSlot.id];
+    if (handlePreconditions(state, robber)) return;
+    if (state.getState(robber.id, "doesNotSteal")) {
+      state.setGlobalState("event", `${robber.name} doesn't want to get his hands dirty.`);
       return;
     }
-    if (!getState(state, thief.id, "knowsSecretCode")) {
-      state.event = `${thief.name} didn't know the secret code of the safe.`;
+    if (!state.getState(robber.id, "knowsSecretCode")) {
+      state.setGlobalState("event", `${robber.name} didn't know the secret code of the safe.`);
       return;
     }
-    setGlobalState(state, "bankRobbed", true);
-    const thought: Thought = {
-      type: "robbed",
-      thiefId: thief.id,
-    };
-    setStates(state, [thief.id, getEavesdropperId(state)], "awareOf", thought);
-    state.event = `${thief.name} robbed the bank.`;
+    state.setGlobalState("bankRobber", robber);
+    state.setGlobalState("event", `${robber.name} robbed the bank.`);
   },
 };

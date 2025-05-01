@@ -1,7 +1,6 @@
 import { bruno } from "../characters";
 import { heist } from "../scenes/heist";
-import { getState } from "../scenes/sceneUtils";
-import { getInitialStoryState } from "../storyState";
+import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
 import { successfulHit } from "./successfulHit";
 
@@ -12,7 +11,7 @@ export const successfulHeist: Puzzle = {
   scenes: [...successfulHit.scenes, heist.id],
   characters: [...successfulHit.characters, bruno.id],
   isWinning: (state) =>
-    state.graph.getAttribute("bankRobbed") === true && getState(state, bruno.id, "rewarded") === true,
+    state.getGlobalState("bankRobber")?.id === bruno.id && state.getState(bruno.id, "rewarded") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
 };

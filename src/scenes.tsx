@@ -1,3 +1,4 @@
+import { entityMap, EntityMap } from "./entities";
 import { confrontation } from "./scenes/confrontation";
 import { deal } from "./scenes/deal";
 import { death } from "./scenes/death";
@@ -9,8 +10,7 @@ import { impersonate } from "./scenes/impersonate";
 import { love } from "./scenes/love";
 import { shield } from "./scenes/shield";
 import { takeover } from "./scenes/takeover";
-import { EntityMap, Scene } from "./types";
-import { entityMap } from "./utils";
+import { Scene } from "./types";
 
 export const scenes: EntityMap<Scene> = entityMap([
   love,

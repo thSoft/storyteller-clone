@@ -3,10 +3,11 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useSelector } from "react-redux";
 import { characters } from "../characters";
+import { resolve } from "../entities";
+import { isPuzzleWon } from "../puzzleUtils";
 import { scenes } from "../scenes";
 import { getStates } from "../simulator";
 import { GameState, Puzzle } from "../types";
-import { resolve } from "../utils";
 import { CharacterView } from "./CharacterView";
 import { InsertionPoint } from "./InsertionPoint";
 import { PanelView } from "./PanelView";
@@ -25,7 +26,7 @@ export const PuzzleView: React.FC<{
     <DndProvider backend={HTML5Backend}>
       <h1>
         {puzzle.prompt}
-        {puzzle.isWinning(states[states.length - 1]) && " - Victory"}
+        {isPuzzleWon(puzzle, panels) && " - Victory"}
       </h1>
       <div style={{ display: "flex", gap: "12px" }}>
         <div>
@@ -48,7 +49,7 @@ export const PuzzleView: React.FC<{
           <h2>
             Story ({panels.length} / {puzzle.maxPanelCount} panels):
           </h2>
-          <InsertionPoint puzzle={puzzle} index={0} panelCount={panels.length} />
+          <InsertionPoint puzzle={puzzle} key={panels.length} index={0} panelCount={panels.length} />
           {panels.map((panel, index) => {
             return (
               <PanelView
@@ -56,7 +57,7 @@ export const PuzzleView: React.FC<{
                 panel={panel}
                 index={index}
                 states={states}
-                key={index}
+                key={`${index}-${panels.length}`}
                 panelCount={panels.length}
               />
             );

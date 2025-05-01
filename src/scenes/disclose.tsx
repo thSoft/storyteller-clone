@@ -1,6 +1,6 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { areRelated, getEavesdropperId, getState, handlePreconditions, setState, setStates } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 export const speakerSlot = { id: "speaker", label: "Speaker" };
 export const listenerSlot = { id: "listener", label: "Listener" };
 export const disclose: Scene = {
@@ -11,66 +11,68 @@ export const disclose: Scene = {
     const speaker = assigned[speakerSlot.id];
     const listener = assigned[listenerSlot.id];
     if (handlePreconditions(state, speaker, listener)) return;
-    const thought = getState(state, speaker.id, "awareOf");
-    if (thought === undefined) {
-      state.event = `${speaker.name} had nothing to tell to ${listener.name}.`;
+    const speakerPromisedMurderToListener = state.areRelated(speaker.id, "promisedMurderTo", listener.id);
+    const victimIds = state.getRelated(speaker.id, "killed", speaker.id);
+    const orderedVictimIds = victimIds.filter((victimId) => state.areRelated(listener.id, "wantsToKill", victimId));
+    // If the speaker promised murder to the listener
+    // and the speaker believes that he killed a person whom the listener actually wants to kill,
+    // then the listener is glad to hear it and promotes the speaker
+    if (speakerPromisedMurderToListener && orderedVictimIds.length > 0) {
+      for (const victimId of orderedVictimIds) {
+        state.setState(victimId, "dead", true, true);
+        state.addRelation(speaker.id, "killed", victimId, true);
+      }
+      state.setState(listener.id, "content", true);
+      state.setState(speaker.id, "promoted", true);
+      state.setGlobalState(
+        "event",
+        `${speaker.name} told ${listener.name} that ${speaker.name} killed ${characters[orderedVictimIds[0]]?.name}. ${
+          listener.name
+        } was glad to hear it and promoted ${speaker.name}.`
+      );
       return;
     }
-    setStates(state, [listener.id, getEavesdropperId(state)], "awareOf", thought);
-    switch (thought.type) {
-      case "killed":
-        const victim = characters[thought.victimId];
-        if (victim === undefined) return;
-        state.event = `${speaker.name} told ${listener.name} that ${victim.name} was killed.`;
-        if (areRelated(state, listener.id, "wantsToKill", victim.id) === true) {
-          state.event += ` ${listener.name} was glad to hear it.`;
-          setState(state, listener.id, "content", true);
-          if (areRelated(state, speaker.id, "isBoundByDealWith", listener.id) === true) {
-            setState(state, speaker.id, "rewarded", true);
-            state.event += ` ${listener.name} promoted ${speaker.name}.`;
-          }
-        }
-        break;
-      case "robbed":
-        if (thought.thiefId === speaker.id) {
-          const thief = characters[thought.thiefId];
-          if (thief === undefined) return;
-          state.event = `${speaker.name} told ${listener.name} that he robbed the bank.`;
-          if (areRelated(state, speaker.id, "isBoundByDealWith", listener.id) === true) {
-            setState(state, listener.id, "content", true);
-            setState(state, speaker.id, "rewarded", true);
-            state.event += ` ${listener.name} was glad to hear it. ${listener.name} shared the money with ${speaker.name}.`;
-          } else {
-            state.event = `${speaker.name} told ${listener.name} that someone else robbed the bank.`;
-            if (areRelated(state, speaker.id, "isBoundByDealWith", listener.id) === true) {
-              setState(state, listener.id, "fired", true);
-              state.event += ` ${listener.name} was angry to hear it. ${listener.name} fired ${speaker.name}.`;
-            }
-          }
-        }
-        break;
-      case "deal":
-        state.event = `${speaker.name} told ${listener.name} that ${
-          characters[thought.ordererId]?.name
-        } had a deal with ${characters[thought.executorId]?.name}.`;
-        break;
-      case "loves":
-        state.event = `${speaker.name} told ${listener.name} that ${characters[thought.lover1Id]?.name} loves ${
-          characters[thought.lover2Id]?.name
-        }.`;
-        break;
-      case "confiscated":
-        state.event = `${speaker.name} told ${listener.name} that ${
-          characters[thought.confiscatorId]?.name
-        } confiscated the violin case from ${characters[thought.confiscatedId]?.name}.`;
-        if (
-          thought.confiscatedId === speaker.id &&
-          areRelated(state, speaker.id, "isBoundByDealWith", listener.id) === true
-        ) {
-          setState(state, speaker.id, "fired", true);
-          state.event += ` ${speaker.name} was angry to hear it. ${speaker.name} fired ${listener.name}.`;
-        }
-        break;
+    const gunOwnerIdAccordingToSpeaker = state.getGlobalState("gunOwner", speaker.id)?.id;
+    // If the speaker promised murder to the listener and believes that a policeman owns the gun,
+    // then the listener is angry at the speaker and fires him
+    if (
+      speakerPromisedMurderToListener &&
+      gunOwnerIdAccordingToSpeaker !== undefined &&
+      state.getState(gunOwnerIdAccordingToSpeaker, "worksForPolice")
+    ) {
+      state.addRelation(listener.id, "angryAt", speaker.id);
+      state.setState(speaker.id, "fired", true);
+      state.setGlobalState(
+        "event",
+        `${speaker.name} told ${listener.name} that ${characters[gunOwnerIdAccordingToSpeaker]?.name} has the gun. ${listener.name} was angry to hear it and fired ${speaker.name}.`
+      );
+      return;
     }
+    const bankRobberId = state.getGlobalState("bankRobber")?.id;
+    // If the speaker promised heist to the listener and robbed the bank,
+    // then the listener is glad to hear it and rewards the speaker
+    if (state.areRelated(speaker.id, "promisedHeistTo", listener.id) && bankRobberId === speaker.id) {
+      state.setGlobalState("bankRobber", speaker, true);
+      state.setState(listener.id, "content", true);
+      state.setState(speaker.id, "rewarded", true);
+      state.setGlobalState(
+        "event",
+        `${speaker.name} told ${listener.name} that he robbed the bank. ${listener.name} was glad to hear it and rewarded ${speaker.name}.`
+      );
+      return;
+    }
+    // If the speaker promised heist to the listener and someone else robbed the bank,
+    // then the listener is angry at the speaker and fires him
+    if (state.areRelated(speaker.id, "promisedHeistTo", listener.id) && bankRobberId !== speaker.id) {
+      state.addRelation(listener.id, "angryAt", speaker.id);
+      state.setState(speaker.id, "fired", true);
+      state.setGlobalState(
+        "event",
+        `${speaker.name} told ${listener.name} that someone else robbed the bank. ${listener.name} was angry to hear it and fired ${speaker.name}.`
+      );
+      return;
+    }
+    // Otherwise
+    state.setGlobalState("event", `${speaker.name} had nothing to tell to ${listener.name}.`);
   },
 };

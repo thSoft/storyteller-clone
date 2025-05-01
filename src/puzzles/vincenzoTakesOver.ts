@@ -1,7 +1,6 @@
 import { mafiaCharacters, vincenzo } from "../characters";
 import { mafiaScenes } from "../scenes";
-import { getState } from "../scenes/sceneUtils";
-import { getInitialStoryState } from "../storyState";
+import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
 
 export const vincenzoTakesOver: Puzzle = {
@@ -10,7 +9,7 @@ export const vincenzoTakesOver: Puzzle = {
   prompt: "Vincenzo Overtakes the Family",
   scenes: mafiaScenes,
   characters: mafiaCharacters,
-  isWinning: (state) => getState(state, vincenzo.id, "headOfFamily") === true,
+  isWinning: (state) => state.getState(vincenzo.id, "headOfFamily") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
 };

@@ -1,6 +1,6 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { getCharacter, getRelated, getState, handlePreconditions, setGlobalState, setState } from "./sceneUtils";
+import { handlePreconditions } from "./sceneUtils";
 
 export const confronterSlot = { id: "confronter", label: "Confronter" };
 export const confrontedSlot = { id: "confronted", label: "Confronted" };
@@ -12,85 +12,61 @@ export const confrontation: Scene = {
     const confronter = assigned[confronterSlot.id];
     const confronted = assigned[confrontedSlot.id];
     if (handlePreconditions(state, confronter, confronted)) return;
-    const thoughtOfConfronter = getState(state, confronter.id, "awareOf");
-    if (thoughtOfConfronter === undefined) {
-      state.event = `${confronter.name} had nothing to confront ${confronted.name} with.`;
+    // If confronter works for police and is aware of confronted promised murder and confronted has the gun,
+    // then confiscate it
+    if (
+      state.getState(confronter.id, "worksForPolice") &&
+      state.getRelated(confronted.id, "promisedMurderTo", confronter.id).length > 0 &&
+      state.getGlobalState("gunOwner")?.id === confronted.id
+    ) {
+      state.setGlobalState("gunOwner", confronter);
+      state.setGlobalState(
+        "event",
+        `${confronter.name} confiscated the violin case from ${confronted.name} because ${confronted.name} got it when he agreed to kill someone.`
+      );
       return;
     }
-    switch (thoughtOfConfronter.type) {
-      case "deal":
-        if (thoughtOfConfronter.executorId === confronted.id) {
-          if (
-            state.graph.getAttribute("personWithGun") === confronted.id &&
-            getState(state, confronter.id, "worksForPolice")
-          ) {
-            setGlobalState(state, "personWithGun", confronter.id);
-            setState(state, confronted.id, "awareOf", {
-              type: "confiscated",
-              confiscatorId: confronter.id,
-              confiscatedId: confronted.id,
-            });
-            state.event = `${confronter.name} confiscated the violin case from ${confronted.name}.`;
-            return;
-          } else {
-            state.event = `${confronter.name} confronted ${confronted.name} with the deal, but could do nothing about it.`;
-            return;
-          }
-        }
-        break;
-      case "killed":
-        if (thoughtOfConfronter.killerId === confronter.id && getState(state, confronter.id, "worksForPolice")) {
-          setState(state, confronted.id, "arrested", true);
-          state.event = `${confronter.name} arrested ${confronted.name} for the murder of ${
-            characters[thoughtOfConfronter.victimId]?.name
-          }.`;
-          return;
-        }
-        break;
-      case "robbed":
-        if (thoughtOfConfronter.thiefId === confronter.id && getState(state, confronter.id, "worksForPolice")) {
-          setState(state, confronted.id, "arrested", true);
-          state.event = `${confronter.name} arrested ${confronted.name} for the robbery of the bank.`;
-          return;
-        }
-        break;
-      case "loves":
-        const [lover1, lover2] = getCharacter(
-          (character, otherCharacter) =>
-            character.id === confronted.id &&
-            getRelated(state, character.id, "childOf").includes(confronter.id) &&
-            otherCharacter !== undefined &&
-            getRelated(state, confronter.id, "wantsToKill").includes(otherCharacter.id),
-          characters[thoughtOfConfronter.lover1Id],
-          characters[thoughtOfConfronter.lover2Id]
-        );
-        if (lover1 !== undefined && lover2 !== undefined) {
-          setState(state, confronted.id, "disowned", true);
-          state.event = `${confronter.name} disowned ${confronted.name} because of his/her love for ${
-            characters[lover2.id]?.name
-          }.`;
-          return;
-        } else {
-          state.event = `${confronter.name} confronted ${confronted.name} with the fact that ${
-            characters[thoughtOfConfronter.lover1Id]?.name
-          } loves ${characters[thoughtOfConfronter.lover2Id]?.name}.`;
-          return;
-        }
-    }
-    const thoughtOfConfronted = getState(state, confronted.id, "awareOf");
-    if (thoughtOfConfronted === undefined) {
+    // If confronter works for police and is aware of the confronted having killed someone,
+    // then arrest the confronted
+    if (
+      state.getState(confronter.id, "worksForPolice") &&
+      state.getRelated(confronted.id, "killed", confronter.id).length > 0
+    ) {
+      state.setState(confronted.id, "arrested", true);
+      state.setGlobalState("event", `${confronter.name} arrested ${confronted.name} for murder.`);
       return;
     }
-    switch (thoughtOfConfronted.type) {
-      case "deal":
-        if (
-          thoughtOfConfronted.executorId !== confronter.seemingly.id &&
-          state.graph.getAttribute("personWithGun") === confronter.id
-        ) {
-          setState(state, confronted.id, "shockedByGun", true);
-          state.event = `${confronter.name} shocked ${confronted.name} by showing that (s)he has the violin case.`;
-        }
-        return;
+    // If confronter works for police and is aware of the confronted having robbed the bank,
+    // then arrest the confronted
+    if (
+      state.getState(confronter.id, "worksForPolice") &&
+      state.getRelated(confronted.id, "promisedHeistTo", confronter.id).length > 0
+    ) {
+      state.setState(confronted.id, "arrested", true);
+      state.setGlobalState("event", `${confronter.name} arrested ${confronted.name} for robbery.`);
+      return;
     }
+    // If confronter is aware of the confronted loving someone who the confronter wants to kill,
+    // and the confronted is child of the confronter, then disown the confronted
+    const loverIdsOfConfronted = state.getRelated(confronted.id, "loves", confronter.id);
+    const loverIdsOfConfrontedMortalEnemiesOfConfronter = loverIdsOfConfronted.filter((loverId) =>
+      state.areRelated(confronter.id, "wantsToKill", loverId)
+    );
+    if (
+      loverIdsOfConfrontedMortalEnemiesOfConfronter.length > 0 &&
+      state.areRelated(confronted.id, "childOf", confronter.id)
+    ) {
+      state.setState(confronted.id, "disowned", true);
+      state.setGlobalState(
+        "event",
+        `${confronter.name} disowned ${confronted.name} because ${
+          confronted.name
+        } loves ${loverIdsOfConfrontedMortalEnemiesOfConfronter
+          .map((loverId) => characters[loverId]?.name)
+          .join(", ")} whom ${confronter.name} wants to kill.`
+      );
+      return;
+    }
+    state.setGlobalState("event", `${confronter.name} had nothing to confront ${confronted.name} about.`);
   },
 };

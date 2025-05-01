@@ -43,7 +43,7 @@ export const PanelView: React.FC<{
   return (
     <span>
       <div
-        key={index}
+        key={`${index}-${panelCount}`}
         style={{
           border: "1px solid black",
           padding: "8px",
@@ -64,8 +64,8 @@ export const PanelView: React.FC<{
             onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
           />
         ))}
-        <div>{toFirstUpper(state?.event) || "\u00A0"}</div>
-        {showGraph && state && <StoryGraphView graph={state.graph} width={800} height={400} />}
+        <div>{toFirstUpper(state?.getAttribute("event")) || "\u00A0"}</div>
+        {showGraph && state && <StoryGraphView graph={state} width={800} height={400} />}
       </div>
       <InsertionPoint puzzle={puzzle} index={index + 1} panelCount={panelCount} />
     </span>

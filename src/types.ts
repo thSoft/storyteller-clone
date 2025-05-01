@@ -1,19 +1,10 @@
+import { Entity } from "./entities";
+import { StateProxy } from "./stateProxy";
 import { StoryState } from "./storyState";
-
-export type Entity = { id: string };
-
-export type EntityMap<T extends Entity> = Record<string, T>;
 
 export type Character = Entity & {
   name: string;
 };
-
-export type CharacterWithImpersonation = Character & {
-  seemingly: Character;
-  actually: Character;
-};
-
-export type CharacterPair = [string, string];
 
 export type SceneSlot = Entity & {
   label: string;
@@ -23,7 +14,7 @@ export type SceneSlot = Entity & {
 export type Scene = Entity & {
   name: string;
   slots: SceneSlot[];
-  outcomeLogic: (state: StoryState, assigned: Record<string, CharacterWithImpersonation>) => void;
+  outcomeLogic: (state: StateProxy, assigned: Record<string, Character>) => void;
 };
 
 export type Puzzle = Entity & {
@@ -31,7 +22,7 @@ export type Puzzle = Entity & {
   prompt: string;
   scenes: string[];
   characters: string[];
-  isWinning: (state: StoryState) => boolean;
+  isWinning: (state: StateProxy) => boolean;
   initialStoryState: StoryState;
   maxPanelCount: number;
 };
