@@ -1,7 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { puzzles } from "../puzzles";
-import { setCurrentPuzzleId } from "../store/gameStateSlice";
 import { GameState } from "../types";
 import { BookView } from "./BookView";
 import { PuzzleView } from "./PuzzleView";
@@ -14,14 +13,7 @@ export const PuzzleBrowser: React.FC = () => {
 
   return (
     <div style={{ padding: "1rem" }}>
-      {currentPuzzleId && puzzle ? (
-        <>
-          <button onClick={() => dispatch(setCurrentPuzzleId(null))}>← Back to Puzzle List</button>
-          <PuzzleView puzzle={puzzle} currentPuzzleId={currentPuzzleId} />
-        </>
-      ) : (
-        <BookView />
-      )}
+      {currentPuzzleId && puzzle ? <PuzzleView puzzle={puzzle} currentPuzzleId={currentPuzzleId} /> : <BookView />}
     </div>
   );
 };
