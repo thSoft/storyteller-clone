@@ -1,3 +1,4 @@
+import { characters } from "../characters";
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
 
@@ -15,6 +16,14 @@ export const heist: Scene = {
     }
     if (!state.getState(robber.id, "knowsSecretCode")) {
       state.setGlobalState("event", `${robber.name} didn't know the secret code of the safe.`);
+      return;
+    }
+    const previousRobberId = state.getGlobalState("bankRobber")?.id;
+    if (previousRobberId !== undefined) {
+      state.setGlobalState(
+        "event",
+        `${robber.name} failed to rob the bank because ${characters[previousRobberId]?.name} already robbed it.`
+      );
       return;
     }
     state.setGlobalState("bankRobber", robber);
