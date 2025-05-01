@@ -31,7 +31,7 @@ export const hit: Scene = {
     } else {
       state.setState(target.id, "dead", true);
       state.addRelation(shooter.id, "killed", target.id);
-      event += ` and killed him/her.`;
+      event += ` to death.`;
     }
     state.setGlobalState("event", event);
   },

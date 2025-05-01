@@ -27,15 +27,15 @@ export const scenes: EntityMap<Scene> = entityMap([
 ]);
 
 export const mafiaScenes = [
-  love,
-  death,
   deal,
   hit,
   disclose,
   heist,
   eavesdrop,
   confrontation,
-  shield,
-  takeover,
+  love,
   impersonate,
+  shield,
+  death,
+  takeover,
 ].map((scene) => scene.id);

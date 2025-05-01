@@ -13,6 +13,6 @@ export const failedHeist: Puzzle = {
   isWinning: (state) =>
     state.getGlobalState("bankRobber")?.id === vincenzo.id && state.getState(bruno.id, "fired") === true,
   initialStoryState: getInitialStoryState(),
-  maxPanelCount: 6,
+  maxPanelCount: 5,
   dependsOn: vincenzoTakesOver.id,
 };

@@ -84,6 +84,17 @@ function getRelatedBy(state: StoryState, characterId: string, type: RelationType
     .filter((source) => source !== undefined);
 }
 
+type SourceTarget = {
+  source: string;
+  target: string;
+};
+
+function getRelations(state: StoryState, type: RelationType, povCharacterId?: string): SourceTarget[] {
+  return getStoryGraph(state, povCharacterId)
+    .mapEdges((_, attributes, source, target) => (attributes.type === type ? { source, target } : undefined))
+    .filter((edge) => edge !== undefined);
+}
+
 // Private state writer functions
 
 function getGraphsToUpdate(
@@ -218,6 +229,7 @@ export type StateProxy = {
   areRelated: (characterId1: string, type: RelationType, characterId2: string, povCharacterId?: string) => boolean;
   getRelated: (characterId: string, type: RelationType, povCharacterId?: string) => string[];
   getRelatedBy: (characterId: string, type: RelationType, povCharacterId?: string) => string[];
+  getRelations: (type: RelationType, povCharacterId?: string) => SourceTarget[];
   resolveImpersonation: (characterId: string) => string;
 };
 
@@ -238,6 +250,7 @@ export function createStateProxy(state: StoryState, participantIds?: string[]): 
       areRelated(state, characterId1, type, characterId2, povCharacterId),
     getRelated: (characterId, type, povCharacterId) => getRelated(state, characterId, type, povCharacterId),
     getRelatedBy: (characterId, type, povCharacterId) => getRelatedBy(state, characterId, type, povCharacterId),
+    getRelations: (type, povCharacterId) => getRelations(state, type, povCharacterId),
     resolveImpersonation: (characterId: string) => resolveImpersonation(state, characterId),
   };
 }

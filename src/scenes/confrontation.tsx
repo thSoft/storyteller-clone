@@ -22,7 +22,7 @@ export const confrontation: Scene = {
       state.setGlobalState("gunOwner", confronter);
       state.setGlobalState(
         "event",
-        `${confronter.name} confiscated the violin case from ${confronted.name} because ${confronted.name} got it when he agreed to kill someone.`
+        `${confronter.name} confiscated the violin case from ${confronted.name} because (s)he knew that ${confronted.name} got it when (s)he agreed to kill someone.`
       );
       return;
     }

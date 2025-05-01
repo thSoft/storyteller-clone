@@ -1,4 +1,5 @@
 import { characters } from "../characters";
+import { RelationType } from "../storyState";
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
 export const speakerSlot = { id: "speaker", label: "Speaker" };
@@ -69,6 +70,36 @@ export const disclose: Scene = {
       state.setGlobalState(
         "event",
         `${speaker.name} told ${listener.name} that someone else robbed the bank. ${listener.name} was angry to hear it and fired ${speaker.name}.`
+      );
+      return;
+    }
+    // If the speaker is aware of a hit or heist plan where the speaker is not involved in the crime,
+    // then he tells the listener about it
+    const speakerIsNotInvolved = ({ source, target }: { source: string; target: string }): boolean =>
+      source !== speaker.id && target !== speaker.id;
+    const hitPlanners = state.getRelations("promisedMurderTo", speaker.id);
+    const hitPlansToGiveAway = hitPlanners
+      .filter(speakerIsNotInvolved)
+      .map((sourceTarget) => ({ ...sourceTarget, crimeName: "hit", relationType: "promisedMurderTo" as RelationType }));
+    const heistPlanners = state.getRelations("promisedHeistTo", speaker.id);
+    const heistPlansToGiveAway = heistPlanners.filter(speakerIsNotInvolved).map((sourceTarget) => ({
+      ...sourceTarget,
+      crimeName: "heist",
+      relationType: "promisedHeistTo" as RelationType,
+    }));
+    const crimePlansToGiveAway = [...hitPlansToGiveAway, ...heistPlansToGiveAway];
+    if (crimePlansToGiveAway.length > 0) {
+      for (const crimePlan of crimePlansToGiveAway) {
+        state.addRelation(crimePlan.source, crimePlan.relationType, crimePlan.target, true);
+      }
+      state.setGlobalState(
+        "event",
+        `${speaker.name} told ${listener.name} that ${crimePlansToGiveAway
+          .map(
+            ({ crimeName: type, source, target }) =>
+              ` ${characters[source]?.name} promised ${type} to ${characters[target]?.name}`
+          )
+          .join(" and ")}.`
       );
       return;
     }
