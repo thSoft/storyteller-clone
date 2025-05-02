@@ -74,7 +74,7 @@ export const disclose: Scene = {
       return;
     }
     // If the speaker is aware of a hit or heist plan where the speaker is not involved in the crime,
-    // then he tells the listener about it
+    // then (s)he tells the listener about it
     const speakerIsNotInvolved = ({ source, target }: { source: string; target: string }): boolean =>
       source !== speaker.id && target !== speaker.id;
     const hitPlanners = state.getRelations("promisedMurderTo", speaker.id);
@@ -100,6 +100,20 @@ export const disclose: Scene = {
               ` ${characters[source]?.name} promised ${type} to ${characters[target]?.name}`
           )
           .join(" and ")}.`
+      );
+      return;
+    }
+    // If the speaker is in love with someone, then (s)he tells the listener about it
+    const lovedBySpeakerIds = state.getRelated(speaker.id, "loves", speaker.id);
+    if (lovedBySpeakerIds.length > 0) {
+      for (const lovedBySpeakerId of lovedBySpeakerIds) {
+        state.addRelation(speaker.id, "loves", lovedBySpeakerId, true);
+      }
+      state.setGlobalState(
+        "event",
+        `${speaker.name} told ${listener.name} that he loves ${lovedBySpeakerIds
+          .map((id) => characters[id]?.name)
+          .join(", ")}.`
       );
       return;
     }

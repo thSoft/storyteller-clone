@@ -11,7 +11,7 @@ export const impersonate: Scene = {
     const impersonator = assigned[impersonatorSlot.id];
     const impersonated = assigned[impersonatedSlot.id];
     if (handlePreconditions(state, impersonator)) return;
-    const oldImpersonatedIds = state.getRelated(impersonator.id, "impersonates", impersonator.id);
+    const oldImpersonatedIds = state.getRelated(impersonator.id, "impersonates");
     if (oldImpersonatedIds.length > 0 && impersonated === undefined) {
       const oldImpersonatedId = oldImpersonatedIds[0];
       state.removeRelation(impersonator.id, "impersonates", oldImpersonatedId);

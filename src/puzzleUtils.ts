@@ -23,7 +23,6 @@ export function isPuzzleEnabled(puzzleId: string, gameState: GameState): boolean
 }
 
 export function getPuzzleTooltip(puzzleId: string, gameState: GameState): string | undefined {
-  if (isAllPuzzlesEnabled()) return undefined;
   const puzzle = puzzles[puzzleId];
   if (!puzzle.dependsOn) return undefined;
   const isEnabled = isPuzzleEnabled(puzzleId, gameState);

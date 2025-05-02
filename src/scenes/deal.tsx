@@ -15,7 +15,10 @@ export const deal: Scene = {
     const targetIds = state.getRelated(orderer.id, "wantsToKill");
     // Order hit
     if (targetIds.length > 0) {
-      if (!state.areRelated(executor.id, "obeys", orderer.id)) {
+      if (
+        !state.areRelated(executor.id, "obeys", orderer.id) &&
+        state.getRelated(executor.id, "impersonates").length === 0
+      ) {
         state.setGlobalState("event", `${executor.name} doesn't obey ${orderer.name}.`);
         return;
       }

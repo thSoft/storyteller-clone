@@ -40,7 +40,7 @@ export const confrontation: Scene = {
     // then arrest the confronted
     if (
       state.getState(confronter.id, "worksForPolice") &&
-      state.getRelated(confronted.id, "promisedHeistTo", confronter.id).length > 0
+      state.getGlobalState("bankRobber", confronter.id)?.id === confronted.id
     ) {
       state.setState(confronted.id, "arrested", true);
       state.setGlobalState("event", `${confronter.name} arrested ${confronted.name} for robbery.`);
@@ -48,12 +48,15 @@ export const confrontation: Scene = {
     }
     // If confronter is aware of the confronted loving someone who the confronter wants to kill,
     // and the confronted is child of the confronter, then disown the confronted
-    const loverIdsOfConfronted = state.getRelated(confronted.id, "loves", confronter.id);
-    const loverIdsOfConfrontedMortalEnemiesOfConfronter = loverIdsOfConfronted.filter((loverId) =>
+    const loverOfConfrontedIds = [
+      ...state.getRelated(confronted.id, "loves", confronter.id),
+      ...state.getRelatedBy(confronted.id, "loves", confronter.id),
+    ];
+    const mortalEnemiesOfConfronterLoverOfConfrontedIds = loverOfConfrontedIds.filter((loverId) =>
       state.areRelated(confronter.id, "wantsToKill", loverId)
     );
     if (
-      loverIdsOfConfrontedMortalEnemiesOfConfronter.length > 0 &&
+      mortalEnemiesOfConfronterLoverOfConfrontedIds.length > 0 &&
       state.areRelated(confronted.id, "childOf", confronter.id)
     ) {
       state.setState(confronted.id, "disowned", true);
@@ -61,7 +64,7 @@ export const confrontation: Scene = {
         "event",
         `${confronter.name} disowned ${confronted.name} because ${
           confronted.name
-        } loves ${loverIdsOfConfrontedMortalEnemiesOfConfronter
+        } loves ${mortalEnemiesOfConfronterLoverOfConfrontedIds
           .map((loverId) => characters[loverId]?.name)
           .join(", ")} whom ${confronter.name} wants to kill.`
       );

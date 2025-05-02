@@ -19,12 +19,12 @@ function getGlobalState<AttributeName extends keyof GraphAttributes>(
   name: AttributeName,
   povCharacterId?: string
 ): GraphAttributes[AttributeName] {
-  return getStoryGraph(state, povCharacterId).getAttribute(name);
+  return getStoryState(state, povCharacterId).getAttribute(name);
 }
 
 export function resolveImpersonation(state: StoryState, characterId: string, condition: boolean = true): string {
   if (condition) {
-    const impersonatedIds = getStoryGraph(state)
+    const impersonatedIds = getStoryState(state)
       .mapOutEdges(characterId, (_0, edgeAttributes, _1, target) =>
         edgeAttributes.type === "impersonates" ? target : undefined
       )
@@ -35,7 +35,7 @@ export function resolveImpersonation(state: StoryState, characterId: string, con
   }
 }
 
-function getStoryGraph(state: StoryState, povCharacterId?: string): StoryState {
+function getStoryState(state: StoryState, povCharacterId?: string): StoryState {
   return povCharacterId ? state.getNodeAttribute(povCharacterId, "believedStoryState") || state : state;
 }
 
@@ -45,8 +45,22 @@ function getState<AttributeName extends keyof NodeAttributes>(
   name: AttributeName,
   povCharacterId?: string
 ): NodeAttributes[AttributeName] {
-  const resolvedCharacterId = resolveImpersonation(state, characterId, povCharacterId !== characterId);
-  return getStoryGraph(state, povCharacterId).getNodeAttribute(resolvedCharacterId, name);
+  const resolvedCharacterId = resolveImpersonation(
+    state,
+    characterId,
+    povCharacterId !== undefined && povCharacterId !== characterId
+  );
+  return getStoryState(state, povCharacterId).getNodeAttribute(resolvedCharacterId, name);
+}
+
+function getCharacterIds(
+  state: StoryState,
+  predicate: (characterId: string, attributes: NodeAttributes) => boolean,
+  povCharacterId?: string
+): string[] {
+  return getStoryState(state, povCharacterId).filterNodes((characterId, attributes) =>
+    predicate(characterId, attributes)
+  );
 }
 
 function areRelated(
@@ -56,9 +70,17 @@ function areRelated(
   characterId2: string,
   povCharacterId?: string
 ) {
-  const resolvedCharacterId1 = resolveImpersonation(state, characterId1, povCharacterId !== characterId1);
-  const resolvedCharacterId2 = resolveImpersonation(state, characterId2, povCharacterId !== characterId2);
-  const storyGraph = getStoryGraph(state, povCharacterId);
+  const resolvedCharacterId1 = resolveImpersonation(
+    state,
+    characterId1,
+    povCharacterId !== undefined && povCharacterId !== characterId1
+  );
+  const resolvedCharacterId2 = resolveImpersonation(
+    state,
+    characterId2,
+    povCharacterId !== undefined && povCharacterId !== characterId2
+  );
+  const storyGraph = getStoryState(state, povCharacterId);
   return storyGraph.someDirectedEdge(
     resolvedCharacterId1,
     resolvedCharacterId2,
@@ -67,19 +89,31 @@ function areRelated(
 }
 
 function getRelated(state: StoryState, characterId: string, type: RelationType, povCharacterId?: string): string[] {
-  const resolvedCharacterId = resolveImpersonation(state, characterId, povCharacterId !== characterId);
-  return getStoryGraph(state, povCharacterId)
+  const resolvedCharacterId = resolveImpersonation(
+    state,
+    characterId,
+    povCharacterId !== undefined && povCharacterId !== characterId
+  );
+  return getStoryState(state, povCharacterId)
     .mapOutEdges(resolvedCharacterId, (_0, edgeAttributes, _1, target) =>
-      edgeAttributes.type === type ? target : undefined
+      edgeAttributes.type === type
+        ? resolveImpersonation(state, target, povCharacterId !== undefined && povCharacterId !== target)
+        : undefined
     )
     .filter((target) => target !== undefined);
 }
 
 function getRelatedBy(state: StoryState, characterId: string, type: RelationType, povCharacterId?: string): string[] {
-  const resolvedCharacterId = resolveImpersonation(state, characterId, povCharacterId !== characterId);
-  return getStoryGraph(state, povCharacterId)
+  const resolvedCharacterId = resolveImpersonation(
+    state,
+    characterId,
+    povCharacterId !== undefined && povCharacterId !== characterId
+  );
+  return getStoryState(state, povCharacterId)
     .mapInEdges(resolvedCharacterId, (_0, edgeAttributes, source) =>
-      edgeAttributes.type === type ? source : undefined
+      edgeAttributes.type === type
+        ? resolveImpersonation(state, source, povCharacterId !== undefined && povCharacterId !== source)
+        : undefined
     )
     .filter((source) => source !== undefined);
 }
@@ -90,26 +124,42 @@ type SourceTarget = {
 };
 
 function getRelations(state: StoryState, type: RelationType, povCharacterId?: string): SourceTarget[] {
-  return getStoryGraph(state, povCharacterId)
-    .mapEdges((_, attributes, source, target) => (attributes.type === type ? { source, target } : undefined))
+  return getStoryState(state, povCharacterId)
+    .mapEdges((_, attributes, source, target) => {
+      if (attributes.type !== type) {
+        return undefined;
+      }
+      const resolvedSource = resolveImpersonation(
+        state,
+        source,
+        povCharacterId !== undefined && povCharacterId !== source
+      );
+      const resolvedTarget = resolveImpersonation(
+        state,
+        target,
+        povCharacterId !== undefined && povCharacterId !== target
+      );
+      return { source: resolvedSource, target: resolvedTarget };
+    })
     .filter((edge) => edge !== undefined);
 }
 
 // Private state writer functions
 
-function getGraphsToUpdate(
-  state: StoryState,
-  participantIds?: string[],
-  onlyBelieved?: boolean
-): [StoryState, boolean][] {
+type StateToUpdate = {
+  state: StoryState;
+  believedBy?: string;
+};
+
+function getStatesToUpdate(state: StoryState, participantIds?: string[], onlyBelieved?: boolean): StateToUpdate[] {
   const participantGraphs =
     participantIds
       ?.map((characterId) => {
         const believedState = state.getNodeAttribute(characterId, "believedStoryState");
-        return believedState ? ([believedState, true] as [StoryState, boolean]) : null;
+        return believedState ? { state: believedState, believedBy: characterId } : undefined;
       })
-      .filter((pair) => pair !== null) ?? [];
-  return onlyBelieved ? participantGraphs : [[state, false], ...participantGraphs];
+      .filter((stateToUpdate) => stateToUpdate !== undefined) ?? [];
+  return onlyBelieved ? participantGraphs : [{ state }, ...participantGraphs];
 }
 
 function setGlobalState<AttributeName extends keyof GraphAttributes>(
@@ -119,10 +169,15 @@ function setGlobalState<AttributeName extends keyof GraphAttributes>(
   participantIds?: string[],
   onlyBelieved?: boolean
 ) {
-  const resolvedValue =
-    typeof value === "object" && "id" in value ? { id: resolveImpersonation(state, value.id) } : value;
-  getGraphsToUpdate(state, participantIds, onlyBelieved).forEach(([s, isBelievedGraph]) => {
-    s.setAttribute(name, isBelievedGraph ? (resolvedValue as GraphAttributes[AttributeName]) : value);
+  // Important: We need to resolve the impersonation before setting the global state
+  const valueId = typeof value === "object" && "id" in value ? value.id : undefined;
+  const resolvedValue = valueId
+    ? ({ id: resolveImpersonation(state, valueId) } as GraphAttributes[AttributeName])
+    : value;
+  getStatesToUpdate(state, participantIds, onlyBelieved).forEach(({ state: otherState, believedBy }) => {
+    const valueToUse =
+      believedBy !== undefined && valueId !== undefined && believedBy !== valueId ? resolvedValue : value;
+    otherState.setAttribute(name, valueToUse);
   });
 }
 
@@ -135,9 +190,12 @@ function setState<AttributeName extends keyof NodeAttributes>(
   onlyBelieved?: boolean
 ) {
   if (characterId !== undefined) {
+    // Important: We need to resolve the impersonation before setting the state
     const resolvedCharacterId = resolveImpersonation(state, characterId);
-    getGraphsToUpdate(state, participantIds, onlyBelieved).forEach(([s, isBelievedGraph]) => {
-      s.setNodeAttribute(isBelievedGraph ? resolvedCharacterId : characterId, name, value);
+    getStatesToUpdate(state, participantIds, onlyBelieved).forEach(({ state: otherState, believedBy }) => {
+      const characterIdToUse =
+        believedBy !== undefined && believedBy !== characterId ? resolvedCharacterId : characterId;
+      otherState.setNodeAttribute(characterIdToUse, name, value);
     });
   }
 }
@@ -163,12 +221,13 @@ function addRelation(
   participantIds?: string[],
   onlyBelieved?: boolean
 ) {
+  // Important: We need to resolve the impersonation before adding the edge
   const resolvedSourceId = resolveImpersonation(state, sourceId);
   const resolvedTargetId = resolveImpersonation(state, targetId);
-  getGraphsToUpdate(state, participantIds, onlyBelieved).forEach(([s, isBelievedGraph]) => {
-    s.addDirectedEdge(isBelievedGraph ? resolvedSourceId : sourceId, isBelievedGraph ? resolvedTargetId : targetId, {
-      type,
-    });
+  getStatesToUpdate(state, participantIds, onlyBelieved).forEach(({ state: otherState, believedBy }) => {
+    const edgeSourceId = believedBy !== undefined && believedBy !== sourceId ? resolvedSourceId : sourceId;
+    const edgeTargetId = believedBy !== undefined && believedBy !== targetId ? resolvedTargetId : targetId;
+    otherState.addDirectedEdge(edgeSourceId, edgeTargetId, { type });
   });
 }
 
@@ -180,21 +239,18 @@ function removeRelation(
   participantIds?: string[],
   onlyBelieved?: boolean
 ) {
+  // Important: We need to resolve the impersonation before removing the edge
   const resolvedSourceId = resolveImpersonation(state, sourceId);
   const resolvedTargetId = resolveImpersonation(state, targetId);
-  getGraphsToUpdate(state, participantIds, onlyBelieved).forEach(([s, isBelievedGraph]) => {
-    s.forEachDirectedEdge(
-      isBelievedGraph ? resolvedSourceId : sourceId,
-      isBelievedGraph ? resolvedTargetId : targetId,
-      removeEdge
-    );
+  getStatesToUpdate(state, participantIds, onlyBelieved).forEach(({ state: otherState, believedBy }) => {
+    const edgeSourceId = believedBy !== undefined && believedBy !== sourceId ? resolvedSourceId : sourceId;
+    const edgeTargetId = believedBy !== undefined && believedBy !== targetId ? resolvedTargetId : targetId;
+    otherState.forEachDirectedEdge(edgeSourceId, edgeTargetId, (edge, edgeAttributes) => {
+      if (edgeAttributes.type === type) {
+        otherState.dropEdge(edge);
+      }
+    });
   });
-
-  function removeEdge(edge: string, edgeAttributes: EdgeAttributes) {
-    if (edgeAttributes.type === type) {
-      state.dropEdge(edge);
-    }
-  }
 }
 
 export type StateProxy = {
@@ -230,6 +286,10 @@ export type StateProxy = {
   getRelated: (characterId: string, type: RelationType, povCharacterId?: string) => string[];
   getRelatedBy: (characterId: string, type: RelationType, povCharacterId?: string) => string[];
   getRelations: (type: RelationType, povCharacterId?: string) => SourceTarget[];
+  getCharacterIds: (
+    predicate: (characterId: string, attributes: NodeAttributes) => boolean,
+    povCharacterId?: string
+  ) => string[];
   resolveImpersonation: (characterId: string) => string;
 };
 
@@ -251,50 +311,51 @@ export function createStateProxy(state: StoryState, participantIds?: string[]): 
     getRelated: (characterId, type, povCharacterId) => getRelated(state, characterId, type, povCharacterId),
     getRelatedBy: (characterId, type, povCharacterId) => getRelatedBy(state, characterId, type, povCharacterId),
     getRelations: (type, povCharacterId) => getRelations(state, type, povCharacterId),
+    getCharacterIds: (predicate, povCharacterId) => getCharacterIds(state, predicate, povCharacterId),
     resolveImpersonation: (characterId: string) => resolveImpersonation(state, characterId),
   };
 }
 
 export function getInitialStoryState(): StoryState {
-  const state = new MultiDirectedGraph<NodeAttributes, EdgeAttributes, GraphAttributes>();
+  const result = new MultiDirectedGraph<NodeAttributes, EdgeAttributes, GraphAttributes>();
   // Add all characters as nodes
   Object.keys(characters).forEach((characterId) => {
-    state.addNode(characterId);
+    result.addNode(characterId);
   });
 
   // Set initial public state
-  const stateProxy = createStateProxy(state);
+  const state = createStateProxy(result);
 
   // - Marcello family
-  stateProxy.setState(donMarcello.id, "headOfFamily", true);
-  stateProxy.setState(donMarcello.id, "doesNotKill", true);
-  stateProxy.addRelation(donMarcello.id, "wantsToKill", alessio.id);
-  stateProxy.addRelation(vincenzo.id, "obeys", donMarcello.id);
-  stateProxy.setState(donMarcello.id, "successors", [nico, vincenzo, lucia]);
-  stateProxy.addRelation(nico.id, "childOf", donMarcello.id);
-  stateProxy.addRelation(lucia.id, "childOf", donMarcello.id);
-  stateProxy.setState(lucia.id, "sex", "female");
+  state.setState(donMarcello.id, "headOfFamily", true);
+  state.setState(donMarcello.id, "doesNotKill", true);
+  state.addRelation(donMarcello.id, "wantsToKill", alessio.id);
+  state.addRelation(vincenzo.id, "obeys", donMarcello.id);
+  state.setState(donMarcello.id, "successors", [nico, vincenzo, lucia]);
+  state.addRelation(nico.id, "childOf", donMarcello.id);
+  state.addRelation(lucia.id, "childOf", donMarcello.id);
+  state.setState(lucia.id, "sex", "female");
 
   // - Romano family
-  stateProxy.setState(donRomano.id, "headOfFamily", true);
-  stateProxy.setState(donRomano.id, "doesNotSteal", true);
-  stateProxy.setState(donRomano.id, "doesNotKill", true);
-  stateProxy.setState(donRomano.id, "knowsSecretCode", true);
-  stateProxy.addRelation(bruno.id, "obeys", donRomano.id);
-  stateProxy.addRelation(alessio.id, "obeys", donRomano.id);
-  stateProxy.addRelation(alessio.id, "childOf", donRomano.id);
+  state.setState(donRomano.id, "headOfFamily", true);
+  state.setState(donRomano.id, "doesNotSteal", true);
+  state.setState(donRomano.id, "doesNotKill", true);
+  state.setState(donRomano.id, "knowsSecretCode", true);
+  state.addRelation(bruno.id, "obeys", donRomano.id);
+  state.addRelation(alessio.id, "obeys", donRomano.id);
+  state.addRelation(alessio.id, "childOf", donRomano.id);
 
   // - Police
-  stateProxy.setState(inspectorRinaldi.id, "worksForPolice", true);
+  state.setState(inspectorRinaldi.id, "worksForPolice", true);
 
   // Set each character's believedStoryState to a copy of the initial public story state
-  const initialState = state.copy();
+  const publicState = result.copy();
   Object.keys(characters).forEach((characterId) => {
-    stateProxy.setState(characterId, "believedStoryState", initialState.copy());
+    state.setState(characterId, "believedStoryState", publicState.copy());
   });
 
   // Set initial secret state
-  stateProxy.setGlobalState("gunOwner", donMarcello);
+  state.setGlobalState("gunOwner", donMarcello);
 
-  return state;
+  return result;
 }

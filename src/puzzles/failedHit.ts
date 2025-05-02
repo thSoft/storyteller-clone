@@ -11,7 +11,7 @@ export const failedHit: Puzzle = {
   prompt: "Fired for Failed Hit",
   scenes: [...successfulHeist.scenes, eavesdrop.id, confrontation.id],
   characters: [...successfulHeist.characters, inspectorRinaldi.id],
-  isWinning: (state) => state.getState(alessio.id, "dead") === false && state.getState(vincenzo.id, "fired") === true,
+  isWinning: (state) => !state.getState(alessio.id, "dead") && state.getState(vincenzo.id, "fired") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
   dependsOn: successfulHeist.id,
