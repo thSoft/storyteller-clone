@@ -33,9 +33,9 @@ export const deal: Scene = {
       let event = `${orderer.name} ordered ${executor.name} to kill ${targetNames} `;
       if (state.getGlobalState("gunOwner")?.id === orderer.id) {
         state.setGlobalState("gunOwner", executor);
-        event += "and handed him a gun in a violin case.";
+        event += "and handed him/her a gun in a violin case.";
       } else {
-        event += "and told him to get a gun.";
+        event += "and told him/her to get a gun.";
       }
       state.setGlobalState("event", event);
       return;

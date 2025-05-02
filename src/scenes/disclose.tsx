@@ -1,7 +1,7 @@
 import { characters } from "../characters";
 import { RelationType } from "../storyState";
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
+import { handleMurderDiscovery, handlePreconditions } from "./sceneUtils";
 export const speakerSlot = { id: "speaker", label: "Speaker" };
 export const listenerSlot = { id: "listener", label: "Listener" };
 export const disclose: Scene = {
@@ -101,6 +101,31 @@ export const disclose: Scene = {
           )
           .join(" and ")}.`
       );
+      return;
+    }
+    // If the speaker is aware of a performed hit where the speaker is not involved in the crime,
+    // then (s)he tells the listener about it
+    const hits = state.getRelations("killed", speaker.id);
+    const hitsToGiveAway = hits.filter(speakerIsNotInvolved);
+    if (hitsToGiveAway.length > 0) {
+      for (const hit of hitsToGiveAway) {
+        state.addRelation(hit.source, "killed", hit.target, true);
+      }
+      state.setGlobalState(
+        "event",
+        `${speaker.name} told ${listener.name} that ${hitsToGiveAway
+          .map(({ source, target }) => ` ${characters[source]?.name} killed ${characters[target]?.name}`)
+          .join(" and ")}.`
+      );
+      // Handle murder discovery for each hit
+      for (const hit of hitsToGiveAway) {
+        const murderer = characters[hit.source];
+        const victim = characters[hit.target];
+        if (murderer && victim) {
+          handleMurderDiscovery(state, listener, murderer, victim);
+        }
+      }
+
       return;
     }
     // If the speaker is in love with someone, then (s)he tells the listener about it

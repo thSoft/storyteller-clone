@@ -10,6 +10,8 @@ export const eavesdrop: Scene = {
   outcomeLogic: (state, assigned) => {
     const eavesdropper = assigned[eavesdropperSlot.id];
     if (handlePreconditions(state, eavesdropper)) return;
+
+    // Set the eavesdropper for the next event
     state.setGlobalState("eavesdropper", eavesdropper);
     state.setGlobalState("event", `${eavesdropper.name} eavesdropped on the following event.`);
   },

@@ -103,3 +103,20 @@ export function handleDeathWitnessing(
     );
   }
 }
+
+export function handleMurderDiscovery(
+  state: StateProxy,
+  discoverer: Character,
+  murderer: Character,
+  victim: Character
+) {
+  // If the victim is a child or employee of the discoverer, they want to kill the murderer
+  if (state.areRelated(victim.id, "childOf", discoverer.id)) {
+    state.addRelation(discoverer.id, "wantsToKill", murderer.id);
+    const currentEvent = state.getGlobalState("event") || "";
+    state.setGlobalState(
+      "event",
+      ` ${currentEvent} ${discoverer.name} wants to kill ${murderer.name} because they murdered ${victim.name}.`
+    );
+  }
+}

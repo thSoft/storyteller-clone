@@ -12,20 +12,6 @@ export const confrontation: Scene = {
     const confronter = assigned[confronterSlot.id];
     const confronted = assigned[confrontedSlot.id];
     if (handlePreconditions(state, confronter, confronted)) return;
-    // If confronter works for police and is aware of confronted promised murder and confronted has the gun,
-    // then confiscate it
-    if (
-      state.getState(confronter.id, "worksForPolice") &&
-      state.getRelated(confronted.id, "promisedMurderTo", confronter.id).length > 0 &&
-      state.getGlobalState("gunOwner")?.id === confronted.id
-    ) {
-      state.setGlobalState("gunOwner", confronter);
-      state.setGlobalState(
-        "event",
-        `${confronter.name} confiscated the violin case from ${confronted.name} because (s)he knew that ${confronted.name} got it when (s)he agreed to kill someone.`
-      );
-      return;
-    }
     // If confronter works for police and is aware of the confronted having killed someone,
     // then arrest the confronted
     if (
@@ -44,6 +30,25 @@ export const confrontation: Scene = {
     ) {
       state.setState(confronted.id, "arrested", true);
       state.setGlobalState("event", `${confronter.name} arrested ${confronted.name} for robbery.`);
+      return;
+    }
+    // If confronted has gun and believes that confronter works for police,
+    // and confronter is aware of confronted promised murder or killed someone,
+    // then confiscate it
+    const knowsAboutHitPlan = state.getRelated(confronted.id, "promisedMurderTo", confronter.id).length > 0;
+    const knowsAboutHit = state.getRelated(confronted.id, "killed", confronter.id).length > 0;
+    if (
+      state.getState(confronter.id, "worksForPolice", confronted.id) &&
+      (knowsAboutHitPlan || knowsAboutHit) &&
+      state.getGlobalState("gunOwner")?.id === confronted.id
+    ) {
+      state.setGlobalState("gunOwner", confronter);
+      state.setGlobalState(
+        "event",
+        `${confronter.name} confiscated the violin case from ${confronted.name} because (s)he knew that ${
+          confronted.name
+        } got it when (s)he ${knowsAboutHitPlan ? "promised to kill" : "killed"} someone.`
+      );
       return;
     }
     // If confronter is aware of the confronted loving someone who the confronter wants to kill,

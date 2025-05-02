@@ -1,8 +1,10 @@
+import { characters } from "../characters";
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
+import { handleMurderDiscovery, handlePreconditions } from "./sceneUtils";
 
 export const shooterSlot = { id: "shooter", label: "Shooter" };
 export const targetSlot = { id: "target", label: "Target" };
+
 export const hit: Scene = {
   id: "hit",
   name: "🔫 Hit",
@@ -34,5 +36,14 @@ export const hit: Scene = {
       event += ` to death.`;
     }
     state.setGlobalState("event", event);
+
+    // Handle murder discovery for eavesdropper if present
+    const eavesdropperId = state.getGlobalState("eavesdropper")?.id;
+    if (eavesdropperId) {
+      const eavesdropper = characters[eavesdropperId];
+      if (eavesdropper) {
+        handleMurderDiscovery(state, eavesdropper, shooter, target);
+      }
+    }
   },
 };
