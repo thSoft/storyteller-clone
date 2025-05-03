@@ -26,28 +26,48 @@ export const InsertionPoint: React.FC<{
     }
   };
 
-  const [{ dragging }, drop] = useDrop(() => ({
+  const [{ dragging, isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.SCENE,
     canDrop: () => panelCount < puzzle.maxPanelCount, // Disallow dropping if maxPanelCount is reached
     drop: (item: { sceneId: string }) => handleInsertPanel(index, item.sceneId),
     collect: (monitor) => ({
       dragging: !!monitor.canDrop(),
+      isOver: !!monitor.isOver(),
     }),
   }));
 
   const ref = useRef<HTMLDivElement>(null);
   drop(ref);
 
+  const backgroundColor =
+    panelCount < puzzle.maxPanelCount ? (isOver ? "yellow" : dragging ? "lightgreen" : "transparent") : "transparent";
   return (
     <div
       ref={ref}
       style={{
-        height: "16px",
-        backgroundColor: panelCount < puzzle.maxPanelCount && dragging ? "lightgreen" : "transparent",
-        margin: "4px 0",
+        width: panelCount === 0 ? "100%" : "24px",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {panelCount === 0 && "Please drag and drop scenes here."}
+      <div
+        style={{
+          width: panelCount === 0 ? "100%" : "12px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: backgroundColor,
+          margin: "4px 0",
+          boxShadow: dragging ? `0px 0px 12px ${backgroundColor}` : "none",
+          borderRadius: "4px",
+        }}
+      >
+        {panelCount === 0 && "Please drag and drop scenes here."}
+      </div>
     </div>
   );
 };

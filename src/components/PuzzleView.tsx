@@ -10,7 +10,7 @@ import { scenes } from "../scenes";
 import { getStates } from "../simulator";
 import { setCurrentPuzzleId } from "../store/gameStateSlice";
 import { GameState, Puzzle } from "../types";
-import { CharacterView } from "./CharacterView";
+import { DraggableCharacterView } from "./DraggableCharacterView";
 import { InsertionPoint } from "./InsertionPoint";
 import { PanelView } from "./PanelView";
 import { SceneView } from "./SceneView";
@@ -71,39 +71,59 @@ export const PuzzleView: React.FC<{
         {isPuzzleWon(puzzle, panels) && " - Victory"}
       </h1>
       <div style={{ display: "flex", gap: "12px" }}>
-        <div>
+        <div style={{ width: "30vw" }}>
           <div>
             <h2>Scenes:</h2>
-            {puzzleScenes.map((scene) => (
-              <SceneView key={scene.id} scene={scene} />
-            ))}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                gap: "8px",
+              }}
+            >
+              {puzzleScenes.map((scene) => (
+                <SceneView key={scene.id} scene={scene} />
+              ))}
+            </div>
           </div>
 
           <div>
             <h2>Characters:</h2>
-            {puzzleCharacters.map((character) => (
-              <CharacterView key={character.id} character={character} />
-            ))}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                gap: "16px",
+              }}
+            >
+              {puzzleCharacters.map((character) => (
+                <DraggableCharacterView key={character.id} character={character} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div>
+        <div style={{ width: "70vw" }}>
           <h2>
             Story ({panels.length} / {puzzle.maxPanelCount} panels):
           </h2>
-          <InsertionPoint puzzle={puzzle} key={panels.length} index={0} panelCount={panels.length} />
-          {panels.map((panel, index) => {
-            return (
-              <PanelView
-                puzzle={puzzle}
-                panel={panel}
-                index={index}
-                states={states}
-                key={`${index}-${panels.length}`}
-                panelCount={panels.length}
-              />
-            );
-          })}
+          <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", rowGap: "8px" }}>
+            {panels.map((panel, index) => {
+              return (
+                <PanelView
+                  puzzle={puzzle}
+                  panel={panel}
+                  index={index}
+                  states={states}
+                  key={`${index}-${panels.length}`}
+                  panelCount={panels.length}
+                />
+              );
+            })}
+            <InsertionPoint puzzle={puzzle} key={panels.length} index={panels.length} panelCount={panels.length} />
+          </div>
         </div>
       </div>
     </DndProvider>

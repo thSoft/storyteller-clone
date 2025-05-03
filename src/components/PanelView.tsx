@@ -41,33 +41,43 @@ export const PanelView: React.FC<{
 
   const state = states[index + 1];
   return (
-    <span>
+    <div style={{ display: "flex", flexDirection: "row", gap: "0" }}>
+      <InsertionPoint puzzle={puzzle} index={index} panelCount={panelCount} />
       <div
         key={`${index}-${panelCount}`}
         style={{
           border: "1px solid black",
           padding: "8px",
+          width: "300px",
         }}
         onContextMenu={handleContextMenu}
       >
         <h4 style={{ marginTop: 0 }}>
           {scene?.name}{" "}
-          <button style={{ float: "right" }} onClick={() => handleRemovePanel()}>
-            Remove
+          <button style={{ float: "right" }} onClick={() => handleRemovePanel()} title="Remove panel">
+            ❌
           </button>
         </h4>
-        {scene?.slots.map((slot: SceneSlot) => (
-          <SlotView
-            key={slot.id}
-            slot={slot}
-            assignedCharacter={panel.slotAssignedCharacters[slot.id]}
-            onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
-          />
-        ))}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: "4px",
+          }}
+        >
+          {scene?.slots.map((slot: SceneSlot) => (
+            <SlotView
+              key={slot.id}
+              slot={slot}
+              assignedCharacter={panel.slotAssignedCharacters[slot.id]}
+              onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
+            />
+          ))}
+        </div>
         <div>{toFirstUpper(state?.getAttribute("event")) || "\u00A0"}</div>
         {showGraph && state && <StoryGraphView graph={state} width={800} height={400} />}
       </div>
-      <InsertionPoint puzzle={puzzle} index={index + 1} panelCount={panelCount} />
-    </span>
+    </div>
   );
 };

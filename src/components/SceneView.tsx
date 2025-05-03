@@ -23,7 +23,9 @@ export const SceneView: React.FC<{ scene: Scene }> = ({ scene }) => {
         cursor: "move",
         margin: "4px",
         padding: "4px",
+        lineHeight: "1.5",
         border: "1px solid",
+        width: "110px",
       }}
     >
       {scene.name}
