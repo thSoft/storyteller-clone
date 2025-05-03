@@ -2,37 +2,37 @@ import { characters } from "../characters";
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
 
-export const ordererSlot = { id: "orderer", label: "Orderer" };
-export const executorSlot = { id: "executor", label: "Executor" };
+export const proposerSlot = { id: "proposer", label: "Proposer" };
+export const acceptorSlot = { id: "acceptor", label: "Acceptor" };
 export const deal: Scene = {
   id: "deal",
   name: "🤝 Deal",
-  slots: [ordererSlot, executorSlot],
+  slots: [proposerSlot, acceptorSlot],
   outcomeLogic: (state, assigned) => {
-    const orderer = assigned[ordererSlot.id];
-    const executor = assigned[executorSlot.id];
-    if (handlePreconditions(state, orderer, executor)) return;
-    const targetIds = state.getRelated(orderer.id, "wantsToKill");
+    const proposer = assigned[proposerSlot.id];
+    const acceptor = assigned[acceptorSlot.id];
+    if (handlePreconditions(state, proposer, acceptor)) return;
+    const targetIds = state.getRelated(proposer.id, "wantsToKill");
     // Order hit
     if (targetIds.length > 0) {
       if (
-        !state.areRelated(executor.id, "obeys", orderer.id) &&
-        state.getRelated(executor.id, "impersonates").length === 0
+        !state.areRelated(acceptor.id, "obeys", proposer.id) &&
+        state.getRelated(acceptor.id, "impersonates").length === 0
       ) {
-        state.setGlobalState("event", `${executor.name} doesn't obey ${orderer.name}.`);
+        state.setGlobalState("event", `${acceptor.name} doesn't obey ${proposer.name}.`);
         return;
       }
-      state.addRelation(executor.id, "promisedMurderTo", orderer.id);
+      state.addRelation(acceptor.id, "promisedMurderTo", proposer.id);
       for (const targetId of targetIds) {
-        state.addRelation(executor.id, "wantsToKill", targetId);
+        state.addRelation(acceptor.id, "wantsToKill", targetId);
       }
       const targetNames = targetIds
         .map((id) => characters[id]?.name)
         .filter((name) => name !== undefined)
         .join(", ");
-      let event = `${orderer.name} ordered ${executor.name} to kill ${targetNames} `;
-      if (state.getGlobalState("gunOwner")?.id === orderer.id) {
-        state.setGlobalState("gunOwner", executor);
+      let event = `${proposer.name} ordered ${acceptor.name} to kill ${targetNames} `;
+      if (state.getGlobalState("gunOwner")?.id === proposer.id) {
+        state.setGlobalState("gunOwner", acceptor);
         event += "and handed him/her a gun in a violin case.";
       } else {
         event += "and told him/her to get a gun.";
@@ -41,23 +41,23 @@ export const deal: Scene = {
       return;
     }
     // Order heist
-    if (state.getState(orderer.id, "knowsSecretCode")) {
-      if (!state.areRelated(executor.id, "obeys", orderer.id)) {
-        state.setGlobalState("event", `${executor.name} doesn't obey ${orderer.name}.`);
+    if (state.getState(proposer.id, "knowsSecretCode")) {
+      if (!state.areRelated(acceptor.id, "obeys", proposer.id)) {
+        state.setGlobalState("event", `${acceptor.name} doesn't obey ${proposer.name}.`);
         return;
       }
-      state.setStates([executor.id, state.getGlobalState("eavesdropper")?.id], "knowsSecretCode", true);
-      state.addRelation(executor.id, "promisedHeistTo", orderer.id);
+      state.setStates([acceptor.id, state.getGlobalState("eavesdropper")?.id], "knowsSecretCode", true);
+      state.addRelation(acceptor.id, "promisedHeistTo", proposer.id);
       state.setGlobalState(
         "event",
-        `${orderer.name} ordered ${executor.name} to rob the bank and told him the secret code of the safe.`
+        `${proposer.name} ordered ${acceptor.name} to rob the bank and told him the secret code of the safe.`
       );
       return;
     }
     // Join police
-    if (state.getState(orderer.id, "worksForPolice")) {
-      state.setState(executor.id, "worksForPolice", true);
-      state.setGlobalState("event", `${orderer.name} persuaded ${executor.name} to join the police.`);
+    if (state.getState(proposer.id, "worksForPolice")) {
+      state.setState(acceptor.id, "worksForPolice", true);
+      state.setGlobalState("event", `${proposer.name} persuaded ${acceptor.name} to join the police.`);
       return;
     }
   },
