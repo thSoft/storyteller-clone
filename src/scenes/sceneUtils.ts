@@ -109,7 +109,7 @@ export function handleMurderDiscovery(
   // If the victim is a child or employee of the discoverer, they want to kill the murderer
   if (state.areRelated(victim.id, "childOf", discoverer.id)) {
     state.addRelation(discoverer.id, "wantsToKill", murderer.id);
-    const currentEvent = state.getGlobalState("event") || "";
+    const currentEvent = state.getGlobalState("event")?.description || "";
     state.setDescription(
       ` ${currentEvent} ${discoverer.name} wants to kill ${murderer.name} because they murdered ${victim.name}.`
     );

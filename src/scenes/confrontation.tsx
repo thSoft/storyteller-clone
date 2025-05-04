@@ -43,8 +43,7 @@ export const confrontation: Scene = {
       state.getGlobalState("gunOwner")?.id === confronted.id
     ) {
       state.setGlobalState("gunOwner", confronter);
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${confronter.name} confiscated the violin case from ${confronted.name} because (s)he knew that ${
           confronted.name
         } got it when (s)he ${knowsAboutHitPlan ? "promised to kill" : "killed"} someone.`
@@ -65,8 +64,7 @@ export const confrontation: Scene = {
       state.areRelated(confronted.id, "childOf", confronter.id)
     ) {
       state.setState(confronted.id, "disowned", true);
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${confronter.name} disowned ${confronted.name} because ${
           confronted.name
         } loves ${mortalEnemiesOfConfronterLoverOfConfrontedIds

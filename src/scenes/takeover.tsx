@@ -54,8 +54,7 @@ export const takeover: Scene = {
         !state.getState(successorId, "disowned")
     );
     if (actualSuccessorIds.length > 0 && actualSuccessorIds[0] !== overtaker.id) {
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${overtaker.name} can't succeed ${headOfFamily.name} because ${
           characters[actualSuccessorIds[0]]?.name
         } precedes him/her in the succession.`

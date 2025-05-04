@@ -27,6 +27,9 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
           newState.setNodeAttribute(node, "believedStoryState", believedState.copy());
         }
       });
+
+      newState.setAttribute("event", initialEvent);
+
       const state = createStateProxy(newState);
       const unassignedSlots = scene.slots.filter((slot) => !slot.optional && !assigned[slot.id]);
       if (unassignedSlots.length > 0) {
@@ -40,7 +43,6 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
       ].filter((id) => id !== undefined);
       const stateWithParticipants = createStateProxy(newState, participantIds);
 
-      newState.setAttribute("event", initialEvent);
       scene.outcomeLogic(stateWithParticipants, assigned);
 
       if (scene.id !== eavesdrop.id) {
