@@ -14,28 +14,38 @@ export const hit: Scene = {
     const target = assigned[targetSlot.id];
     if (handlePreconditions(state, shooter, target)) return;
     if (!state.areRelated(shooter.id, "wantsToKill", target.id)) {
-      state.setGlobalState("event", `${shooter.name} didn't want to kill ${target.name}.`);
+      state.addAction({
+        type: "thought",
+        characterId: shooter.id,
+        message: `I don't want to kill ${target.name}.`,
+      });
       return;
     }
     if (state.getState(shooter.id, "doesNotKill")) {
-      state.setGlobalState("event", `${shooter.name} doesn't want to get his hands dirty.`);
+      state.setDescription(`${shooter.name} doesn't want to get his hands dirty.`);
       return;
     }
     if (state.getGlobalState("gunOwner")?.id !== shooter.id) {
-      state.setGlobalState("event", `${shooter.name} didn't have a gun.`);
+      state.setDescription(`${shooter.name} didn't have a gun.`);
       return;
     }
-    let event = `${shooter.name} shot ${target.name}`;
+    state.addAction({
+      type: "other",
+      characterId: shooter.id,
+      action: "shoot",
+    });
+    state.addAction({
+      type: "other",
+      characterId: target.id,
+      action: "shot",
+    });
     if (state.getState(target.id, "protectedFromMurder")) {
       state.setState(target.id, "dead", true, true);
       state.addRelation(shooter.id, "killed", target.id, true);
-      event += ` but ${target.name} was protected by the bulletproof vest.`;
     } else {
       state.setState(target.id, "dead", true);
       state.addRelation(shooter.id, "killed", target.id);
-      event += ` to death.`;
     }
-    state.setGlobalState("event", event);
 
     // Handle murder discovery for eavesdropper if present
     const eavesdropperId = state.getGlobalState("eavesdropper")?.id;

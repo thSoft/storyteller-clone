@@ -13,6 +13,6 @@ export const eavesdrop: Scene = {
 
     // Set the eavesdropper for the next event
     state.setGlobalState("eavesdropper", eavesdropper);
-    state.setGlobalState("event", `${eavesdropper.name} eavesdropped on the following event.`);
+    state.setDescription(`${eavesdropper.name} eavesdropped on the following event.`);
   },
 };

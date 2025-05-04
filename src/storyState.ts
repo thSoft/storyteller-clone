@@ -32,7 +32,7 @@ export type GraphAttributes = {
   gunOwner?: Entity;
   bankRobber?: Entity;
   eavesdropper?: Entity;
-  event?: string;
+  event?: StoryEvent;
 };
 
 export type RelationType =
@@ -47,3 +47,34 @@ export type RelationType =
   | "killed";
 
 export type StoryState = Graph<NodeAttributes, EdgeAttributes, GraphAttributes>;
+
+export type Action = Speech | Thought | OtherAction;
+
+export type Speech = {
+  type: "speech";
+  characterId: string;
+  message: string;
+  style?: "whisper" | "shout";
+};
+
+export type Thought = {
+  type: "thought";
+  characterId: string;
+  message: string;
+};
+
+export type OtherAction = {
+  type: "other";
+  characterId: string;
+  action: string;
+};
+
+export type StoryEvent = {
+  description: string;
+  actions: Action[];
+};
+
+export const initialEvent: StoryEvent = {
+  description: "",
+  actions: [],
+};

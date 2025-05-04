@@ -9,6 +9,6 @@ export const shield: Scene = {
     const protectedCharacter = assigned[protectedSlot.id];
     if (handlePreconditions(state, protectedCharacter)) return;
     state.setState(protectedCharacter.id, "protectedFromMurder", true);
-    state.setGlobalState("event", `${protectedCharacter.name} put on a bulletproof vest.`);
+    state.setDescription(`${protectedCharacter.name} put on a bulletproof vest.`);
   },
 };

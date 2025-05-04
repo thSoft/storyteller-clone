@@ -10,7 +10,15 @@ import {
   nico,
   vincenzo,
 } from "./characters";
-import { EdgeAttributes, GraphAttributes, NodeAttributes, RelationType, StoryState } from "./storyState";
+import {
+  Action,
+  EdgeAttributes,
+  GraphAttributes,
+  initialEvent,
+  NodeAttributes,
+  RelationType,
+  StoryState,
+} from "./storyState";
 
 // Private state reader functions
 
@@ -291,6 +299,8 @@ export type StateProxy = {
     povCharacterId?: string
   ) => string[];
   resolveImpersonation: (characterId: string) => string;
+  setDescription: (description: string) => void;
+  addAction: (action: Action) => void;
 };
 
 export function createStateProxy(state: StoryState, participantIds?: string[]): StateProxy {
@@ -313,7 +323,18 @@ export function createStateProxy(state: StoryState, participantIds?: string[]): 
     getRelations: (type, povCharacterId) => getRelations(state, type, povCharacterId),
     getCharacterIds: (predicate, povCharacterId) => getCharacterIds(state, predicate, povCharacterId),
     resolveImpersonation: (characterId: string) => resolveImpersonation(state, characterId),
+    setDescription: (description: string) => setDescription(state, description),
+    addAction: (action: Action) => addAction(state, action),
   };
+}
+
+function addAction(state: StoryState, action: Action) {
+  const event = state.getAttribute("event") || initialEvent;
+  state.setAttribute("event", { ...event, actions: [...event.actions, action] });
+}
+
+function setDescription(state: StoryState, description: string) {
+  state.setAttribute("event", { ...(state.getAttribute("event") || initialEvent), description });
 }
 
 export function getInitialStoryState(): StoryState {

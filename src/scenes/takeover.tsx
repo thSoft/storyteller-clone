@@ -10,23 +10,20 @@ export const takeover: Scene = {
     const overtaker = assigned[overtakerSlot.id];
     if (handlePreconditions(state, overtaker)) return;
     if (state.getState(overtaker.id, "headOfFamily")) {
-      state.setGlobalState("event", `${overtaker.name} is already the head of the family.`);
+      state.setDescription(`${overtaker.name} is already the head of the family.`);
       return;
     }
     if (state.getState(overtaker.id, "disowned")) {
-      state.setGlobalState("event", `${overtaker.name} is disowned and cannot become the head of the family.`);
+      state.setDescription(`${overtaker.name} is disowned and cannot become the head of the family.`);
       return;
     }
     if (state.getState(overtaker.id, "worksForPolice")) {
-      state.setGlobalState(
-        "event",
-        `${overtaker.name} is a police officer and does not want to become the head of the family.`
-      );
+      state.setDescription(`${overtaker.name} is a police officer and does not want to become the head of the family.`);
       return;
     }
     const obeys = [...state.getRelated(overtaker.id, "obeys"), ...state.getRelated(overtaker.id, "childOf")];
     if (obeys.length === 0) {
-      state.setGlobalState("event", `${overtaker.name} has no one to obey.`);
+      state.setDescription(`${overtaker.name} has no one to obey.`);
       return;
     }
     const headOfFamilyId = obeys[0];
@@ -35,19 +32,18 @@ export const takeover: Scene = {
       return;
     }
     if (!state.getState(headOfFamilyId, "headOfFamily")) {
-      state.setGlobalState("event", `${headOfFamily.name} is not the head of the family.`);
+      state.setDescription(`${headOfFamily.name} is not the head of the family.`);
       return;
     }
     if (!state.getState(headOfFamilyId, "dead")) {
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${headOfFamily.name} is still alive and wouldn't let ${overtaker.name} become the head of the family.`
       );
       return;
     }
     const successorIds = state.getState(headOfFamilyId, "successors")?.map((successor) => successor.id);
     if (successorIds === undefined || successorIds.length === 0) {
-      state.setGlobalState("event", `${overtaker.name} has no one to succeed.`);
+      state.setDescription(`${overtaker.name} has no one to succeed.`);
       return;
     }
     const actualSuccessorIds = successorIds.filter(
@@ -67,6 +63,6 @@ export const takeover: Scene = {
       return;
     }
     state.setState(overtaker.id, "headOfFamily", true);
-    state.setGlobalState("event", `${overtaker.name} became the head of the family.`);
+    state.setDescription(`${overtaker.name} became the head of the family.`);
   },
 };

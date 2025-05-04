@@ -15,15 +15,12 @@ export const impersonate: Scene = {
     if (oldImpersonatedIds.length > 0 && impersonated === undefined) {
       const oldImpersonatedId = oldImpersonatedIds[0];
       state.removeRelation(impersonator.id, "impersonates", oldImpersonatedId);
-      state.setGlobalState(
-        "event",
-        `${impersonator.name} no longer impersonates ${characters[oldImpersonatedId]?.name}.`
-      );
+      state.setDescription(`${impersonator.name} no longer impersonates ${characters[oldImpersonatedId]?.name}.`);
       return;
     }
     if (impersonated !== undefined) {
       state.addRelation(impersonator.id, "impersonates", impersonated.id);
-      state.setGlobalState("event", `${impersonator.name} impersonated ${impersonated.name}.`);
+      state.setDescription(`${impersonator.name} impersonated ${impersonated.name}.`);
     }
   },
 };

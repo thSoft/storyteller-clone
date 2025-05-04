@@ -19,7 +19,7 @@ export const confrontation: Scene = {
       state.getRelated(confronted.id, "killed", confronter.id).length > 0
     ) {
       state.setState(confronted.id, "arrested", true);
-      state.setGlobalState("event", `${confronter.name} arrested ${confronted.name} for murder.`);
+      state.setDescription(`${confronter.name} arrested ${confronted.name} for murder.`);
       return;
     }
     // If confronter works for police and is aware of the confronted having robbed the bank,
@@ -29,7 +29,7 @@ export const confrontation: Scene = {
       state.getGlobalState("bankRobber", confronter.id)?.id === confronted.id
     ) {
       state.setState(confronted.id, "arrested", true);
-      state.setGlobalState("event", `${confronter.name} arrested ${confronted.name} for robbery.`);
+      state.setDescription(`${confronter.name} arrested ${confronted.name} for robbery.`);
       return;
     }
     // If confronted has gun and believes that confronter works for police,
@@ -75,6 +75,6 @@ export const confrontation: Scene = {
       );
       return;
     }
-    state.setGlobalState("event", `${confronter.name} had nothing to confront ${confronted.name} about.`);
+    state.setDescription(`${confronter.name} had nothing to confront ${confronted.name} about.`);
   },
 };

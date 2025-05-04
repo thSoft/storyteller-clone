@@ -14,7 +14,7 @@ export const death: Scene = {
     if (handlePreconditions(state, victim, witness, { checkDeathWitnessing: false })) return;
 
     state.setState(victim.id, "dead", true);
-    state.setGlobalState("event", `${victim.name} died.`);
+    state.setDescription(`${victim.name} died.`);
 
     handleDeathWitnessing(state, victim, witness);
 

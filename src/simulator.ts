@@ -2,7 +2,7 @@ import { characters } from "./characters";
 import { scenes } from "./scenes";
 import { eavesdrop } from "./scenes/eavesdrop";
 import { createStateProxy } from "./stateProxy";
-import { StoryState } from "./storyState";
+import { initialEvent, StoryState } from "./storyState";
 import { Panel } from "./types";
 
 // Public functions
@@ -30,7 +30,7 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
       const state = createStateProxy(newState);
       const unassignedSlots = scene.slots.filter((slot) => !slot.optional && !assigned[slot.id]);
       if (unassignedSlots.length > 0) {
-        state.setGlobalState("event", "Please drag and drop characters to the slots that are not optional.");
+        state.setDescription("Please drag and drop characters to the slots that are not optional.");
         return [...previousStates, newState];
       }
 
@@ -40,7 +40,7 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
       ].filter((id) => id !== undefined);
       const stateWithParticipants = createStateProxy(newState, participantIds);
 
-      state.setGlobalState("event", undefined);
+      newState.setAttribute("event", initialEvent);
       scene.outcomeLogic(stateWithParticipants, assigned);
 
       if (scene.id !== eavesdrop.id) {

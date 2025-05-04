@@ -11,22 +11,21 @@ export const heist: Scene = {
     const robber = assigned[robberSlot.id];
     if (handlePreconditions(state, robber)) return;
     if (state.getState(robber.id, "doesNotSteal")) {
-      state.setGlobalState("event", `${robber.name} doesn't want to get his hands dirty.`);
+      state.setDescription(`${robber.name} doesn't want to get his hands dirty.`);
       return;
     }
     if (!state.getState(robber.id, "knowsSecretCode")) {
-      state.setGlobalState("event", `${robber.name} didn't know the secret code of the safe.`);
+      state.setDescription(`${robber.name} didn't know the secret code of the safe.`);
       return;
     }
     const previousRobberId = state.getGlobalState("bankRobber")?.id;
     if (previousRobberId !== undefined) {
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${robber.name} failed to rob the bank because ${characters[previousRobberId]?.name} already robbed it.`
       );
       return;
     }
     state.setGlobalState("bankRobber", robber);
-    state.setGlobalState("event", `${robber.name} robbed the bank.`);
+    state.setDescription(`${robber.name} robbed the bank.`);
   },
 };

@@ -25,12 +25,16 @@ export const disclose: Scene = {
       }
       state.setState(listener.id, "content", true);
       state.setState(speaker.id, "promoted", true);
-      state.setGlobalState(
-        "event",
-        `${speaker.name} told ${listener.name} that ${speaker.name} killed ${characters[orderedVictimIds[0]]?.name}. ${
-          listener.name
-        } was glad to hear it and promoted ${speaker.name}.`
-      );
+      state.addAction({
+        type: "speech",
+        characterId: speaker.id,
+        message: `I killed ${characters[orderedVictimIds[0]]?.name}.`,
+      });
+      state.addAction({
+        type: "speech",
+        characterId: listener.id,
+        message: "Very good, indeed! You shall be promoted!",
+      });
       return;
     }
     const gunOwnerIdAccordingToSpeaker = state.getGlobalState("gunOwner", speaker.id)?.id;
@@ -43,8 +47,7 @@ export const disclose: Scene = {
     ) {
       state.addRelation(listener.id, "angryAt", speaker.id);
       state.setState(speaker.id, "fired", true);
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${speaker.name} told ${listener.name} that ${characters[gunOwnerIdAccordingToSpeaker]?.name} has the gun. ${listener.name} was angry to hear it and fired ${speaker.name}.`
       );
       return;
@@ -56,8 +59,7 @@ export const disclose: Scene = {
       state.setGlobalState("bankRobber", speaker, true);
       state.setState(listener.id, "content", true);
       state.setState(speaker.id, "rewarded", true);
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${speaker.name} told ${listener.name} that he robbed the bank. ${listener.name} was glad to hear it and rewarded ${speaker.name}.`
       );
       return;
@@ -67,8 +69,7 @@ export const disclose: Scene = {
     if (state.areRelated(speaker.id, "promisedHeistTo", listener.id) && bankRobberId !== speaker.id) {
       state.addRelation(listener.id, "angryAt", speaker.id);
       state.setState(speaker.id, "fired", true);
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${speaker.name} told ${listener.name} that someone else robbed the bank. ${listener.name} was angry to hear it and fired ${speaker.name}.`
       );
       return;
@@ -92,8 +93,7 @@ export const disclose: Scene = {
       for (const crimePlan of crimePlansToGiveAway) {
         state.addRelation(crimePlan.source, crimePlan.relationType, crimePlan.target, true);
       }
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${speaker.name} told ${listener.name} that ${crimePlansToGiveAway
           .map(
             ({ crimeName: type, source, target }) =>
@@ -111,8 +111,7 @@ export const disclose: Scene = {
       for (const hit of hitsToGiveAway) {
         state.addRelation(hit.source, "killed", hit.target, true);
       }
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${speaker.name} told ${listener.name} that ${hitsToGiveAway
           .map(({ source, target }) => ` ${characters[source]?.name} killed ${characters[target]?.name}`)
           .join(" and ")}.`
@@ -134,8 +133,7 @@ export const disclose: Scene = {
       for (const lovedBySpeakerId of lovedBySpeakerIds) {
         state.addRelation(speaker.id, "loves", lovedBySpeakerId, true);
       }
-      state.setGlobalState(
-        "event",
+      state.setDescription(
         `${speaker.name} told ${listener.name} that he loves ${lovedBySpeakerIds
           .map((id) => characters[id]?.name)
           .join(", ")}.`
@@ -143,6 +141,6 @@ export const disclose: Scene = {
       return;
     }
     // Otherwise
-    state.setGlobalState("event", `${speaker.name} had nothing to tell to ${listener.name}.`);
+    state.setDescription(`${speaker.name} had nothing to tell to ${listener.name}.`);
   },
 };

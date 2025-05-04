@@ -40,6 +40,8 @@ export const PanelView: React.FC<{
   };
 
   const state = states[index + 1];
+  const event = state?.getAttribute("event");
+  const actions = event?.actions;
   return (
     <div style={{ display: "flex", flexDirection: "row", gap: "0" }}>
       <InsertionPoint puzzle={puzzle} index={index} panelCount={panelCount} />
@@ -66,16 +68,25 @@ export const PanelView: React.FC<{
             gap: "4px",
           }}
         >
-          {scene?.slots.map((slot: SceneSlot) => (
-            <SlotView
-              key={slot.id}
-              slot={slot}
-              assignedCharacter={panel.slotAssignedCharacters[slot.id]}
-              onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
-            />
-          ))}
+          {scene?.slots.map((slot: SceneSlot, index: number) => {
+            const characterActions = actions?.filter(
+              (bubble) => bubble.characterId === panel.slotAssignedCharacters[slot.id]
+            );
+            return (
+              <SlotView
+                key={slot.id}
+                slot={slot}
+                index={index}
+                assignedCharacter={panel.slotAssignedCharacters[slot.id]}
+                onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
+                speech={characterActions?.find((action) => action.type === "speech")}
+                thought={characterActions?.find((action) => action.type === "thought")}
+                otherAction={characterActions?.find((action) => action.type === "other")}
+              />
+            );
+          })}
         </div>
-        <div>{toFirstUpper(state?.getAttribute("event")) || "\u00A0"}</div>
+        <div>{toFirstUpper(event?.description)}</div>
         {showGraph && state && <StoryGraphView graph={state} width={800} height={400} />}
       </div>
     </div>

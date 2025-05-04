@@ -28,17 +28,14 @@ function handleEncounter(state: StateProxy, confronter: Character, confronted: C
     state.getGlobalState("gunOwner")?.id === confronter.id
   ) {
     state.setState(confronted.id, "shockedByGun", true);
-    state.setGlobalState(
-      "event",
-      `${confronted.name} was shocked to see the violin case in the hands of ${confronter.name}.`
-    );
+    state.setDescription(`${confronted.name} was shocked to see the violin case in the hands of ${confronter.name}.`);
     return true;
   }
   // If confronted is aware of confronter being dead, but the confronter is alive,
   // then the confronted is shocked by seeing the confronter alive
   if (!state.getState(confronter.id, "dead") && state.getState(confronter.id, "dead", confronted.id) === true) {
     state.setState(confronted.id, "shockedByAlive", true);
-    state.setGlobalState("event", `${confronted.name} was shocked to see ${confronter.name} alive.`);
+    state.setDescription(`${confronted.name} was shocked to see ${confronter.name} alive.`);
     return true;
   }
   return false;
@@ -59,7 +56,7 @@ export function handlePreconditions(
     character2
   );
   if (deadCharacter) {
-    state.setGlobalState("event", `${deadCharacter.name} was dead.`);
+    state.setDescription(`${deadCharacter.name} was dead.`);
     if (options.checkDeathWitnessing) {
       handleDeathWitnessing(state, deadCharacter, otherCharacter);
     }
@@ -67,11 +64,11 @@ export function handlePreconditions(
   }
   // Arrested
   if (state.getState(character1.id, "arrested")) {
-    state.setGlobalState("event", `${character1.name} was arrested.`);
+    state.setDescription(`${character1.name} was arrested.`);
     return true;
   }
   if (character2 && state.getState(character2.id, "arrested")) {
-    state.setGlobalState("event", `${character2.name} was arrested.`);
+    state.setDescription(`${character2.name} was arrested.`);
     return true;
   }
   if (
@@ -97,8 +94,7 @@ export function handleDeathWitnessing(
   ) {
     state.setState(otherCharacter.id, "heartbroken", true);
     const currentEvent = state.getGlobalState("event") || "";
-    state.setGlobalState(
-      "event",
+    state.setDescription(
       `${currentEvent} ${otherCharacter.name} was heartbroken by the death of ${deadCharacter.name}.`
     );
   }
@@ -114,8 +110,7 @@ export function handleMurderDiscovery(
   if (state.areRelated(victim.id, "childOf", discoverer.id)) {
     state.addRelation(discoverer.id, "wantsToKill", murderer.id);
     const currentEvent = state.getGlobalState("event") || "";
-    state.setGlobalState(
-      "event",
+    state.setDescription(
       ` ${currentEvent} ${discoverer.name} wants to kill ${murderer.name} because they murdered ${victim.name}.`
     );
   }
