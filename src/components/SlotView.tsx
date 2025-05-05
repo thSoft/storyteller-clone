@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useDrop } from "react-dnd";
+import { Tooltip } from "react-tooltip";
 import { characters } from "../characters";
 import { OtherAction, Speech, Thought } from "../storyState";
 import { SceneSlot } from "../types";
@@ -14,7 +15,8 @@ export const SlotView: React.FC<{
   speech?: Speech;
   thought?: Thought;
   otherAction?: OtherAction;
-}> = ({ index, assignedCharacter, onAssignCharacter, speech, thought, otherAction }) => {
+  panelIndex: number;
+}> = ({ index, assignedCharacter, onAssignCharacter, speech, thought, otherAction, panelIndex }) => {
   const [{ dragging, isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.CHARACTER,
     drop: (item: { characterId: string }) => onAssignCharacter(item.characterId),
@@ -29,40 +31,54 @@ export const SlotView: React.FC<{
 
   const character = assignedCharacter ? characters[assignedCharacter] : undefined;
 
-  function getSpeechBubble(filename: string, message: string) {
+  const id = `${panelIndex}-${index}`;
+
+  function getSpeechBubble(thought: boolean, message: string) {
     return (
-      <div
+      <Tooltip
+        content={message}
+        id={id}
+        isOpen={true}
         style={{
-          width: "140px",
-          height: "120px",
-          backgroundImage: `url(/bubbles/${filename}.svg)`,
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          width: "100px",
+          backgroundColor: "white",
+          color: "black",
+          borderRadius: thought ? "40%" : "25%",
         }}
-      >
-        <div style={{ fontSize: "1cqh", width: "80%", textAlign: "center" }}>{message}</div>
-      </div>
+        noArrow={thought}
+        border={"2px solid black"}
+        opacity={1}
+      />
     );
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", margin: "10px 0" }}>
-      {speech && getSpeechBubble(speech.style || "speech", speech.message)}
-      {thought && getSpeechBubble("thought", thought.message)}
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          width: "140px",
+          height: "120px",
+        }}
+      >
+        {thought && (
+          <svg viewBox="0 0 100 100">
+            <ellipse cx="55" cy="82" rx="6" ry="3" fill="white" stroke="black" />
+            <ellipse cx="60" cy="78" rx="8" ry="4" fill="white" stroke="black" />
+          </svg>
+        )}
+      </div>
+      {speech && getSpeechBubble(false, speech.message)}
+      {thought && getSpeechBubble(true, thought.message)}
       <span
         ref={ref}
         style={{
           backgroundColor: isOver ? "yellow" : dragging ? "lightgreen" : "white",
-          padding: "4px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           transform: index % 2 === 1 ? "scaleX(-1)" : "none",
         }}
+        data-tooltip-id={id}
       >
         <CharacterView character={character} showName={false} action={otherAction?.action} />
       </span>

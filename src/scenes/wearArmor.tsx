@@ -3,9 +3,9 @@ import { handlePreconditions } from "./sceneUtils";
 
 const protectedSlot = { id: "protected", label: "Protected" };
 
-export const wearBulletproofVest: Scene = {
-  id: "wearBulletproofVest",
-  name: "Wear Bulletproof Vest",
+export const wearArmor: Scene = {
+  id: "wearArmor",
+  name: "Wear Armor",
   slots: [protectedSlot],
   outcomeLogic: (state, assigned) => {
     const protectedCharacter = assigned[protectedSlot.id];

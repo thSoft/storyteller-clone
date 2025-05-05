@@ -14,7 +14,7 @@ import { robTheBank } from "./scenes/robTheBank";
 import { shoot } from "./scenes/shoot";
 import { showGun } from "./scenes/showGun";
 import { takeOver } from "./scenes/takeover";
-import { wearBulletproofVest } from "./scenes/wearBulletproofVest";
+import { wearArmor } from "./scenes/wearArmor";
 
 import { Scene } from "./types";
 
@@ -31,7 +31,7 @@ export const scenes: EntityMap<Scene> = entityMap([
   disown,
   fallInLove,
   impersonate,
-  wearBulletproofVest,
+  wearArmor,
   showGun,
   die,
   takeOver,
@@ -48,10 +48,10 @@ export const mafiaScenes = [
   arrest,
   impersonate,
   showGun,
-  wearBulletproofVest,
-  recruit,
+  wearArmor,
   fallInLove,
   disown,
+  recruit,
   die,
   takeOver,
 ].map((scene) => scene.id);

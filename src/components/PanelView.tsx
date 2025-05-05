@@ -68,7 +68,7 @@ export const PanelView: React.FC<{
             gap: "4px",
           }}
         >
-          {scene?.slots.map((slot: SceneSlot, index: number) => {
+          {scene?.slots.map((slot: SceneSlot, slotIndex: number) => {
             const characterActions = actions?.filter(
               (bubble) => bubble.characterId === panel.slotAssignedCharacters[slot.id]
             );
@@ -76,7 +76,8 @@ export const PanelView: React.FC<{
               <SlotView
                 key={slot.id}
                 slot={slot}
-                index={index}
+                index={slotIndex}
+                panelIndex={index}
                 assignedCharacter={panel.slotAssignedCharacters[slot.id]}
                 onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
                 speech={characterActions?.find((action) => action.type === "speech")}
