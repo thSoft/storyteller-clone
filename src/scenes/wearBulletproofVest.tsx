@@ -1,9 +1,11 @@
 import { Scene } from "../types";
 import { handlePreconditions } from "./sceneUtils";
-export const protectedSlot = { id: "protected", label: "Protected" };
-export const shield: Scene = {
-  id: "shield",
-  name: "🛡️ Shield",
+
+const protectedSlot = { id: "protected", label: "Protected" };
+
+export const wearBulletproofVest: Scene = {
+  id: "wearBulletproofVest",
+  name: "Wear Bulletproof Vest",
   slots: [protectedSlot],
   outcomeLogic: (state, assigned) => {
     const protectedCharacter = assigned[protectedSlot.id];

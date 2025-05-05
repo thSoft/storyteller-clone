@@ -1,6 +1,7 @@
 import { characters } from "./characters";
 import { scenes } from "./scenes";
 import { eavesdrop } from "./scenes/eavesdrop";
+import { handlePreconditions } from "./scenes/sceneUtils";
 import { createStateProxy } from "./stateProxy";
 import { initialEvent, StoryState } from "./storyState";
 import { Panel } from "./types";
@@ -37,13 +38,17 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
         return [...previousStates, newState];
       }
 
+      const assignedCharacters = Object.values(assigned);
       const participantIds = [
-        ...Object.values(assigned).map((character) => character.id),
+        ...assignedCharacters.map((character) => character.id),
         state.getGlobalState("eavesdropper")?.id,
       ].filter((id) => id !== undefined);
       const stateWithParticipants = createStateProxy(newState, participantIds);
 
-      scene.outcomeLogic(stateWithParticipants, assigned);
+      const commonPreconditionMatched = handlePreconditions(state, assignedCharacters[0], assignedCharacters[1]);
+      if (!commonPreconditionMatched) {
+        scene.outcomeLogic(stateWithParticipants, assigned);
+      }
 
       if (scene.id !== eavesdrop.id) {
         state.setGlobalState("eavesdropper", undefined);

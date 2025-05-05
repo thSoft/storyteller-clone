@@ -1,13 +1,14 @@
-import { bruno, donRomano } from "../characters";
-import { deal } from "../scenes/deal";
+import { alessio, bruno, donRomano } from "../characters";
 import { disclose } from "../scenes/disclose";
-import { heist } from "../scenes/heist";
+import { orderHeist } from "../scenes/orderHeist";
+import { robTheBank } from "../scenes/robTheBank";
 import { panel, runPuzzleTests } from "../testUtils";
 import { Panel } from "../types";
 import { successfulHeist } from "./successfulHeist";
 
 const validSolutions: Panel[][] = [
-  [panel(deal, donRomano, bruno), panel(heist, bruno), panel(disclose, bruno, donRomano)],
+  [panel(orderHeist, donRomano, bruno), panel(robTheBank, bruno), panel(disclose, bruno, donRomano)],
+  [panel(orderHeist, donRomano, alessio), panel(robTheBank, alessio), panel(disclose, alessio, donRomano)],
 ];
 
 const invalidSolutions: Panel[][] = [[]];

@@ -68,7 +68,7 @@ export const PuzzleView: React.FC<{
       </div>
       <h1>
         {puzzle.prompt}
-        {isPuzzleWon(puzzle, panels) && " - Victory"}
+        {isPuzzleWon(puzzle, panels) && " 🎉"}
       </h1>
       <div style={{ display: "flex", gap: "12px" }}>
         <div style={{ width: "30vw" }}>

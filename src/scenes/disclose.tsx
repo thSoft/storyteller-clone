@@ -1,17 +1,18 @@
 import { characters } from "../characters";
 import { RelationType } from "../storyState";
 import { Scene } from "../types";
-import { handleMurderDiscovery, handlePreconditions } from "./sceneUtils";
-export const speakerSlot = { id: "speaker", label: "Speaker" };
-export const listenerSlot = { id: "listener", label: "Listener" };
+import { handleMurderDiscovery } from "./sceneUtils";
+
+const speakerSlot = { id: "speaker", label: "Speaker" };
+const listenerSlot = { id: "listener", label: "Listener" };
+
 export const disclose: Scene = {
   id: "disclose",
-  name: "👂 Disclose",
+  name: "Disclose",
   slots: [speakerSlot, listenerSlot],
   outcomeLogic: (state, assigned) => {
     const speaker = assigned[speakerSlot.id];
     const listener = assigned[listenerSlot.id];
-    if (handlePreconditions(state, speaker, listener)) return;
     const speakerPromisedMurderToListener = state.areRelated(speaker.id, "promisedMurderTo", listener.id);
     const victimIds = state.getRelated(speaker.id, "killed", speaker.id);
     const orderedVictimIds = victimIds.filter((victimId) => state.areRelated(listener.id, "wantsToKill", victimId));

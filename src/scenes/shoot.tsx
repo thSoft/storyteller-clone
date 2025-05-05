@@ -1,18 +1,17 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { handleMurderDiscovery, handlePreconditions } from "./sceneUtils";
+import { handleMurderDiscovery } from "./sceneUtils";
 
-export const shooterSlot = { id: "shooter", label: "Shooter" };
-export const targetSlot = { id: "target", label: "Target" };
+const shooterSlot = { id: "shooter", label: "Shooter" };
+const targetSlot = { id: "target", label: "Target" };
 
-export const hit: Scene = {
-  id: "hit",
-  name: "🔫 Hit",
+export const shoot: Scene = {
+  id: "shoot",
+  name: "Shoot",
   slots: [shooterSlot, targetSlot],
   outcomeLogic: (state, assigned) => {
     const shooter = assigned[shooterSlot.id];
     const target = assigned[targetSlot.id];
-    if (handlePreconditions(state, shooter, target)) return;
     if (!state.areRelated(shooter.id, "wantsToKill", target.id)) {
       state.addAction({
         type: "thought",

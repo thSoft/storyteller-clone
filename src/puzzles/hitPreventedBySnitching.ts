@@ -1,4 +1,4 @@
-import { alessio, bruno, donMarcello, donRomano, mafiaCharacters, vincenzo } from "../characters";
+import { donMarcello, mafiaCharacters, vincenzo } from "../characters";
 import { mafiaScenes } from "../scenes";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
@@ -13,8 +13,10 @@ export const hitPreventedBySnitching: Puzzle = {
   isWinning: (state) => {
     const gunOwnerId = state.getGlobalState("gunOwner")?.id;
     if (gunOwnerId === undefined) return false;
-    const rivalAwareOfHitPlan = [donRomano, alessio, bruno].some((character) =>
-      state.areRelated(vincenzo.id, "promisedMurderTo", donMarcello.id, character.id)
+    const rivalAwareOfHitPlan = mafiaCharacters.some(
+      (characterId) =>
+        state.areRelated(vincenzo.id, "promisedMurderTo", donMarcello.id, characterId) &&
+        !state.areRelated(characterId, "promisedMurderTo", donMarcello.id)
     );
     const gunConfiscatedByPolice = state.getState(gunOwnerId, "worksForPolice") === true;
     return rivalAwareOfHitPlan && gunConfiscatedByPolice;

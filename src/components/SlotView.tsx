@@ -14,7 +14,7 @@ export const SlotView: React.FC<{
   speech?: Speech;
   thought?: Thought;
   otherAction?: OtherAction;
-}> = ({ slot, index, assignedCharacter, onAssignCharacter, speech, thought, otherAction }) => {
+}> = ({ index, assignedCharacter, onAssignCharacter, speech, thought, otherAction }) => {
   const [{ dragging, isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.CHARACTER,
     drop: (item: { characterId: string }) => onAssignCharacter(item.characterId),
@@ -51,10 +51,6 @@ export const SlotView: React.FC<{
 
   return (
     <div style={{ display: "flex", flexDirection: "column", margin: "10px 0" }}>
-      <div style={{ fontSize: "90%", textAlign: "center", height: "20px" }}>
-        {slot.label}
-        {slot.optional ? " (optional)" : ""}:{" "}
-      </div>
       {speech && getSpeechBubble(speech.style || "speech", speech.message)}
       {thought && getSpeechBubble("thought", thought.message)}
       <span

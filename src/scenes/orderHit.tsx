@@ -1,19 +1,17 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
 
-export const proposerSlot = { id: "proposer", label: "Proposer" };
-export const acceptorSlot = { id: "acceptor", label: "Acceptor" };
-export const deal: Scene = {
-  id: "deal",
-  name: "🤝 Deal",
+const proposerSlot = { id: "proposer", label: "Proposer" };
+const acceptorSlot = { id: "acceptor", label: "Acceptor" };
+
+export const orderHit: Scene = {
+  id: "orderHit",
+  name: "Order Hit",
   slots: [proposerSlot, acceptorSlot],
   outcomeLogic: (state, assigned) => {
     const proposer = assigned[proposerSlot.id];
     const acceptor = assigned[acceptorSlot.id];
-    if (handlePreconditions(state, proposer, acceptor)) return;
     const targetIds = state.getRelated(proposer.id, "wantsToKill");
-    // Order hit
     if (targetIds.length > 0) {
       const targetNames = targetIds
         .map((id) => characters[id]?.name)
@@ -48,7 +46,7 @@ export const deal: Scene = {
         });
         action.message += " Here, take this violin case!";
       } else {
-        action.message += " Get a gun!";
+        action.message += " Now go, get a gun!";
       }
       state.addAction(action);
       state.addAction({
@@ -56,25 +54,6 @@ export const deal: Scene = {
         characterId: acceptor.id,
         message: "OK, I will do it.",
       });
-      return;
-    }
-    // Order heist
-    if (state.getState(proposer.id, "knowsSecretCode")) {
-      if (!state.areRelated(acceptor.id, "obeys", proposer.id)) {
-        state.setDescription(`${acceptor.name} doesn't obey ${proposer.name}.`);
-        return;
-      }
-      state.setStates([acceptor.id, state.getGlobalState("eavesdropper")?.id], "knowsSecretCode", true);
-      state.addRelation(acceptor.id, "promisedHeistTo", proposer.id);
-      state.setDescription(
-        `${proposer.name} ordered ${acceptor.name} to rob the bank and told him the secret code of the safe.`
-      );
-      return;
-    }
-    // Join police
-    if (state.getState(proposer.id, "worksForPolice")) {
-      state.setState(acceptor.id, "worksForPolice", true);
-      state.setDescription(`${proposer.name} persuaded ${acceptor.name} to join the police.`);
       return;
     }
   },

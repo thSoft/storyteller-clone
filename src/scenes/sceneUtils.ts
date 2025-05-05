@@ -19,18 +19,6 @@ export function getCharacter(
 // Common scene logic
 
 function handleEncounter(state: StateProxy, confronter: Character, confronted: Character): boolean {
-  const gunOwnerBelievedByConfronted = state.getGlobalState("gunOwner", confronted.id);
-  // If confronted is aware of the gun being possessed by someone other than the confronter,
-  // and the confronter has the gun, then the confronted is shocked by the gun
-  if (
-    gunOwnerBelievedByConfronted !== undefined &&
-    gunOwnerBelievedByConfronted?.id !== state.resolveImpersonation(confronter.id) &&
-    state.getGlobalState("gunOwner")?.id === confronter.id
-  ) {
-    state.setState(confronted.id, "shockedByGun", true);
-    state.setDescription(`${confronted.name} was shocked to see the violin case in the hands of ${confronter.name}.`);
-    return true;
-  }
   // If confronted is aware of confronter being dead, but the confronter is alive,
   // then the confronted is shocked by seeing the confronter alive
   if (!state.getState(confronter.id, "dead") && state.getState(confronter.id, "dead", confronted.id) === true) {
@@ -41,14 +29,7 @@ function handleEncounter(state: StateProxy, confronter: Character, confronted: C
   return false;
 }
 
-export function handlePreconditions(
-  state: StateProxy,
-  character1: Character,
-  character2?: Character,
-  options: { checkDeathWitnessing?: boolean } = {
-    checkDeathWitnessing: true,
-  }
-): boolean {
+export function handlePreconditions(state: StateProxy, character1: Character, character2?: Character): boolean {
   // Dead
   const [deadCharacter, otherCharacter] = getCharacter(
     (character) => state.getState(character.id, "dead") === true,
@@ -57,9 +38,7 @@ export function handlePreconditions(
   );
   if (deadCharacter) {
     state.setDescription(`${deadCharacter.name} was dead.`);
-    if (options.checkDeathWitnessing) {
-      handleDeathWitnessing(state, deadCharacter, otherCharacter);
-    }
+    handleDeathWitnessing(state, deadCharacter, otherCharacter);
     return true;
   }
   // Arrested

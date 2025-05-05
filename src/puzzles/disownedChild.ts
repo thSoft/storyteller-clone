@@ -1,17 +1,18 @@
 import { lucia } from "../characters";
-import { love } from "../scenes/love";
+import { disown } from "../scenes/disown";
+import { fallInLove } from "../scenes/fallInLove";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
-import { failedHit } from "./failedHit";
+import { stagedDeath } from "./stagedDeath";
 
 export const disownment: Puzzle = {
   id: "disownment",
   title: "Disowned Child",
   prompt: "Disowned Child",
-  scenes: [...failedHit.scenes, love.id],
-  characters: [...failedHit.characters, lucia.id],
+  scenes: [...stagedDeath.scenes, fallInLove.id, disown.id],
+  characters: [...stagedDeath.characters, lucia.id],
   isWinning: (state) => state.getState(lucia.id, "disowned") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
-  dependsOn: failedHit.id,
+  dependsOn: stagedDeath.id,
 };

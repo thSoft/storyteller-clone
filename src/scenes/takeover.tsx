@@ -1,14 +1,15 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
-export const overtakerSlot = { id: "overtaker", label: "Overtaker" };
-export const takeover: Scene = {
-  id: "takeover",
-  name: "👑 Takeover",
+
+const overtakerSlot = { id: "overtaker", label: "Overtaker" };
+
+export const takeOver: Scene = {
+  id: "takeOver",
+  name: "Take Over",
   slots: [overtakerSlot],
   outcomeLogic: (state, assigned) => {
     const overtaker = assigned[overtakerSlot.id];
-    if (handlePreconditions(state, overtaker)) return;
+
     if (state.getState(overtaker.id, "headOfFamily")) {
       state.setDescription(`${overtaker.name} is already the head of the family.`);
       return;

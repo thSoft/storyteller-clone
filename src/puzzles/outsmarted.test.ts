@@ -1,7 +1,8 @@
 import { bruno, donMarcello, vincenzo } from "../characters";
-import { confrontation } from "../scenes/confrontation";
-import { deal } from "../scenes/deal";
 import { impersonate } from "../scenes/impersonate";
+import { orderHeist } from "../scenes/orderHeist";
+import { orderHit } from "../scenes/orderHit";
+import { showGun } from "../scenes/showGun";
 import { panel, runPuzzleTests } from "../testUtils";
 import { Panel } from "../types";
 import { outsmarted } from "./outsmarted";
@@ -9,14 +10,14 @@ import { outsmarted } from "./outsmarted";
 const validSolutions = [
   [
     panel(impersonate, bruno, vincenzo),
-    panel(deal, donMarcello, bruno),
+    panel(orderHit, donMarcello, bruno),
     panel(impersonate, bruno),
-    panel(confrontation, bruno, donMarcello),
+    panel(showGun, bruno, donMarcello),
   ],
 ];
 
 const invalidSolutions: Panel[][] = [
-  [panel(impersonate, bruno, vincenzo), panel(deal, donMarcello, bruno), panel(confrontation, bruno, donMarcello)],
+  [panel(impersonate, bruno, vincenzo), panel(orderHeist, donMarcello, bruno), panel(showGun, bruno, donMarcello)],
 ];
 
 runPuzzleTests(outsmarted, validSolutions, invalidSolutions);

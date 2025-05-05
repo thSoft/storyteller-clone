@@ -1,5 +1,5 @@
 import { donMarcello } from "../characters";
-import { shield } from "../scenes/shield";
+import { wearBulletproofVest } from "../scenes/wearBulletproofVest";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
 import { outsmarted } from "./outsmarted";
@@ -8,7 +8,7 @@ export const stagedDeath: Puzzle = {
   id: "stagedDeath",
   title: "Staged Death",
   prompt: "Seeing a Living Ghost",
-  scenes: [...outsmarted.scenes, shield.id],
+  scenes: [...outsmarted.scenes, wearBulletproofVest.id],
   characters: [...outsmarted.characters],
   isWinning: (state) => state.getState(donMarcello.id, "shockedByAlive") === true,
   initialStoryState: getInitialStoryState(),

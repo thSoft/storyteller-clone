@@ -1,15 +1,14 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
 
-export const robberSlot = { id: "robber", label: "Robber" };
-export const heist: Scene = {
-  id: "heist",
-  name: "💰 Heist",
+const robberSlot = { id: "robber", label: "Robber" };
+
+export const robTheBank: Scene = {
+  id: "robTheBank",
+  name: "Rob the Bank",
   slots: [robberSlot],
   outcomeLogic: (state, assigned) => {
     const robber = assigned[robberSlot.id];
-    if (handlePreconditions(state, robber)) return;
     if (state.getState(robber.id, "doesNotSteal")) {
       state.setDescription(`${robber.name} doesn't want to get his hands dirty.`);
       return;

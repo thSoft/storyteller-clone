@@ -1,13 +1,13 @@
 import { alessio, donMarcello, vincenzo } from "../characters";
-import { deal } from "../scenes/deal";
 import { disclose } from "../scenes/disclose";
-import { hit } from "../scenes/hit";
+import { orderHit } from "../scenes/orderHit";
+import { shoot } from "../scenes/shoot";
 import { panel, runPuzzleTests } from "../testUtils";
 import { Panel } from "../types";
 import { successfulHit } from "./successfulHit";
 
 const validSolutions: Panel[][] = [
-  [panel(deal, donMarcello, vincenzo), panel(hit, vincenzo, alessio), panel(disclose, vincenzo, donMarcello)],
+  [panel(orderHit, donMarcello, vincenzo), panel(shoot, vincenzo, alessio), panel(disclose, vincenzo, donMarcello)],
 ];
 
 const invalidSolutions: Panel[][] = [[]];

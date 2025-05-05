@@ -1,8 +1,8 @@
 import { donMarcello, inspectorRinaldi, vincenzo } from "../characters";
-import { confrontation } from "../scenes/confrontation";
-import { deal } from "../scenes/deal";
+import { confiscate } from "../scenes/confiscate";
 import { disclose } from "../scenes/disclose";
 import { eavesdrop } from "../scenes/eavesdrop";
+import { orderHit } from "../scenes/orderHit";
 import { panel, runPuzzleTests } from "../testUtils";
 import { Panel } from "../types";
 import { failedHit } from "./failedHit";
@@ -10,8 +10,8 @@ import { failedHit } from "./failedHit";
 const validSolutions = [
   [
     panel(eavesdrop, inspectorRinaldi),
-    panel(deal, donMarcello, vincenzo),
-    panel(confrontation, inspectorRinaldi, vincenzo),
+    panel(orderHit, donMarcello, vincenzo),
+    panel(confiscate, inspectorRinaldi, vincenzo),
     panel(disclose, vincenzo, donMarcello),
   ],
 ];

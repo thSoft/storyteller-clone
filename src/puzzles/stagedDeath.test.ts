@@ -1,20 +1,19 @@
 import { alessio, donMarcello, vincenzo } from "../characters";
-import { confrontation } from "../scenes/confrontation";
-import { deal } from "../scenes/deal";
 import { disclose } from "../scenes/disclose";
-import { hit } from "../scenes/hit";
-import { shield } from "../scenes/shield";
+import { orderHit } from "../scenes/orderHit";
+import { shoot } from "../scenes/shoot";
+import { wearBulletproofVest } from "../scenes/wearBulletproofVest";
 import { panel, runPuzzleTests } from "../testUtils";
 import { Panel } from "../types";
 import { stagedDeath } from "./stagedDeath";
 
 const validSolutions = [
   [
-    panel(deal, donMarcello, vincenzo),
-    panel(shield, alessio),
-    panel(hit, vincenzo, alessio),
+    panel(orderHit, donMarcello, vincenzo),
+    panel(wearBulletproofVest, alessio),
+    panel(shoot, vincenzo, alessio),
     panel(disclose, vincenzo, donMarcello),
-    panel(confrontation, alessio, donMarcello),
+    panel(disclose, alessio, donMarcello),
   ],
 ];
 

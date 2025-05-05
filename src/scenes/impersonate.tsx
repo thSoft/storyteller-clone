@@ -1,16 +1,16 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
-import { handlePreconditions } from "./sceneUtils";
-export const impersonatorSlot = { id: "impersonator", label: "Impersonator" };
-export const impersonatedSlot = { id: "impersonated", label: "Impersonated", optional: true };
+
+const impersonatorSlot = { id: "impersonator", label: "Impersonator" };
+const impersonatedSlot = { id: "impersonated", label: "Impersonated", optional: true };
+
 export const impersonate: Scene = {
   id: "impersonate",
-  name: "🥸 Impersonate",
+  name: "Impersonate",
   slots: [impersonatorSlot, impersonatedSlot],
   outcomeLogic: (state, assigned) => {
     const impersonator = assigned[impersonatorSlot.id];
     const impersonated = assigned[impersonatedSlot.id];
-    if (handlePreconditions(state, impersonator)) return;
     const oldImpersonatedIds = state.getRelated(impersonator.id, "impersonates");
     if (oldImpersonatedIds.length > 0 && impersonated === undefined) {
       const oldImpersonatedId = oldImpersonatedIds[0];
