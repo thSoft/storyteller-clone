@@ -26,16 +26,8 @@ export const disclose: Scene = {
       }
       state.setState(listener.id, "content", true);
       state.setState(speaker.id, "promoted", true);
-      state.addAction({
-        type: "speech",
-        characterId: speaker.id,
-        message: `I killed ${characters[orderedVictimIds[0]]?.name}.`,
-      });
-      state.addAction({
-        type: "speech",
-        characterId: listener.id,
-        message: "Very good, indeed! You shall be promoted!",
-      });
+      state.say(speaker.id, `I killed ${characters[orderedVictimIds[0]]?.name}.`);
+      state.say(listener.id, "Very good, indeed! You shall be promoted!");
       return;
     }
     const gunOwnerIdAccordingToSpeaker = state.getGlobalState("gunOwner", speaker.id)?.id;
@@ -48,9 +40,11 @@ export const disclose: Scene = {
     ) {
       state.addRelation(listener.id, "angryAt", speaker.id);
       state.setState(speaker.id, "fired", true);
-      state.setDescription(
-        `${speaker.name} told ${listener.name} that ${characters[gunOwnerIdAccordingToSpeaker]?.name} has the gun. ${listener.name} was angry to hear it and fired ${speaker.name}.`
+      state.say(
+        speaker.id,
+        `Boss, we're in big trouble! ${characters[gunOwnerIdAccordingToSpeaker]?.name} has the gun!`
       );
+      state.say(listener.id, `You moron! You failed the mission! You are fired!`);
       return;
     }
     const bankRobberId = state.getGlobalState("bankRobber")?.id;
@@ -60,9 +54,8 @@ export const disclose: Scene = {
       state.setGlobalState("bankRobber", speaker, true);
       state.setState(listener.id, "content", true);
       state.setState(speaker.id, "rewarded", true);
-      state.setDescription(
-        `${speaker.name} told ${listener.name} that he robbed the bank. ${listener.name} was glad to hear it and rewarded ${speaker.name}.`
-      );
+      state.say(speaker.id, `I robbed the bank! Here is the money!`);
+      state.say(listener.id, "Very good, indeed! Take your cut!");
       return;
     }
     // If the speaker promised heist to the listener and someone else robbed the bank,
@@ -70,9 +63,8 @@ export const disclose: Scene = {
     if (state.areRelated(speaker.id, "promisedHeistTo", listener.id) && bankRobberId !== speaker.id) {
       state.addRelation(listener.id, "angryAt", speaker.id);
       state.setState(speaker.id, "fired", true);
-      state.setDescription(
-        `${speaker.name} told ${listener.name} that someone else robbed the bank. ${listener.name} was angry to hear it and fired ${speaker.name}.`
-      );
+      state.say(speaker.id, `Boss, we're in big trouble! Someone else robbed the bank!`);
+      state.say(listener.id, `You moron! You failed the mission! You are fired!`);
       return;
     }
     // If the speaker is aware of a hit or heist plan where the speaker is not involved in the crime,
@@ -94,8 +86,9 @@ export const disclose: Scene = {
       for (const crimePlan of crimePlansToGiveAway) {
         state.addRelation(crimePlan.source, crimePlan.relationType, crimePlan.target, true);
       }
-      state.setDescription(
-        `${speaker.name} told ${listener.name} that ${crimePlansToGiveAway
+      state.say(
+        speaker.id,
+        `Listen up! ${crimePlansToGiveAway
           .map(
             ({ crimeName: type, source, target }) =>
               ` ${characters[source]?.name} promised ${type} to ${characters[target]?.name}`
@@ -112,8 +105,9 @@ export const disclose: Scene = {
       for (const hit of hitsToGiveAway) {
         state.addRelation(hit.source, "killed", hit.target, true);
       }
-      state.setDescription(
-        `${speaker.name} told ${listener.name} that ${hitsToGiveAway
+      state.say(
+        speaker.id,
+        `Listen up! ${hitsToGiveAway
           .map(({ source, target }) => ` ${characters[source]?.name} killed ${characters[target]?.name}`)
           .join(" and ")}.`
       );
@@ -134,14 +128,13 @@ export const disclose: Scene = {
       for (const lovedBySpeakerId of lovedBySpeakerIds) {
         state.addRelation(speaker.id, "loves", lovedBySpeakerId, true);
       }
-      state.setDescription(
-        `${speaker.name} told ${listener.name} that he loves ${lovedBySpeakerIds
-          .map((id) => characters[id]?.name)
-          .join(", ")}.`
+      state.say(
+        speaker.id,
+        `Listen up! ${lovedBySpeakerIds.map((id) => characters[id]?.name).join(", ")} are loved by ${speaker.name}.`
       );
       return;
     }
     // Otherwise
-    state.setDescription(`${speaker.name} had nothing to tell to ${listener.name}.`);
+    state.think(speaker.id, `I have nothing to tell to ${listener.name}.`);
   },
 };

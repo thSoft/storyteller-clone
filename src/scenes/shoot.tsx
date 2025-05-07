@@ -13,31 +13,19 @@ export const shoot: Scene = {
     const shooter = assigned[shooterSlot.id];
     const target = assigned[targetSlot.id];
     if (!state.areRelated(shooter.id, "wantsToKill", target.id)) {
-      state.addAction({
-        type: "thought",
-        characterId: shooter.id,
-        message: `I don't want to kill ${target.name}.`,
-      });
+      state.think(shooter.id, `I don't want to kill ${target.name}.`);
       return;
     }
     if (state.getState(shooter.id, "doesNotKill")) {
-      state.setDescription(`${shooter.name} doesn't want to get his hands dirty.`);
+      state.think(shooter.id, `I don't want to get my hands dirty.`);
       return;
     }
     if (state.getGlobalState("gunOwner")?.id !== shooter.id) {
-      state.setDescription(`${shooter.name} didn't have a gun.`);
+      state.think(shooter.id, `I don't have a gun.`);
       return;
     }
-    state.addAction({
-      type: "other",
-      characterId: shooter.id,
-      action: "shoot",
-    });
-    state.addAction({
-      type: "other",
-      characterId: target.id,
-      action: "shot",
-    });
+    state.act(shooter.id, "shoot");
+    state.act(target.id, "shot");
     if (state.getState(target.id, "protectedFromMurder")) {
       state.setState(target.id, "dead", true, true);
       state.addRelation(shooter.id, "killed", target.id, true);

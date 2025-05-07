@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { books, puzzles } from "../puzzles";
-import { GameState, Panel } from "../types";
+import { scenes } from "../scenes";
+import { placeholder } from "../scenes/placeholder";
+import { GameState, Panel, PuzzleState } from "../types";
 
 const initialGameState: GameState = {
   currentPuzzleId: null,
@@ -22,6 +24,7 @@ const gameStateSlice = createSlice({
       if (currentPuzzleId) {
         if (puzzles[currentPuzzleId]) {
           state.currentBookId = findChapterId(currentPuzzleId);
+          padPanels(currentPuzzleId, state.puzzleStates);
         } else {
           state.puzzleStates[currentPuzzleId] = { panels: [] };
         }
@@ -53,6 +56,38 @@ const gameStateSlice = createSlice({
         assignedCharacters[slotId] = characterId;
       }
     },
+    setPanelScene(
+      state,
+      action: PayloadAction<{
+        index: number;
+        sceneId: string;
+      }>
+    ) {
+      const { index, sceneId } = action.payload;
+      if (!state.currentPuzzleId) {
+        return;
+      }
+      const puzzleState = state.puzzleStates[state.currentPuzzleId];
+      if (puzzleState) {
+        const panel = puzzleState.panels[index];
+        if (!panel) {
+          console.warn("Panel not found");
+          return;
+        }
+        if (puzzles[state.currentPuzzleId].maxPanelCount <= index) {
+          console.warn("Cannot set scene for panel. Index out of bounds.");
+          return;
+        }
+        panel.sceneId = sceneId;
+        // Replace assigned characters if the scene changes
+        const assignedCharacters = panel.slotAssignedCharacters;
+        const oldAssignedCharacters = { ...assignedCharacters };
+        panel.slotAssignedCharacters = {};
+        Object.values(oldAssignedCharacters).forEach((characterId, index) => {
+          panel.slotAssignedCharacters[scenes[sceneId].slots[index].id] = characterId;
+        });
+      }
+    },
     addPanelToCurrentPuzzle(
       state,
       action: PayloadAction<{
@@ -67,8 +102,13 @@ const gameStateSlice = createSlice({
       const puzzleState = state.puzzleStates[state.currentPuzzleId];
       if (puzzleState) {
         if (puzzleState.panels.length >= puzzles[state.currentPuzzleId].maxPanelCount) {
-          console.warn("Cannot add more panels. Max panel count reached.");
-          return; // Prevent adding the panel
+          // If last panel's sceneId is placeholder, remove it
+          if (puzzleState.panels[puzzleState.panels.length - 1].sceneId === placeholder.id) {
+            puzzleState.panels.pop();
+          } else {
+            console.warn("Cannot add more panels. Max panel count reached.");
+            return; // Prevent adding the panel
+          }
         }
         puzzleState.panels.splice(index, 0, panel);
       } else {
@@ -84,6 +124,7 @@ const gameStateSlice = createSlice({
       if (puzzleState && index >= 0 && index < puzzleState.panels.length) {
         puzzleState.panels.splice(index, 1);
       }
+      padPanels(state.currentPuzzleId, state.puzzleStates);
     },
     markPuzzleCompleted(state, action: PayloadAction<{ puzzleId: string }>) {
       const { puzzleId } = action.payload;
@@ -101,6 +142,20 @@ export const {
   addPanelToCurrentPuzzle,
   removePanelFromCurrentPuzzle,
   markPuzzleCompleted,
+  setPanelScene,
 } = gameStateSlice.actions;
 
 export default gameStateSlice.reducer;
+
+function padPanels(currentPuzzleId: string, puzzleStates: Record<string, PuzzleState>) {
+  const maxPanelCount = puzzles[currentPuzzleId].maxPanelCount;
+  const currentPuzzleState = puzzleStates[currentPuzzleId];
+  if (currentPuzzleState) {
+    while (currentPuzzleState.panels.length < maxPanelCount) {
+      currentPuzzleState.panels.push({
+        sceneId: placeholder.id,
+        slotAssignedCharacters: {},
+      });
+    }
+  }
+}

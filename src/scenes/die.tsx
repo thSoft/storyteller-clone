@@ -14,6 +14,7 @@ export const die: Scene = {
     const witness = assigned[witnessSlot.id];
     state.setState(victim.id, "dead", true);
     state.setDescription(`${victim.name} died.`);
+    // TODO state.act(victim.id, "die");
     handleDeathWitnessing(state, victim, witness);
     const eavesdropperId = state.getGlobalState("eavesdropper")?.id;
     if (eavesdropperId) {

@@ -200,6 +200,15 @@ export const StoryGraphView: React.FC<StoryGraphViewProps> = ({ graph, width, he
   }, [graph, width, height]);
 
   return (
-    <canvas ref={canvasRef} width={width} height={height} style={{ border: "1px solid #ccc", marginTop: "8px" }} />
+    <canvas
+      ref={canvasRef}
+      width={width}
+      height={height}
+      style={{
+        border: "1px solid #ccc",
+        backgroundColor: "white",
+        marginTop: "8px",
+      }}
+    />
   );
 };

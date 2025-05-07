@@ -34,7 +34,7 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
       const state = createStateProxy(newState);
       const unassignedSlots = scene.slots.filter((slot) => !slot.optional && !assigned[slot.id]);
       if (unassignedSlots.length > 0) {
-        state.setDescription("Please drag and drop characters to the slots that are not optional.");
+        state.setDescription("Please drag and drop scenes or characters here.");
         return [...previousStates, newState];
       }
 
@@ -45,7 +45,8 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
       ].filter((id) => id !== undefined);
       const stateWithParticipants = createStateProxy(newState, participantIds);
 
-      const commonPreconditionMatched = handlePreconditions(state, assignedCharacters[0], assignedCharacters[1]);
+      const commonPreconditionMatched =
+        assignedCharacters[0] !== undefined && handlePreconditions(state, assignedCharacters[0], assignedCharacters[1]);
       if (!commonPreconditionMatched) {
         scene.outcomeLogic(stateWithParticipants, assigned);
       }

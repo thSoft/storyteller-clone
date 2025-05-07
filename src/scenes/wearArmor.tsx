@@ -12,5 +12,6 @@ export const wearArmor: Scene = {
     if (handlePreconditions(state, protectedCharacter)) return;
     state.setState(protectedCharacter.id, "protectedFromMurder", true);
     state.setDescription(`${protectedCharacter.name} put on a bulletproof vest.`);
+    // TODO state.act(protectedCharacter.id, "wearArmor");
   },
 };

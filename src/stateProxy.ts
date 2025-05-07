@@ -301,6 +301,9 @@ export type StateProxy = {
   resolveImpersonation: (characterId: string) => string;
   setDescription: (description: string) => void;
   addAction: (action: Action) => void;
+  think(characterId: string, message: string): void;
+  say(characterId: string, message: string): void;
+  act(characterId: string, action: string): void;
 };
 
 export function createStateProxy(state: StoryState, participantIds?: string[]): StateProxy {
@@ -325,6 +328,9 @@ export function createStateProxy(state: StoryState, participantIds?: string[]): 
     resolveImpersonation: (characterId: string) => resolveImpersonation(state, characterId),
     setDescription: (description: string) => setDescription(state, description),
     addAction: (action: Action) => addAction(state, action),
+    think: (characterId: string, message: string) => addAction(state, { type: "thought", characterId, message }),
+    say: (characterId: string, message: string) => addAction(state, { type: "speech", characterId, message }),
+    act: (characterId: string, action: string) => addAction(state, { type: "other", characterId, action }),
   };
 }
 

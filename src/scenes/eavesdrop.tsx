@@ -10,5 +10,6 @@ export const eavesdrop: Scene = {
     const eavesdropper = assigned[eavesdropperSlot.id];
     state.setGlobalState("eavesdropper", eavesdropper);
     state.setDescription(`${eavesdropper.name} eavesdropped on the following event.`);
+    // TODO state.act(eavesdropper.id, "eavesdrop");
   },
 };

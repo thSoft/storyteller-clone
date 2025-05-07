@@ -1,7 +1,7 @@
 import { puzzles } from "./puzzles";
 import { getStates } from "./simulator";
 import { createStateProxy } from "./stateProxy";
-import { GameState, Panel, Puzzle } from "./types";
+import { Panel, Puzzle, PuzzleState } from "./types";
 
 function isAllPuzzlesEnabled(): boolean {
   if (typeof window === "undefined") return false;
@@ -15,17 +15,17 @@ export function isPuzzleWon(puzzle: Puzzle, panels: Panel[]): boolean {
   return puzzle.isWinning(createStateProxy(lastState));
 }
 
-export function isPuzzleEnabled(puzzleId: string, gameState: GameState): boolean {
+export function isPuzzleEnabled(puzzleId: string, puzzleStates: Record<string, PuzzleState>): boolean {
   if (isAllPuzzlesEnabled()) return true;
   const puzzle = puzzles[puzzleId];
   if (!puzzle.dependsOn) return true;
-  return gameState.puzzleStates[puzzle.dependsOn]?.completed === true;
+  return puzzleStates[puzzle.dependsOn]?.completed === true;
 }
 
-export function getPuzzleTooltip(puzzleId: string, gameState: GameState): string | undefined {
+export function getPuzzleTooltip(puzzleId: string, puzzleStates: Record<string, PuzzleState>): string | undefined {
   const puzzle = puzzles[puzzleId];
   if (!puzzle.dependsOn) return undefined;
-  const isEnabled = isPuzzleEnabled(puzzleId, gameState);
+  const isEnabled = isPuzzleEnabled(puzzleId, puzzleStates);
   if (!isEnabled) {
     const dependencyPuzzle = puzzles[puzzle.dependsOn];
     return `Complete "${dependencyPuzzle.title}" first`;

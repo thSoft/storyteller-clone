@@ -27,13 +27,14 @@ export const disown: Scene = {
       state.areRelated(confronted.id, "childOf", confronter.id)
     ) {
       state.setState(confronted.id, "disowned", true);
-      state.setDescription(
-        `${confronter.name} disowned ${confronted.name} because ${
-          confronted.name
-        } loves ${mortalEnemiesOfConfronterLoverOfConfrontedIds
+      state.say(
+        confronter.id,
+        `You shall not be a part of my family because you love ${mortalEnemiesOfConfronterLoverOfConfrontedIds
           .map((loverId) => characters[loverId]?.name)
-          .join(", ")} whom ${confronter.name} wants to kill.`
+          .join(", ")}! Don't you know what did he do?`
       );
+      // TODO state.act(confronter.id, "disown");
+      // TODO state.act(confronted.id, "disowned");
       return;
     }
   },

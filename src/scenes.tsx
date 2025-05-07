@@ -9,6 +9,7 @@ import { fallInLove } from "./scenes/fallInLove";
 import { impersonate } from "./scenes/impersonate";
 import { orderHeist } from "./scenes/orderHeist";
 import { orderHit } from "./scenes/orderHit";
+import { placeholder } from "./scenes/placeholder";
 import { recruit } from "./scenes/recruit";
 import { robTheBank } from "./scenes/robTheBank";
 import { shoot } from "./scenes/shoot";
@@ -19,6 +20,7 @@ import { wearArmor } from "./scenes/wearArmor";
 import { Scene } from "./types";
 
 export const scenes: EntityMap<Scene> = entityMap([
+  placeholder,
   orderHit,
   orderHeist,
   recruit,

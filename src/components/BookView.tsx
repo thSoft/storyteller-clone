@@ -7,10 +7,9 @@ import { GameState } from "../types";
 
 export const BookView: React.FC = () => {
   const dispatch = useDispatch();
-  const gameState = useSelector((state: GameState) => state);
+  const puzzleStates = useSelector((state: GameState) => state.puzzleStates);
   const bookIds = Object.keys(books);
   const currentBookId = useSelector((state: GameState) => state.currentBookId ?? bookIds[0]);
-  const puzzleStates = useSelector((state: GameState) => state.puzzleStates);
 
   const currentBookIndex = books[currentBookId] ? bookIds.indexOf(currentBookId) : 0;
   const currentBook = Object.values(books)[currentBookIndex];
@@ -45,8 +44,8 @@ export const BookView: React.FC = () => {
 
       <ul>
         {currentBook?.puzzles.map((puzzleId) => {
-          const enabled = isPuzzleEnabled(puzzleId, gameState);
-          const tooltip = getPuzzleTooltip(puzzleId, gameState);
+          const enabled = isPuzzleEnabled(puzzleId, puzzleStates);
+          const tooltip = getPuzzleTooltip(puzzleId, puzzleStates);
           return (
             <li key={puzzleId}>
               {puzzleStates[puzzleId]?.completed ? "✅" : "☐"}

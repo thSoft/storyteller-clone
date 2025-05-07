@@ -12,7 +12,8 @@ export const recruit: Scene = {
     const acceptor = assigned[acceptorSlot.id];
     if (state.getState(proposer.id, "worksForPolice")) {
       state.setState(acceptor.id, "worksForPolice", true);
-      state.setDescription(`${proposer.name} persuaded ${acceptor.name} to join the police.`);
+      state.say(proposer.id, `If you join the police, you will finally be free from your crimes!`);
+      state.say(acceptor.id, `OK, I will do it.`);
       return;
     }
   },

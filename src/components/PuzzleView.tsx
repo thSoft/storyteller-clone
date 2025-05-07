@@ -2,16 +2,15 @@ import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useDispatch, useSelector } from "react-redux";
-import { characters } from "../characters";
+import { characters, mafiaCharacters } from "../characters";
 import { resolve } from "../entities";
 import { books } from "../puzzles";
 import { getPuzzleTooltip, isPuzzleEnabled, isPuzzleWon } from "../puzzleUtils";
-import { scenes } from "../scenes";
+import { mafiaScenes, scenes } from "../scenes";
 import { getStates } from "../simulator";
 import { setCurrentPuzzleId } from "../store/gameStateSlice";
 import { GameState, Puzzle } from "../types";
 import { DraggableCharacterView } from "./DraggableCharacterView";
-import { InsertionPoint } from "./InsertionPoint";
 import { PanelView } from "./PanelView";
 import { SceneView } from "./SceneView";
 
@@ -20,7 +19,7 @@ export const PuzzleView: React.FC<{
   currentPuzzleId: string;
 }> = ({ puzzle, currentPuzzleId }) => {
   const dispatch = useDispatch();
-  const gameState = useSelector((state: GameState) => state);
+  const puzzleStates = useSelector((state: GameState) => state.puzzleStates);
   const panels = useSelector((state: GameState) => state.puzzleStates[currentPuzzleId]?.panels ?? []);
   const currentBookId = useSelector((state: GameState) => state.currentBookId);
   const states = getStates(panels, puzzle.initialStoryState);
@@ -33,8 +32,8 @@ export const PuzzleView: React.FC<{
   const hasNextPuzzle = currentPuzzleIndex < (currentBook?.puzzles.length ?? 0) - 1;
 
   const nextPuzzleId = hasNextPuzzle && currentBook ? currentBook.puzzles[currentPuzzleIndex + 1] : null;
-  const isNextPuzzleEnabled = nextPuzzleId ? isPuzzleEnabled(nextPuzzleId, gameState) : false;
-  const nextPuzzleTooltip = nextPuzzleId ? getPuzzleTooltip(nextPuzzleId, gameState) : undefined;
+  const isNextPuzzleEnabled = nextPuzzleId ? isPuzzleEnabled(nextPuzzleId, puzzleStates) : false;
+  const nextPuzzleTooltip = nextPuzzleId ? getPuzzleTooltip(nextPuzzleId, puzzleStates) : undefined;
 
   const handlePreviousPuzzle = () => {
     if (hasPreviousPuzzle && currentBook) {
@@ -50,7 +49,7 @@ export const PuzzleView: React.FC<{
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div style={{ marginBottom: "1rem" }}>
+      <div style={{ marginBottom: "1rem", textAlign: "center" }}>
         <button onClick={handlePreviousPuzzle} disabled={!hasPreviousPuzzle}>
           ← Previous Puzzle
         </button>
@@ -66,14 +65,13 @@ export const PuzzleView: React.FC<{
           Next Puzzle →
         </button>
       </div>
-      <h1>
+      <h1 style={{ textAlign: "center" }}>
         {puzzle.prompt}
         {isPuzzleWon(puzzle, panels) && " 🎉"}
       </h1>
       <div style={{ display: "flex", gap: "12px" }}>
         <div style={{ width: "30vw" }}>
           <div>
-            <h2>Scenes:</h2>
             <div
               style={{
                 display: "flex",
@@ -82,14 +80,14 @@ export const PuzzleView: React.FC<{
                 gap: "8px",
               }}
             >
-              {puzzleScenes.map((scene) => (
-                <SceneView key={scene.id} scene={scene} />
-              ))}
+              {mafiaScenes.map((sceneId) => {
+                const scene = scenes[sceneId];
+                return <SceneView key={sceneId} scene={scene} visible={puzzleScenes.includes(scene)} />;
+              })}
             </div>
           </div>
-
+          <hr />
           <div>
-            <h2>Characters:</h2>
             <div
               style={{
                 display: "flex",
@@ -98,18 +96,22 @@ export const PuzzleView: React.FC<{
                 gap: "16px",
               }}
             >
-              {puzzleCharacters.map((character) => (
-                <DraggableCharacterView key={character.id} character={character} />
-              ))}
+              {mafiaCharacters.map((characterId) => {
+                const character = characters[characterId];
+                return (
+                  <DraggableCharacterView
+                    key={characterId}
+                    character={character}
+                    visible={puzzleCharacters.includes(character)}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
 
         <div style={{ width: "70vw" }}>
-          <h2>
-            Story ({panels.length} / {puzzle.maxPanelCount} panels):
-          </h2>
-          <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", rowGap: "8px" }}>
+          <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: "8px" }}>
             {panels.map((panel, index) => {
               return (
                 <PanelView
@@ -117,12 +119,11 @@ export const PuzzleView: React.FC<{
                   panel={panel}
                   index={index}
                   states={states}
-                  key={`${index}-${panels.length}`}
+                  key={`${index}-${panels.length}-${puzzleStates[currentPuzzleId]?.panels[index]}`}
                   panelCount={panels.length}
                 />
               );
             })}
-            <InsertionPoint puzzle={puzzle} key={panels.length} index={panels.length} panelCount={panels.length} />
           </div>
         </div>
       </div>

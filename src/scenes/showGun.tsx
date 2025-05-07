@@ -11,11 +11,7 @@ export const showGun: Scene = {
     const confronter = assigned[confronterSlot.id];
     const confronted = assigned[confrontedSlot.id];
     if (state.getGlobalState("gunOwner")?.id !== confronter.id) {
-      state.addAction({
-        type: "thought",
-        characterId: confronter.id,
-        message: "I have no gun to show.",
-      });
+      state.think(confronter.id, `I have no gun to show.`);
       return;
     }
     // If confronted is aware of the gun being possessed by someone other than the confronter,
@@ -27,8 +23,11 @@ export const showGun: Scene = {
       state.getGlobalState("gunOwner")?.id === confronter.id
     ) {
       state.setState(confronted.id, "shockedByGun", true);
-      state.setDescription(`${confronted.name} was shocked to see the violin case in the hands of ${confronter.name}.`);
-      return true;
+      state.say(confronter.id, `Look what I've got!`);
+      // TODO state.act(confronter.id, "showGun");
+      state.say(confronted.id, `Nooo! How did you get that?`);
+      // TODO state.act(confronted.id, "shockedByGun");
+      return;
     }
   },
 };

@@ -15,12 +15,12 @@ export const CharacterView: React.FC<{
         gap: "4px",
         border: "1px solid",
       }
-    : { border: character ? "none" : "1px dashed" };
+    : {};
   return (
     <div
       style={{
-        width: "110px",
-        height: "140px",
+        width: "6vw",
+        height: "16vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -29,17 +29,15 @@ export const CharacterView: React.FC<{
         ...styling,
       }}
     >
-      {character ? (
+      {character !== undefined && (
         <>
           <img
             src={`/characters/${character.id}/${action || (showName ? "portrait" : "default")}.png`}
             alt={character.name}
-            style={{ width: "100px" }}
+            style={{ width: "5.4vw" }}
           />
           {showName && <div style={{ fontSize: "90%", textAlign: "center" }}>{character.name}</div>}
         </>
-      ) : (
-        "?"
       )}
     </div>
   );

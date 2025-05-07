@@ -10,25 +10,29 @@ export const arrest: Scene = {
   outcomeLogic: (state, assigned) => {
     const confronter = assigned[confronterSlot.id];
     const confronted = assigned[confrontedSlot.id];
+    if (!state.getState(confronter.id, "worksForPolice", confronted.id)) {
+      state.think(confronter.id, `${confronted.name} won't believe I'm a police officer.`);
+      return;
+    }
     // If confronter works for police and is aware of the confronted having killed someone,
     // then arrest the confronted
-    if (
-      state.getState(confronter.id, "worksForPolice") &&
-      state.getRelated(confronted.id, "killed", confronter.id).length > 0
-    ) {
+    if (state.getRelated(confronted.id, "killed", confronter.id).length > 0) {
       state.setState(confronted.id, "arrested", true);
-      state.setDescription(`${confronter.name} arrested ${confronted.name} for murder.`);
+      handleArrest("murder");
       return;
     }
     // If confronter works for police and is aware of the confronted having robbed the bank,
     // then arrest the confronted
-    if (
-      state.getState(confronter.id, "worksForPolice") &&
-      state.getGlobalState("bankRobber", confronter.id)?.id === confronted.id
-    ) {
+    if (state.getGlobalState("bankRobber", confronter.id)?.id === confronted.id) {
       state.setState(confronted.id, "arrested", true);
-      state.setDescription(`${confronter.name} arrested ${confronted.name} for robbery.`);
+      handleArrest("robbery");
       return;
+    }
+
+    function handleArrest(cause: string) {
+      state.say(confronter.id, `In the name of the law, I arrest you for ${cause}!`);
+      // TODO state.act(confronter.id, "arrest");
+      // TODO state.act(confronted.id, "arrested");
     }
   },
 };

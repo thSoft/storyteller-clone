@@ -11,20 +11,20 @@ export const takeOver: Scene = {
     const overtaker = assigned[overtakerSlot.id];
 
     if (state.getState(overtaker.id, "headOfFamily")) {
-      state.setDescription(`${overtaker.name} is already the head of the family.`);
+      state.think(overtaker.id, `I am already the head of the family.`);
       return;
     }
     if (state.getState(overtaker.id, "disowned")) {
-      state.setDescription(`${overtaker.name} is disowned and cannot become the head of the family.`);
+      state.think(overtaker.id, `I am disowned and cannot become the head of the family.`);
       return;
     }
     if (state.getState(overtaker.id, "worksForPolice")) {
-      state.setDescription(`${overtaker.name} is a police officer and does not want to become the head of the family.`);
+      state.think(overtaker.id, `I am a police officer and do not want to become the head of the family.`);
       return;
     }
     const obeys = [...state.getRelated(overtaker.id, "obeys"), ...state.getRelated(overtaker.id, "childOf")];
     if (obeys.length === 0) {
-      state.setDescription(`${overtaker.name} has no one to obey.`);
+      state.think(overtaker.id, `I have no one to obey.`);
       return;
     }
     const headOfFamilyId = obeys[0];
@@ -33,18 +33,19 @@ export const takeOver: Scene = {
       return;
     }
     if (!state.getState(headOfFamilyId, "headOfFamily")) {
-      state.setDescription(`${headOfFamily.name} is not the head of the family.`);
+      state.think(overtaker.id, `${headOfFamily.name} is not the head of the family.`);
       return;
     }
     if (!state.getState(headOfFamilyId, "dead")) {
-      state.setDescription(
+      state.think(
+        overtaker.id,
         `${headOfFamily.name} is still alive and wouldn't let ${overtaker.name} become the head of the family.`
       );
       return;
     }
     const successorIds = state.getState(headOfFamilyId, "successors")?.map((successor) => successor.id);
     if (successorIds === undefined || successorIds.length === 0) {
-      state.setDescription(`${overtaker.name} has no one to succeed.`);
+      state.think(overtaker.id, `${headOfFamily.name} has no one to succeed.`);
       return;
     }
     const actualSuccessorIds = successorIds.filter(
@@ -55,14 +56,16 @@ export const takeOver: Scene = {
         !state.getState(successorId, "disowned")
     );
     if (actualSuccessorIds.length > 0 && actualSuccessorIds[0] !== overtaker.id) {
-      state.setDescription(
-        `${overtaker.name} can't succeed ${headOfFamily.name} because ${
+      state.think(
+        overtaker.id,
+        `I can't succeed ${headOfFamily.name} because ${
           characters[actualSuccessorIds[0]]?.name
-        } precedes him/her in the succession.`
+        } precedes me in the succession.`
       );
       return;
     }
     state.setState(overtaker.id, "headOfFamily", true);
-    state.setDescription(`${overtaker.name} became the head of the family.`);
+    state.say(overtaker.id, `Now I am the head of the family!`);
+    // TODO state.act(overtaker.id, "takeOver");
   },
 };
