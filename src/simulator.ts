@@ -32,10 +32,23 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
       newState.setAttribute("event", initialEvent);
 
       const state = createStateProxy(newState);
-      const unassignedSlots = scene.slots.filter((slot) => !slot.optional && !assigned[slot.id]);
-      if (unassignedSlots.length > 0) {
+      const mandatorySlots = scene.slots.filter((slot) => !slot.optional);
+      if (mandatorySlots.every((slot) => !assigned[slot.id])) {
         state.setDescription("Please drag and drop scenes or characters here.");
         return [...previousStates, newState];
+      }
+      if (mandatorySlots.length === 2) {
+        if (assigned[scene.slots[0].id] !== undefined && assigned[scene.slots[1].id] === undefined) {
+          if (scene.slots[0].hint !== undefined) {
+            state.think(assigned[scene.slots[0].id].id, scene.slots[0].hint);
+          } else {
+            state.setDescription("Please drag and drop a character to the second slot.");
+          }
+          return [...previousStates, newState];
+        } else if (assigned[scene.slots[0].id] === undefined) {
+          state.setDescription("Please drag and drop a character to the first slot.");
+          return [...previousStates, newState];
+        }
       }
 
       const assignedCharacters = Object.values(assigned);
