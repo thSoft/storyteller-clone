@@ -9,12 +9,14 @@ export type Character = Entity & {
 export type SceneSlot = Entity & {
   label: string;
   optional?: boolean;
+  hint?: string;
 };
 
 export type Scene = Entity & {
   name: string;
   slots: SceneSlot[];
   outcomeLogic: (state: StateProxy, assigned: Record<string, Character>) => void;
+  color?: string;
 };
 
 export type Puzzle = Entity & {

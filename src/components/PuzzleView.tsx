@@ -65,7 +65,7 @@ export const PuzzleView: React.FC<{
           Next Puzzle →
         </button>
       </div>
-      <h1 style={{ textAlign: "center" }}>
+      <h1 style={{ textAlign: "center", lineHeight: "1.2" }}>
         {puzzle.prompt}
         {isPuzzleWon(puzzle, panels) && " 🎉"}
       </h1>
@@ -93,7 +93,7 @@ export const PuzzleView: React.FC<{
                 display: "flex",
                 flexDirection: "row",
                 flexWrap: "wrap",
-                gap: "16px",
+                gap: "8px",
               }}
             >
               {mafiaCharacters.map((characterId) => {

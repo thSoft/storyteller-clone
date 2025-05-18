@@ -2,12 +2,13 @@ import { characters } from "../characters";
 import { Scene } from "../types";
 import { handleMurderDiscovery } from "./sceneUtils";
 
-const shooterSlot = { id: "shooter", label: "Shooter" };
+const shooterSlot = { id: "shooter", label: "Shooter", hint: "Whom should I shoot?" };
 const targetSlot = { id: "target", label: "Target" };
 
 export const shoot: Scene = {
   id: "shoot",
   name: "Shoot",
+  color: "#911021",
   slots: [shooterSlot, targetSlot],
   outcomeLogic: (state, assigned) => {
     const shooter = assigned[shooterSlot.id];

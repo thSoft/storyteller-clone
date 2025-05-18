@@ -6,6 +6,7 @@ const confrontedSlot = { id: "confronted", label: "Confronted" };
 export const showGun: Scene = {
   id: "showGun",
   name: "Show Gun",
+  color: "#C68871",
   slots: [confronterSlot, confrontedSlot],
   outcomeLogic: (state, assigned) => {
     const confronter = assigned[confronterSlot.id];
@@ -24,7 +25,7 @@ export const showGun: Scene = {
     ) {
       state.setState(confronted.id, "shockedByGun", true);
       state.say(confronter.id, `Look what I've got!`);
-      // TODO state.act(confronter.id, "showGun");
+      state.act(confronter.id, "showGun");
       state.say(confronted.id, `Nooo! How did you get that?`);
       // TODO state.act(confronted.id, "shockedByGun");
       return;

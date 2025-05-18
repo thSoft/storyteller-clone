@@ -6,6 +6,7 @@ const confrontedSlot = { id: "confronted", label: "Confronted" };
 export const confiscate: Scene = {
   id: "confiscate",
   name: "Confiscate",
+  color: "#9BA6B3",
   slots: [confronterSlot, confrontedSlot],
   outcomeLogic: (state, assigned) => {
     const confronter = assigned[confronterSlot.id];

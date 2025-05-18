@@ -6,6 +6,7 @@ const acceptorSlot = { id: "acceptor", label: "Acceptor" };
 export const recruit: Scene = {
   id: "recruit",
   name: "Recruit",
+  color: "#6C9EA5",
   slots: [proposerSlot, acceptorSlot],
   outcomeLogic: (state, assigned) => {
     const proposer = assigned[proposerSlot.id];

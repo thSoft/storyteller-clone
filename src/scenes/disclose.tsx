@@ -3,12 +3,13 @@ import { RelationType } from "../storyState";
 import { Scene } from "../types";
 import { handleMurderDiscovery } from "./sceneUtils";
 
-const speakerSlot = { id: "speaker", label: "Speaker" };
+const speakerSlot = { id: "speaker", label: "Speaker", hint: "Whom should I tell my secret to?" };
 const listenerSlot = { id: "listener", label: "Listener" };
 
 export const disclose: Scene = {
   id: "disclose",
   name: "Disclose",
+  color: "#2B4771",
   slots: [speakerSlot, listenerSlot],
   outcomeLogic: (state, assigned) => {
     const speaker = assigned[speakerSlot.id];

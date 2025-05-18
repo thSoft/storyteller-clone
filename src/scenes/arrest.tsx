@@ -6,6 +6,7 @@ const confrontedSlot = { id: "confronted", label: "Confronted" };
 export const arrest: Scene = {
   id: "arrest",
   name: "Arrest",
+  color: "#7B4F97",
   slots: [confronterSlot, confrontedSlot],
   outcomeLogic: (state, assigned) => {
     const confronter = assigned[confronterSlot.id];
@@ -28,6 +29,7 @@ export const arrest: Scene = {
       handleArrest("robbery");
       return;
     }
+    state.think(confronter.id, `There is nothing to arrest ${confronted.name} for.`);
 
     function handleArrest(cause: string) {
       state.say(confronter.id, `In the name of the law, I arrest you for ${cause}!`);

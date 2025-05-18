@@ -1,6 +1,6 @@
 import { characters } from "../characters";
 import { Character, Scene } from "../types";
-import { getCharacter, handlePreconditions } from "./sceneUtils";
+import { getCharacter } from "./sceneUtils";
 
 export const lover1Slot = { id: "lover1", label: "Lover 1" };
 export const lover2Slot = { id: "lover2", label: "Lover 2" };
@@ -8,11 +8,11 @@ export const lover2Slot = { id: "lover2", label: "Lover 2" };
 export const fallInLove: Scene = {
   id: "fallInLove",
   name: "Fall in Love",
+  color: "#D3486B",
   slots: [lover1Slot, lover2Slot],
   outcomeLogic: (state, assigned) => {
     const lover1 = assigned[lover1Slot.id];
     const lover2 = assigned[lover2Slot.id];
-    if (handlePreconditions(state, lover1, lover2)) return;
     if (state.getState(lover1.id, "sex") === state.getState(lover2.id, "sex")) {
       state.think(lover1.id, `(S)he is of the same sex...`);
       return;

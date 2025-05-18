@@ -5,11 +5,12 @@ const eavesdropperSlot = { id: "eavesdropper", label: "Eavesdropper" };
 export const eavesdrop: Scene = {
   id: "eavesdrop",
   name: "Eavesdrop",
+  color: "#7FA05E",
   slots: [eavesdropperSlot],
   outcomeLogic: (state, assigned) => {
     const eavesdropper = assigned[eavesdropperSlot.id];
     state.setGlobalState("eavesdropper", eavesdropper);
     state.setDescription(`${eavesdropper.name} eavesdropped on the following event.`);
-    // TODO state.act(eavesdropper.id, "eavesdrop");
+    state.act(eavesdropper.id, "eavesdrop");
   },
 };

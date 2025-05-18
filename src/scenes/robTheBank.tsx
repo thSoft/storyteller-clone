@@ -5,6 +5,7 @@ const robberSlot = { id: "robber", label: "Robber" };
 export const robTheBank: Scene = {
   id: "robTheBank",
   name: "Rob the Bank",
+  color: "#B74F3D",
   slots: [robberSlot],
   outcomeLogic: (state, assigned) => {
     const robber = assigned[robberSlot.id];
@@ -27,7 +28,7 @@ export const robTheBank: Scene = {
       return;
     }
     state.setGlobalState("bankRobber", robber);
-    // TODO state.act(robber.id, "robTheBank");
+    state.act(robber.id, "robTheBank");
     state.think(robber.id, `🤑`);
   },
 };

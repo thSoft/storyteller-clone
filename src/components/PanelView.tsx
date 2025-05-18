@@ -14,6 +14,7 @@ import { StoryState } from "../storyState";
 import { Panel, Puzzle, SceneSlot } from "../types";
 import { toFirstUpper } from "../utils";
 import { ItemTypes } from "./ItemTypes";
+import { SceneImage } from "./SceneImage";
 import { SlotView } from "./SlotView";
 import { StoryGraphView } from "./StoryGraphView";
 
@@ -79,8 +80,8 @@ export const PanelView: React.FC<{
     setShowGraph(true);
   };
 
-  const state = states[index + 1];
-  const event = state?.getAttribute("event");
+  const stateAfter = states[index + 1];
+  const event = stateAfter?.getAttribute("event");
   const actions = event?.actions;
 
   const slotsAreEmpty = Object.keys(panel.slotAssignedCharacters).length === 0;
@@ -92,15 +93,14 @@ export const PanelView: React.FC<{
         key={`${index}-${panelCount}`}
         style={{
           border: "1px solid black",
-          backgroundColor: showDragging && isOver ? "yellow" : showDragging ? "lightgreen" : "white",
+          backgroundColor: showDragging && isOver ? "yellow" : showDragging ? "lightgreen" : scene?.color,
           paddingLeft: "0.5vw",
           paddingRight: "0.5vw",
           paddingTop: "0.8vh",
-          paddingBottom: "0.8vh",
+          width: "14vw",
+          height: "30vh",
           display: "flex",
           flexDirection: "column",
-          gap: "0.1vh",
-          width: "14vw",
         }}
         onContextMenu={handleContextMenu}
       >
@@ -108,21 +108,20 @@ export const PanelView: React.FC<{
           <button style={{ float: "left" }} onClick={() => handleAddPanelBefore()} title="Add panel before">
             ➕
           </button>
-          {scene?.name}{" "}
           <button style={{ float: "right" }} onClick={() => handleRemovePanel()} title="Remove panel">
             ❌
           </button>
         </h4>
         <div
           style={{
+            width: "100%",
+            height: "25.5vh",
             display: "flex",
             flexDirection: "row",
-            flexWrap: "wrap",
             gap: "1.5vw",
-            height: "30vh",
           }}
         >
-          {!slotsAreEmpty &&
+          {!slotsAreEmpty ? (
             scene?.slots.map((slot: SceneSlot, slotIndex: number) => {
               const characterActions = actions?.filter(
                 (bubble) => bubble.characterId === panel.slotAssignedCharacters[slot.id]
@@ -131,19 +130,24 @@ export const PanelView: React.FC<{
                 <SlotView
                   key={slot.id}
                   slot={slot}
+                  scene={scene}
                   index={slotIndex}
                   panelIndex={index}
-                  assignedCharacter={panel.slotAssignedCharacters[slot.id]}
+                  panel={panel}
+                  assignedCharacterId={panel.slotAssignedCharacters[slot.id]}
                   onAssignCharacter={(characterId) => handleAssignCharacter(slot.id, characterId)}
                   speech={characterActions?.find((action) => action.type === "speech")}
                   thought={characterActions?.find((action) => action.type === "thought")}
                   otherAction={characterActions?.find((action) => action.type === "other")}
-                  state={createStateProxy(state)}
+                  stateBefore={createStateProxy(states[index])}
                 />
               );
-            })}
+            })
+          ) : (
+            <SceneImage scene={scene} style={{ display: "block", width: "100%", height: "auto", margin: "auto" }} />
+          )}
         </div>
-        {showGraph && state && <StoryGraphView graph={state} width={600} height={400} />}
+        {showGraph && stateAfter && <StoryGraphView graph={stateAfter} width={600} height={400} />}
       </div>
     </div>
   );

@@ -1,12 +1,13 @@
 import { characters } from "../characters";
 import { Scene } from "../types";
 
-const impersonatorSlot = { id: "impersonator", label: "Impersonator" };
-const impersonatedSlot = { id: "impersonated", label: "Impersonated", optional: true };
+export const impersonatorSlot = { id: "impersonator", label: "Impersonator" };
+export const impersonatedSlot = { id: "impersonated", label: "Impersonated", optional: true };
 
 export const impersonate: Scene = {
   id: "impersonate",
   name: "Impersonate",
+  color: "#86C2B9",
   slots: [impersonatorSlot, impersonatedSlot],
   outcomeLogic: (state, assigned) => {
     const impersonator = assigned[impersonatorSlot.id];

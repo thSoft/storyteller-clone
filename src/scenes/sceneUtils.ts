@@ -23,6 +23,7 @@ function handleEncounter(state: StateProxy, confronter: Character, confronted: C
   // then the confronted is shocked by seeing the confronter alive
   if (!state.getState(confronter.id, "dead") && state.getState(confronter.id, "dead", confronted.id) === true) {
     state.setState(confronted.id, "shockedByAlive", true);
+    state.think(confronted.id, `😲!!!`);
     state.setDescription(`${confronted.name} was shocked to see ${confronter.name} alive.`);
     return true;
   }
@@ -43,13 +44,16 @@ export function handlePreconditions(state: StateProxy, character1: Character, ch
   }
   // Arrested
   if (state.getState(character1.id, "arrested")) {
+    state.think(character1.id, `I am arrested.`);
     state.setDescription(`${character1.name} was arrested.`);
     return true;
   }
   if (character2 && state.getState(character2.id, "arrested")) {
+    state.think(character2.id, `I am arrested.`);
     state.setDescription(`${character2.name} was arrested.`);
     return true;
   }
+  // Other
   if (
     character2 &&
     (handleEncounter(state, character1, character2) || handleEncounter(state, character2, character1))

@@ -6,6 +6,7 @@ const overtakerSlot = { id: "overtaker", label: "Overtaker" };
 export const takeOver: Scene = {
   id: "takeOver",
   name: "Take Over",
+  color: "#006072",
   slots: [overtakerSlot],
   outcomeLogic: (state, assigned) => {
     const overtaker = assigned[overtakerSlot.id];
