@@ -13,7 +13,7 @@ export const shoot: Scene = {
   outcomeLogic: (state, assigned) => {
     const shooter = assigned[shooterSlot.id];
     const target = assigned[targetSlot.id];
-    if (!state.areRelated(shooter.id, "wantsToKill", target.id)) {
+    if (!state.areRelated(shooter.id, "wantsToKill", target.id, shooter.id)) {
       state.think(shooter.id, `I don't want to kill ${target.name}.`);
       return;
     }

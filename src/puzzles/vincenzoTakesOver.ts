@@ -6,8 +6,8 @@ import { stagedDeath } from "./stagedDeath";
 
 export const vincenzoTakesOver: Puzzle = {
   id: "vincenzoTakesOver",
-  title: "Takeover",
-  prompt: "Vincenzo Overtakes the Family",
+  title: "Vincenzo Takes Over",
+  prompt: "Vincenzo Takes Over the Family",
   scenes: mafiaScenes,
   characters: mafiaCharacters,
   isWinning: (state) => state.getState(vincenzo.id, "headOfFamily") === true,
