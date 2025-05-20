@@ -22,12 +22,8 @@ const gameStateSlice = createSlice({
       const currentPuzzleId = action.payload;
       state.currentPuzzleId = currentPuzzleId;
       if (currentPuzzleId) {
-        if (puzzles[currentPuzzleId]) {
-          state.currentBookId = findChapterId(currentPuzzleId);
-          padPanels(currentPuzzleId, state.puzzleStates);
-        } else {
-          state.puzzleStates[currentPuzzleId] = { panels: [] };
-        }
+        state.currentBookId = findChapterId(currentPuzzleId);
+        padPanels(currentPuzzleId, state.puzzleStates);
       }
     },
     setCurrentBookId(state, action: PayloadAction<string | null>) {
@@ -148,14 +144,14 @@ export const {
 export default gameStateSlice.reducer;
 
 function padPanels(currentPuzzleId: string, puzzleStates: Record<string, PuzzleState>) {
-  const maxPanelCount = puzzles[currentPuzzleId].maxPanelCount;
+  if (!puzzleStates[currentPuzzleId]) {
+    puzzleStates[currentPuzzleId] = { panels: [] };
+  }
   const currentPuzzleState = puzzleStates[currentPuzzleId];
-  if (currentPuzzleState) {
-    while (currentPuzzleState.panels.length < maxPanelCount) {
-      currentPuzzleState.panels.push({
-        sceneId: placeholder.id,
-        slotAssignedCharacters: {},
-      });
-    }
+  while (currentPuzzleState.panels.length < puzzles[currentPuzzleId].maxPanelCount) {
+    currentPuzzleState.panels.push({
+      sceneId: placeholder.id,
+      slotAssignedCharacters: {},
+    });
   }
 }
