@@ -17,5 +17,5 @@ export const successfulHeist: Puzzle = {
   },
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
-  dependsOn: successfulHit.id,
+  dependsOn: [successfulHit.id],
 };

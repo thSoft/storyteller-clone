@@ -13,5 +13,5 @@ export const revenge: Puzzle = {
   isWinning: (state) => state.getState(alessio.id, "dead") === true && state.getState(vincenzo.id, "dead") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 8,
-  dependsOn: vincenzoTakesOver.id,
+  dependsOn: [vincenzoTakesOver.id],
 };

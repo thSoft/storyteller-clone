@@ -14,5 +14,5 @@ export const arrestedForMurder: Puzzle = {
     state.areRelated(vincenzo.id, "killed", alessio.id) && state.getState(vincenzo.id, "arrested") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
-  dependsOn: failedHit.id,
+  dependsOn: [failedHit.id],
 };

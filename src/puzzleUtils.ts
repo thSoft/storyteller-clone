@@ -18,17 +18,25 @@ export function isPuzzleWon(puzzle: Puzzle, panels: Panel[]): boolean {
 export function isPuzzleEnabled(puzzleId: string, puzzleStates: Record<string, PuzzleState>): boolean {
   if (isAllPuzzlesEnabled()) return true;
   const puzzle = puzzles[puzzleId];
-  if (!puzzle.dependsOn) return true;
-  return puzzleStates[puzzle.dependsOn]?.completed === true;
+  if (!puzzle.dependsOn || puzzle.dependsOn.length === 0) return true;
+  // All dependencies must be completed
+  return puzzle.dependsOn.every((depId) => puzzleStates[depId]?.completed === true);
 }
 
 export function getPuzzleTooltip(puzzleId: string, puzzleStates: Record<string, PuzzleState>): string | undefined {
   const puzzle = puzzles[puzzleId];
-  if (!puzzle.dependsOn) return undefined;
+  if (!puzzle.dependsOn || puzzle.dependsOn.length === 0) return undefined;
   const isEnabled = isPuzzleEnabled(puzzleId, puzzleStates);
   if (!isEnabled) {
-    const dependencyPuzzle = puzzles[puzzle.dependsOn];
-    return `Complete "${dependencyPuzzle.title}" first`;
+    // List unmet dependencies
+    const unmet = puzzle.dependsOn.filter((depId) => !puzzleStates[depId]?.completed);
+    if (unmet.length === 1) {
+      const dependencyPuzzle = puzzles[unmet[0]];
+      return `To unlock, complete ${dependencyPuzzle?.title || unmet[0]}`;
+    } else if (unmet.length > 1) {
+      const titles = unmet.map((depId) => `${puzzles[depId]?.title || depId}`).join(", ");
+      return `To unlock, complete ${titles}`;
+    }
   }
   return undefined;
 }

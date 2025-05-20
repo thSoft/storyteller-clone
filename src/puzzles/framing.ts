@@ -29,5 +29,5 @@ export const framing: Puzzle = {
   },
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 5,
-  dependsOn: vincenzoTakesOver.id,
+  dependsOn: [vincenzoTakesOver.id],
 };

@@ -16,5 +16,5 @@ export const avoidingArrest: Puzzle = {
     state.getState(alessio.id, "dead", inspectorRinaldi.id) === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 7,
-  dependsOn: vincenzoTakesOver.id,
+  dependsOn: [vincenzoTakesOver.id],
 };

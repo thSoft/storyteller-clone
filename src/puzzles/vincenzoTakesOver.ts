@@ -13,5 +13,5 @@ export const vincenzoTakesOver: Puzzle = {
   isWinning: (state) => state.getState(vincenzo.id, "headOfFamily") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
-  dependsOn: stagedDeath.id,
+  dependsOn: [stagedDeath.id],
 };

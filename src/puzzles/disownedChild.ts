@@ -14,5 +14,5 @@ export const disownment: Puzzle = {
   isWinning: (state) => state.getState(lucia.id, "disowned") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
-  dependsOn: stagedDeath.id,
+  dependsOn: [stagedDeath.id],
 };

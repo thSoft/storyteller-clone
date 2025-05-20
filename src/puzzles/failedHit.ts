@@ -14,5 +14,5 @@ export const failedHit: Puzzle = {
   isWinning: (state) => !state.getState(alessio.id, "dead") && state.getState(vincenzo.id, "fired") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
-  dependsOn: successfulHeist.id,
+  dependsOn: [successfulHeist.id],
 };

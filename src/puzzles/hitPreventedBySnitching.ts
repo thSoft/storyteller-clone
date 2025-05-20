@@ -6,7 +6,7 @@ import { vincenzoTakesOver } from "./vincenzoTakesOver";
 
 export const hitPreventedBySnitching: Puzzle = {
   id: "hitPreventedBySnitching",
-  title: "Hit Prevented by Snitching",
+  title: "Snitching",
   prompt: "Hit Prevented by Snitching",
   scenes: mafiaScenes,
   characters: mafiaCharacters,
@@ -23,5 +23,5 @@ export const hitPreventedBySnitching: Puzzle = {
   },
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
-  dependsOn: vincenzoTakesOver.id,
+  dependsOn: [vincenzoTakesOver.id],
 };

@@ -13,5 +13,5 @@ export const savedByLove: Puzzle = {
   isWinning: (state) => state.getState(lucia.id, "dead") === true && !state.getState(alessio.id, "dead"),
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
-  dependsOn: vincenzoTakesOver.id,
+  dependsOn: [vincenzoTakesOver.id],
 };
