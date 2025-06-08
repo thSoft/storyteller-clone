@@ -2,7 +2,7 @@ import { characters } from "../characters";
 import { Scene } from "../types";
 
 export const impersonatorSlot = { id: "impersonator", label: "Impersonator" };
-export const impersonatedSlot = { id: "impersonated", label: "Impersonated", optional: true };
+export const impersonatedSlot = { id: "impersonated", label: "Impersonated", optional: true, nonParticipant: true };
 
 export const impersonate: Scene = {
   id: "impersonate",

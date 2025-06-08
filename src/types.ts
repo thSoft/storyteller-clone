@@ -10,6 +10,7 @@ export type SceneSlot = Entity & {
   label: string;
   optional?: boolean;
   hint?: string;
+  nonParticipant?: boolean;
 };
 
 export type Scene = Entity & {

@@ -6,8 +6,6 @@ import { createStateProxy } from "./stateProxy";
 import { initialEvent, StoryState } from "./storyState";
 import { Panel } from "./types";
 
-// Public functions
-
 function resolveMap(slotAssignedCharacters: Record<string, string>) {
   return Object.fromEntries(
     Object.entries(slotAssignedCharacters).map(([slotId, characterId]) => [slotId, characters[characterId]])
@@ -51,7 +49,9 @@ export function getStates(panels: Panel[], initialState: StoryState): StoryState
         }
       }
 
-      const assignedCharacters = Object.values(assigned);
+      const assignedCharacters = Object.entries(assigned)
+        .filter(([slotId, _]) => !scene.slots.find((slot) => slot.id === slotId)?.nonParticipant)
+        .map(([_, character]) => character);
       const participantIds = [
         ...assignedCharacters.map((character) => character.id),
         state.getGlobalState("eavesdropper")?.id,
