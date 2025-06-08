@@ -18,7 +18,10 @@ export const orderHeist: Scene = {
       }
       state.setStates([acceptor.id, state.getGlobalState("eavesdropper")?.id], "knowsSecretCode", true);
       state.addRelation(acceptor.id, "promisedHeistTo", proposer.id);
-      state.say(proposer.id, `If you rob the bank, you will get your share! The code of the safe is 1234.`);
+      state.say(
+        proposer.id,
+        `If you rob the bank and fetch the money, you will get your share! The code of the safe is 1234.`
+      );
       state.say(acceptor.id, `OK, I will do it.`);
       return;
     }
