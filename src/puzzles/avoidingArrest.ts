@@ -20,7 +20,8 @@ export const avoidingArrest: Puzzle = {
   isWinning: (state) =>
     state.getGlobalState("bankRobber")?.id === alessio.id &&
     !state.getState(alessio.id, "arrested") &&
-    state.getState(alessio.id, "dead", inspectorRinaldi.id) === true,
+    state.getState(alessio.id, "dead", inspectorRinaldi.id) === true &&
+    !state.getState(alessio.id, "dead"),
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 7,
   dependsOn: [vincenzoTakesOver.id],
