@@ -1,4 +1,6 @@
-import { bruno } from "../characters";
+import { alessio, bruno, donRomano } from "../characters";
+import { panel } from "../panelUtil";
+import { disclose } from "../scenes/disclose";
 import { orderHeist } from "../scenes/orderHeist";
 import { robTheBank } from "../scenes/robTheBank";
 import { getInitialStoryState } from "../stateProxy";
@@ -18,4 +20,8 @@ export const successfulHeist: Puzzle = {
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
   dependsOn: [successfulHit.id],
+  solutions: [
+    [panel(orderHeist, donRomano, bruno), panel(robTheBank, bruno), panel(disclose, bruno, donRomano)],
+    [panel(orderHeist, donRomano, alessio), panel(robTheBank, alessio), panel(disclose, alessio, donRomano)],
+  ],
 };

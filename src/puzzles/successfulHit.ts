@@ -1,4 +1,5 @@
 import { alessio, donMarcello, donRomano, vincenzo } from "../characters";
+import { panel } from "../panelUtil";
 import { disclose } from "../scenes/disclose";
 import { orderHit } from "../scenes/orderHit";
 import { shoot } from "../scenes/shoot";
@@ -14,4 +15,7 @@ export const successfulHit: Puzzle = {
   isWinning: (state) => state.getState(alessio.id, "dead") === true && state.getState(vincenzo.id, "promoted") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
+  solutions: [
+    [panel(orderHit, donMarcello, vincenzo), panel(shoot, vincenzo, alessio), panel(disclose, vincenzo, donMarcello)],
+  ],
 };

@@ -1,5 +1,13 @@
-import { mafiaCharacters } from "../characters";
+import { alessio, bruno, donMarcello, donRomano, inspectorRinaldi, mafiaCharacters, vincenzo } from "../characters";
+import { panel } from "../panelUtil";
 import { mafiaScenes } from "../scenes";
+import { arrest } from "../scenes/arrest";
+import { eavesdrop } from "../scenes/eavesdrop";
+import { impersonate } from "../scenes/impersonate";
+import { orderHeist } from "../scenes/orderHeist";
+import { orderHit } from "../scenes/orderHit";
+import { robTheBank } from "../scenes/robTheBank";
+import { shoot } from "../scenes/shoot";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
 import { vincenzoTakesOver } from "./vincenzoTakesOver";
@@ -30,4 +38,20 @@ export const framing: Puzzle = {
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 5,
   dependsOn: [vincenzoTakesOver.id],
+  solutions: [
+    [
+      panel(orderHit, donMarcello, vincenzo),
+      panel(impersonate, vincenzo, bruno),
+      panel(eavesdrop, inspectorRinaldi),
+      panel(shoot, vincenzo, alessio),
+      panel(arrest, inspectorRinaldi, bruno),
+    ],
+    [
+      panel(orderHeist, donRomano, bruno),
+      panel(impersonate, bruno, vincenzo),
+      panel(eavesdrop, inspectorRinaldi),
+      panel(robTheBank, bruno),
+      panel(arrest, inspectorRinaldi, vincenzo),
+    ],
+  ],
 };

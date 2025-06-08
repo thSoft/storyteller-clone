@@ -1,6 +1,6 @@
 import { isPuzzleWon } from "./puzzleUtils";
 import { scenes } from "./scenes";
-import { Character, Panel, Puzzle, Scene } from "./types";
+import { Panel, Puzzle } from "./types";
 
 function testPuzzleWinCondition(puzzle: Puzzle, panels: Panel[], expectedResult: boolean) {
   const result = isPuzzleWon(puzzle, panels);
@@ -183,37 +183,24 @@ function isEqual(obj1: Record<string, string>, obj2: Record<string, string>): bo
  * @param validSolutions Array of Panel[] that should satisfy the win condition.
  * @param invalidSolutions Array of Panel[] that should not satisfy the win condition.
  */
-export function runPuzzleTests(puzzle: Puzzle, validSolutions: Panel[][], invalidSolutions: Panel[][]) {
+export function runPuzzleTests(puzzle: Puzzle) {
   describe(`Puzzle: ${puzzle.title}`, () => {
-    validSolutions.forEach((validPanels, index) => {
+    puzzle.solutions.forEach((validPanels, index) => {
       it(`should satisfy the win condition with valid solution #${index + 1}`, () => {
         testPuzzleWinCondition(puzzle, validPanels, true);
       });
     });
 
-    invalidSolutions.forEach((invalidPanels, index) => {
+    puzzle.invalidSolutions?.forEach((invalidPanels, index) => {
       it(`should not satisfy the win condition with invalid solution #${index + 1}`, () => {
         testPuzzleWinCondition(puzzle, invalidPanels, false);
       });
     });
 
-    generateMoreValidSolutions(puzzle, validSolutions, 100).forEach((panels, index) => {
+    generateMoreValidSolutions(puzzle, puzzle.solutions, 100).forEach((panels, index) => {
       it(`has another valid solution #${index + 1}`, () => {
         console.log(panels);
       });
     });
   });
-}
-
-export function panel(scene: Scene, ...assignments: Character[]): Panel {
-  return {
-    sceneId: scene.id,
-    slotAssignedCharacters: assignments.reduce(
-      (result, assignment, index) => ({
-        ...result,
-        [scene.slots[index].id]: assignment.id,
-      }),
-      {} as Record<string, string>
-    ),
-  };
 }

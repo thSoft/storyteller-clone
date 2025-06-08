@@ -1,5 +1,8 @@
-import { lucia } from "../characters";
+import { alessio, donMarcello, lucia } from "../characters";
+import { panel } from "../panelUtil";
+import { disclose } from "../scenes/disclose";
 import { disown } from "../scenes/disown";
+import { eavesdrop } from "../scenes/eavesdrop";
 import { fallInLove } from "../scenes/fallInLove";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
@@ -15,4 +18,11 @@ export const disownment: Puzzle = {
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
   dependsOn: [stagedDeath.id],
+  solutions: [
+    [panel(eavesdrop, donMarcello), panel(fallInLove, lucia, alessio), panel(disown, donMarcello, lucia)],
+    [panel(eavesdrop, donMarcello), panel(fallInLove, alessio, lucia), panel(disown, donMarcello, lucia)],
+    [panel(fallInLove, lucia, alessio), panel(disclose, lucia, donMarcello), panel(disown, donMarcello, lucia)],
+    [panel(fallInLove, lucia, alessio), panel(disclose, alessio, donMarcello), panel(disown, donMarcello, lucia)],
+  ],
+  invalidSolutions: [[]],
 };

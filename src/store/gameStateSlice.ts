@@ -128,6 +128,11 @@ const gameStateSlice = createSlice({
         state.puzzleStates[puzzleId].completed = true;
       }
     },
+    setPanelsForCurrentPuzzle(state, action: PayloadAction<Panel[]>) {
+      if (!state.currentPuzzleId) return;
+      state.puzzleStates[state.currentPuzzleId].panels = [...action.payload];
+      padPanels(state.currentPuzzleId, state.puzzleStates);
+    },
   },
 });
 
@@ -139,6 +144,7 @@ export const {
   removePanelFromCurrentPuzzle,
   markPuzzleCompleted,
   setPanelScene,
+  setPanelsForCurrentPuzzle,
 } = gameStateSlice.actions;
 
 export default gameStateSlice.reducer;

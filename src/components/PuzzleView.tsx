@@ -8,7 +8,7 @@ import { books } from "../puzzles";
 import { getPuzzleTooltip, isPuzzleEnabled, isPuzzleWon } from "../puzzleUtils";
 import { mafiaScenes, scenes } from "../scenes";
 import { getStates } from "../simulator";
-import { setCurrentPuzzleId } from "../store/gameStateSlice";
+import { setCurrentPuzzleId, setPanelsForCurrentPuzzle } from "../store/gameStateSlice";
 import { GameState, Puzzle } from "../types";
 import { DraggableCharacterView } from "./DraggableCharacterView";
 import { PanelView } from "./PanelView";
@@ -47,6 +47,12 @@ export const PuzzleView: React.FC<{
     }
   };
 
+  const handleFillWithSolution = () => {
+    if (puzzle.solutions.length > 0) {
+      dispatch(setPanelsForCurrentPuzzle(puzzle.solutions[0]));
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div style={{ marginBottom: "1rem", textAlign: "center" }}>
@@ -68,6 +74,15 @@ export const PuzzleView: React.FC<{
       <h1 style={{ textAlign: "center", lineHeight: "1.2" }}>
         {puzzle.prompt}
         {isPuzzleWon(puzzle, panels) && " 🎉"}
+        {puzzle.solutions && puzzle.solutions.length > 0 && (
+          <button
+            style={{ marginLeft: "1rem", fontSize: "1rem", padding: "0.2em 0.6em" }}
+            onClick={handleFillWithSolution}
+            title="Fill with first solution"
+          >
+            Fill with Solution
+          </button>
+        )}
       </h1>
       <div style={{ display: "flex", gap: "12px" }}>
         <div style={{ width: "30vw" }}>

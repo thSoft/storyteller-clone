@@ -29,6 +29,8 @@ export type Puzzle = Entity & {
   initialStoryState: StoryState;
   maxPanelCount: number;
   dependsOn?: string[];
+  solutions: Panel[][];
+  invalidSolutions?: Panel[][];
 };
 
 export type Book = Entity & {

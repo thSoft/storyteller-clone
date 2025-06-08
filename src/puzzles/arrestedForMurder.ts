@@ -1,5 +1,9 @@
-import { alessio, vincenzo } from "../characters";
+import { alessio, donMarcello, inspectorRinaldi, vincenzo } from "../characters";
+import { panel } from "../panelUtil";
 import { arrest } from "../scenes/arrest";
+import { eavesdrop } from "../scenes/eavesdrop";
+import { orderHit } from "../scenes/orderHit";
+import { shoot } from "../scenes/shoot";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
 import { failedHit } from "./failedHit";
@@ -15,4 +19,15 @@ export const arrestedForMurder: Puzzle = {
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
   dependsOn: [failedHit.id],
+  solutions: [
+    [
+      panel(orderHit, donMarcello, vincenzo),
+      panel(eavesdrop, inspectorRinaldi),
+      panel(shoot, vincenzo, alessio),
+      panel(arrest, inspectorRinaldi, vincenzo),
+    ],
+  ],
+  invalidSolutions: [
+    [panel(orderHit, donMarcello, vincenzo), panel(shoot, vincenzo, alessio), panel(arrest, inspectorRinaldi, vincenzo)],
+  ],
 };

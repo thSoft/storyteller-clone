@@ -1,5 +1,9 @@
-import { mafiaCharacters, nico, vincenzo } from "../characters";
+import { donMarcello, inspectorRinaldi, mafiaCharacters, nico, vincenzo } from "../characters";
+import { panel } from "../panelUtil";
 import { mafiaScenes } from "../scenes";
+import { die } from "../scenes/die";
+import { recruit } from "../scenes/recruit";
+import { takeOver } from "../scenes/takeover";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
 import { stagedDeath } from "./stagedDeath";
@@ -14,4 +18,8 @@ export const vincenzoTakesOver: Puzzle = {
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 3,
   dependsOn: [stagedDeath.id],
+  solutions: [
+    [panel(recruit, inspectorRinaldi, nico), panel(die, donMarcello), panel(takeOver, vincenzo)],
+    [panel(die, donMarcello), panel(recruit, inspectorRinaldi, nico), panel(takeOver, vincenzo)],
+  ],
 };
