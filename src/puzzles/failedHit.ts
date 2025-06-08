@@ -6,18 +6,18 @@ import { eavesdrop } from "../scenes/eavesdrop";
 import { orderHit } from "../scenes/orderHit";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
-import { successfulHeist } from "./successfulHeist";
+import { arrestedForMurder } from "./arrestedForMurder";
 
 export const failedHit: Puzzle = {
   id: "failedHit",
   title: "Failed Hit",
   prompt: "Fired for Failed Hit",
-  scenes: [...successfulHeist.scenes, eavesdrop.id, confiscate.id],
-  characters: [...successfulHeist.characters, inspectorRinaldi.id],
+  scenes: [...arrestedForMurder.scenes, confiscate.id],
+  characters: [...arrestedForMurder.characters],
   isWinning: (state) => !state.getState(alessio.id, "dead") && state.getState(vincenzo.id, "fired") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
-  dependsOn: [successfulHeist.id],
+  dependsOn: [arrestedForMurder.id],
   solutions: [
     [
       panel(eavesdrop, inspectorRinaldi),

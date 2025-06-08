@@ -41,8 +41,8 @@ export const books: EntityMap<Book> = entityMap([
     puzzles: [
       successfulHit.id,
       successfulHeist.id,
-      failedHit.id,
       arrestedForMurder.id,
+      failedHit.id,
       outsmarted.id,
       stagedDeath.id,
       disownment.id,

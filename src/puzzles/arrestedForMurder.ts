@@ -6,19 +6,19 @@ import { orderHit } from "../scenes/orderHit";
 import { shoot } from "../scenes/shoot";
 import { getInitialStoryState } from "../stateProxy";
 import { Puzzle } from "../types";
-import { failedHit } from "./failedHit";
+import { successfulHeist } from "./successfulHeist";
 
 export const arrestedForMurder: Puzzle = {
   id: "arrestedForMurder",
   title: "Arrested for Murder",
   prompt: "Arrested for Murder",
-  scenes: [...failedHit.scenes, arrest.id],
-  characters: [...failedHit.characters],
+  scenes: [...successfulHeist.scenes, eavesdrop.id, arrest.id],
+  characters: [...successfulHeist.characters, inspectorRinaldi.id],
   isWinning: (state) =>
     state.areRelated(vincenzo.id, "killed", alessio.id) && state.getState(vincenzo.id, "arrested") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 4,
-  dependsOn: [failedHit.id],
+  dependsOn: [successfulHeist.id],
   solutions: [
     [
       panel(orderHit, donMarcello, vincenzo),
@@ -28,6 +28,10 @@ export const arrestedForMurder: Puzzle = {
     ],
   ],
   invalidSolutions: [
-    [panel(orderHit, donMarcello, vincenzo), panel(shoot, vincenzo, alessio), panel(arrest, inspectorRinaldi, vincenzo)],
+    [
+      panel(orderHit, donMarcello, vincenzo),
+      panel(shoot, vincenzo, alessio),
+      panel(arrest, inspectorRinaldi, vincenzo),
+    ],
   ],
 };
