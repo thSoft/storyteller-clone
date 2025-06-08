@@ -154,10 +154,17 @@ function padPanels(currentPuzzleId: string, puzzleStates: Record<string, PuzzleS
     puzzleStates[currentPuzzleId] = { panels: [] };
   }
   const currentPuzzleState = puzzleStates[currentPuzzleId];
+  // Add trailing placeholder panels if panel count < maxPanelCount
   while (currentPuzzleState.panels.length < puzzles[currentPuzzleId].maxPanelCount) {
     currentPuzzleState.panels.push({
       sceneId: placeholder.id,
       slotAssignedCharacters: {},
     });
+  }
+  // Remove trailing placeholder panels if panel count > maxPanelCount
+  while (currentPuzzleState.panels.length > puzzles[currentPuzzleId].maxPanelCount) {
+    if (currentPuzzleState.panels[currentPuzzleState.panels.length - 1].sceneId === placeholder.id) {
+      currentPuzzleState.panels.pop();
+    }
   }
 }

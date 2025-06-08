@@ -131,8 +131,14 @@ export const disclose: Scene = {
       }
       state.say(
         speaker.id,
-        `Listen up! ${lovedBySpeakerIds.map((id) => characters[id]?.name).join(", ")} are loved by ${speaker.name}.`
+        `Listen up! ${speaker.name} loves ${lovedBySpeakerIds.map((id) => characters[id]?.name).join(", ")}.`
       );
+      return;
+    }
+    // If the speaker works for the police and the listener does not work for the police, then (s)he tells the listener about it
+    if (state.getState(speaker.id, "worksForPolice") === true && !state.getState(listener.id, "worksForPolice")) {
+      state.setState(speaker.id, "worksForPolice", true, true);
+      state.say(speaker.id, `Listen up! I work for the police.`);
       return;
     }
     // Otherwise

@@ -1,4 +1,4 @@
-import { alessio, donMarcello, vincenzo } from "../characters";
+import { alessio, donMarcello, mafiaCharacters, vincenzo } from "../characters";
 import { panel } from "../panelUtil";
 import { disclose } from "../scenes/disclose";
 import { orderHit } from "../scenes/orderHit";
@@ -14,17 +14,16 @@ export const stagedDeath: Puzzle = {
   prompt: "Seeing a Living Ghost",
   scenes: [...outsmarted.scenes, wearArmor.id],
   characters: [...outsmarted.characters],
-  isWinning: (state) => state.getState(donMarcello.id, "shockedByAlive") === true,
+  isWinning: (state) => mafiaCharacters.some((characterId) => state.getState(characterId, "shockedByAlive") === true),
   initialStoryState: getInitialStoryState(),
-  maxPanelCount: 5,
+  maxPanelCount: 4,
   dependsOn: [outsmarted.id],
   solutions: [
     [
       panel(orderHit, donMarcello, vincenzo),
       panel(wearArmor, alessio),
       panel(shoot, vincenzo, alessio),
-      panel(disclose, vincenzo, donMarcello),
-      panel(disclose, alessio, donMarcello),
+      panel(disclose, alessio, vincenzo),
     ],
   ],
 };

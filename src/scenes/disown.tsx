@@ -39,7 +39,10 @@ export const disown: Scene = {
     }
     // If confronter is aware of his child working for the police,
     // then disown him/her
-    if (state.getState(confronted.id, "worksForPolice", confronter.id)) {
+    if (
+      state.getState(confronted.id, "worksForPolice", confronter.id) &&
+      !state.getState(confronter.id, "worksForPolice")
+    ) {
       state.say(confronter.id, `You shall not be a part of my family because you work for the police!`);
       handleDisown();
       return;

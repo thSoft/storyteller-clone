@@ -1,7 +1,6 @@
 import { alessio, donMarcello, donRomano, inspectorRinaldi, mafiaCharacters, vincenzo } from "../characters";
 import { panel } from "../panelUtil";
 import { mafiaScenes } from "../scenes";
-import { disclose } from "../scenes/disclose";
 import { eavesdrop } from "../scenes/eavesdrop";
 import { orderHeist } from "../scenes/orderHeist";
 import { orderHit } from "../scenes/orderHit";
@@ -33,7 +32,6 @@ export const avoidingArrest: Puzzle = {
       panel(orderHit, donMarcello, vincenzo),
       panel(wearArmor, alessio),
       panel(eavesdrop, inspectorRinaldi),
-      panel(disclose, donRomano),
       panel(shoot, vincenzo, alessio),
     ],
   ],

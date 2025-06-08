@@ -1,4 +1,5 @@
 import { Scene } from "../types";
+import { canShowPoliceBadge } from "./sceneUtils";
 
 const confronterSlot = { id: "confronter", label: "Confronter" };
 const confrontedSlot = { id: "confronted", label: "Confronted" };
@@ -11,7 +12,7 @@ export const confiscate: Scene = {
   outcomeLogic: (state, assigned) => {
     const confronter = assigned[confronterSlot.id];
     const confronted = assigned[confrontedSlot.id];
-    if (!state.getState(confronter.id, "worksForPolice", confronted.id)) {
+    if (!canShowPoliceBadge(state, confronter, confronted)) {
       state.think(confronter.id, `${confronted.name} won't believe I'm a police officer.`);
       return;
     }

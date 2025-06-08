@@ -22,12 +22,14 @@ import { savedByLove } from "./savedByLove";
 export const luciaTakesOver: Puzzle = {
   id: "luciaTakesOver",
   title: "Lucia Takes Over",
-  prompt: "Nico Disowned, Vincenzo Betrayed, Lucia Takes Over",
+  prompt: "Vincenzo Snitched by Disowned Nico, Lucia Takes Over",
   scenes: mafiaScenes,
   characters: mafiaCharacters,
   isWinning: (state) =>
     state.getState(lucia.id, "headOfFamily") === true &&
     state.getState(nico.id, "disowned") === true &&
+    state.areRelated(vincenzo.id, "killed", alessio.id, nico.id) &&
+    state.areRelated(vincenzo.id, "killed", alessio.id, inspectorRinaldi.id) &&
     state.getState(vincenzo.id, "arrested") === true,
   initialStoryState: getInitialStoryState(),
   maxPanelCount: 10,
@@ -36,6 +38,18 @@ export const luciaTakesOver: Puzzle = {
     [
       panel(eavesdrop, donMarcello),
       panel(recruit, inspectorRinaldi, nico),
+      panel(disown, donMarcello, nico),
+      panel(orderHit, donMarcello, vincenzo),
+      panel(eavesdrop, nico),
+      panel(shoot, vincenzo, alessio),
+      panel(disclose, nico, inspectorRinaldi),
+      panel(arrest, inspectorRinaldi, vincenzo),
+      panel(die, donMarcello),
+      panel(takeOver, lucia),
+    ],
+    [
+      panel(recruit, inspectorRinaldi, nico),
+      panel(disclose, nico, donMarcello),
       panel(disown, donMarcello, nico),
       panel(orderHit, donMarcello, vincenzo),
       panel(eavesdrop, nico),

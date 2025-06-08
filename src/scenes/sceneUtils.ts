@@ -98,3 +98,8 @@ export function handleMurderDiscovery(
     );
   }
 }
+export function canShowPoliceBadge(state: StateProxy, confronter: Character, confronted: Character) {
+  return (
+    state.getState(confronter.id, "worksForPolice", confronted.id) || state.getState(confronter.id, "worksForPolice")
+  );
+}
