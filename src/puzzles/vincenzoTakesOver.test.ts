@@ -11,6 +11,9 @@ const validSolutions = [
   [panel(die, donMarcello), panel(recruit, inspectorRinaldi, nico), panel(takeOver, vincenzo)],
 ];
 
-const invalidSolutions: Panel[][] = [[panel(die, donMarcello), panel(takeOver, vincenzo)]];
+const invalidSolutions: Panel[][] = [
+  [panel(die, donMarcello), panel(takeOver, vincenzo)],
+  [panel(die, nico), panel(die, donMarcello), panel(takeOver, vincenzo)],
+];
 
 runPuzzleTests(vincenzoTakesOver, validSolutions, invalidSolutions);
