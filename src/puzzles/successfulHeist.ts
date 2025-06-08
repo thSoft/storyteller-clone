@@ -12,7 +12,7 @@ export const successfulHeist: Puzzle = {
   title: "Successful Heist",
   prompt: "Robber Gets His Cut",
   scenes: [...successfulHit.scenes, orderHeist.id, robTheBank.id],
-  characters: [...successfulHit.characters, bruno.id],
+  characters: [...successfulHit.characters, donRomano.id, bruno.id],
   isWinning: (state) => {
     const robberId = state.getGlobalState("bankRobber")?.id;
     return robberId !== undefined && state.getState(robberId, "rewarded") === true;
