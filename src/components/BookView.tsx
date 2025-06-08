@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { books, puzzles } from "../puzzles";
 import { getPuzzleTooltip, isPuzzleEnabled } from "../puzzleUtils";
-import { setCurrentBookId, setCurrentPuzzleId } from "../store/gameStateSlice";
+import { setCurrentPuzzleId } from "../store/gameStateSlice";
 import { GameState } from "../types";
 
 export const BookView: React.FC = () => {
@@ -14,34 +14,13 @@ export const BookView: React.FC = () => {
   const currentBookIndex = books[currentBookId] ? bookIds.indexOf(currentBookId) : 0;
   const currentBook = Object.values(books)[currentBookIndex];
 
-  const handlePrev = () => {
-    if (currentBookIndex > 0) {
-      dispatch(setCurrentBookId(bookIds[currentBookIndex - 1]));
-    }
-  };
-
-  const handleNext = () => {
-    if (currentBookIndex < bookIds.length - 1) {
-      dispatch(setCurrentBookId(bookIds[currentBookIndex + 1]));
-    }
-  };
-
   return (
     <div>
       <h2>
-        Book {currentBookIndex + 1}: {currentBook?.title || "Unknown"}
+        Twisted Tales: {currentBook?.title || "Unknown"}
         {currentBook.puzzles.every((puzzleId) => puzzleStates[puzzleId]?.completed) && " - Completed"}
       </h2>
-
-      <div style={{ marginBottom: "1rem" }}>
-        <button onClick={handlePrev} disabled={currentBookIndex === 0}>
-          ← Previous Book
-        </button>
-        <button onClick={handleNext} disabled={currentBookIndex === bookIds.length - 1} style={{ marginLeft: "1rem" }}>
-          Next Book →
-        </button>
-      </div>
-
+      Create alternative stories based on the given prompts!
       <ul>
         {currentBook?.puzzles.map((puzzleId) => {
           const enabled = isPuzzleEnabled(puzzleId, puzzleStates);
